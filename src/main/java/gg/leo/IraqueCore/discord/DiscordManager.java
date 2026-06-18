@@ -136,7 +136,16 @@ public class DiscordManager extends ListenerAdapter {
         formatted = stripColor(formatted);
 
         if (plugin.getConfigManager().isUseWebhooks()) {
-            sendWebhookMessage("chat", player.getName(), player.getUniqueId().toString(), message);
+            String webhookUrl = plugin.getConfigManager().getDiscordWebhook("chat");
+            if (webhookUrl == null || webhookUrl.isBlank() || !webhookUrl.startsWith("http")) {
+                final String finalFormatted = formatted;
+                channel.sendMessage(finalFormatted).queue(
+                        null,
+                        err -> plugin.getPluginLogger().warn("Failed to send message to Discord: " + err.getMessage())
+                );
+            } else {
+                sendWebhookMessage("chat", player.getName(), player.getUniqueId().toString(), message);
+            }
         } else {
             final String finalFormatted = formatted;
             channel.sendMessage(finalFormatted).queue(
