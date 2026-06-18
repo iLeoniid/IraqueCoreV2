@@ -1,0 +1,43 @@
+# ─────────────────────────────────────────────
+#   IraqueCore - Messages Configuration
+#   All messages can be customized here
+#   Color codes supported with & symbol
+# ─────────────────────────────────────────────
+
+prefix: "&8[&6IraqueCore&8] &7"
+
+# ─── Reload Command ───
+reload:
+  success: "&aAll configurations reloaded successfully."
+  failed: "&cAn error occurred while reloading configurations."
+
+# ─── Spawn Commands ───
+spawn:
+  set: "&aSpawn location has been set."
+  teleport: "&aTeleported to spawn."
+  not-set: "&cSpawn has not been set yet."
+  cooldown: "&cYou must wait {time} seconds before using /spawn again."
+
+# ─── Rank Command ───
+rank:
+  given: "&2 You have been granted the rank {rank}"
+  set: "&aYou set {player}'s rank to {rank}"
+  removed: "&aRank {rank} removed."
+  not-found: "&cRank not found!"
+  player-not-found: "&cPlayer not found!"
+  no-permission: "&cYou don't have permission to manage ranks."
+  no-permission-set: "&cYou don't have permission to set ranks."
+  usage-set: "&cUsage: /rank set <player> <rank>"
+  usage-remove: "&cUsage: /rank remove <name>"
+  list-header: "&6─── Ranks ───"
+  list-entry: "&7  {name} &8(Weight: {weight})"
+  your-rank: "&aYour rank: {rank}"
+  info-header: "&aRank: {name} | Prefix: {prefix} | Weight: {weight}"
+  not-found-info: "&cRank not found."
+  create-hint: "&eUse config.yml to create custom ranks."
+general:
+  no-permission: "&cYou don't have permission to use this command."
+  player-only: "&cOnly players can use this command."
+  console-only: "&cOnly console can use this command."
+  invalid-usage: "&cUsage: {usage}"
+  player-not-found: "&cPlayer not found."
