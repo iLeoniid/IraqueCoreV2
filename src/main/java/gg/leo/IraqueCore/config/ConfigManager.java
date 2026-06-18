@@ -3,6 +3,7 @@ package gg.leo.IraqueCore.config;
 import gg.leo.IraqueCore.IraqueCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -195,6 +196,23 @@ public class ConfigManager {
 
     public Component deserialize(String miniString) {
         return MINI.deserialize(miniString);
+    }
+
+    public String toLegacy(String s) {
+        if (s == null) return "";
+        return LegacyComponentSerializer.legacySection().serialize(MINI.deserialize(s));
+    }
+
+    public String toLegacyMessage(String path) {
+        return toLegacy(translate(getMessage(path)));
+    }
+
+    public String toLegacyMessage(String path, String placeholder, String value) {
+        return toLegacy(translate(getMessage(path).replace(placeholder, value)));
+    }
+
+    public String translateAndReplace(String message, String placeholder, String value) {
+        return translate(message.replace(placeholder, value));
     }
 
     public Component getMessageComponent(String path) {

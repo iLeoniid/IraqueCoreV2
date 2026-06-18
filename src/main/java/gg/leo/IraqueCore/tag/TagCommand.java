@@ -21,13 +21,15 @@ public class TagCommand implements TabExecutor {
         this.plugin = plugin;
     }
 
-    private String msg(String path) {
-        return plugin.getConfigManager().translate(
-                plugin.getConfigManager().getMessage(path, "&c" + path));
-    }
-
     private Component txt(String path) {
         return plugin.getConfigManager().getMessageComponent(path);
+    }
+
+    private Component txt(String path, String placeholder, String value) {
+        return plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translateAndReplace(
+                        plugin.getConfigManager().getMessage(path, "&c" + path),
+                        placeholder, value));
     }
 
     @Override
@@ -80,20 +82,18 @@ public class TagCommand implements TabExecutor {
 
         String tagId = args[2].toLowerCase();
         if (plugin.getTagManager().getTag(tagId) == null) {
-            sender.sendMessage(plugin.getConfigManager().deserialize(
-                    msg("tag.set.tag-not-found")
-                            .replace("{ids}", String.join(", ", plugin.getTagManager().getTags().keySet()))));
+            sender.sendMessage(txt("tag.set.tag-not-found", "{ids}",
+                    String.join(", ", plugin.getTagManager().getTags().keySet())));
             return;
         }
 
         plugin.getTagManager().setPlayerTag(target, tagId);
         sender.sendMessage(plugin.getConfigManager().deserialize(
-                msg("tag.set.success")
-                        .replace("{player}", target.getName())
-                        .replace("{tag}", tagId)));
-        target.sendMessage(plugin.getConfigManager().deserialize(
-                msg("tag.set.notify")
-                        .replace("{tag}", tagId)));
+                plugin.getConfigManager().translate(
+                        plugin.getConfigManager().getMessage("tag.set.success")
+                                .replace("{player}", target.getName())
+                                .replace("{tag}", tagId))));
+        target.sendMessage(txt("tag.set.notify", "{tag}", tagId));
     }
 
     @Override

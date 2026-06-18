@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.tag;
 
 import gg.leo.IraqueCore.IraqueCore;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -158,16 +159,16 @@ public class TagManager implements Listener {
         String currentTagText = getPlayerTagDisplay(player);
         ItemStack removeItem = new ItemStack(Material.BARRIER);
         ItemMeta removeMeta = removeItem.getItemMeta();
-        removeMeta.setDisplayName(ChatColor.RED + "\u2716 " + msg("tag.gui.remove-title"));
+        removeMeta.setDisplayName(ChatColor.RED + "\u2716 " + legacyMsg("tag.gui.remove-title"));
         if (currentTagText.isEmpty()) {
             removeMeta.setLore(Arrays.asList(
-                    msg("tag.gui.no-tag-equipped")
+                    legacyMsg("tag.gui.no-tag-equipped")
             ));
         } else {
             removeMeta.setLore(Arrays.asList(
-                    msg("tag.gui.current-tag").replace("{tag}", currentTagText),
+                    legacyMsg("tag.gui.current-tag", "{tag}", currentTagText),
                     "",
-                    msg("tag.gui.click-remove")
+                    legacyMsg("tag.gui.click-remove")
             ));
         }
         removeItem.setItemMeta(removeMeta);
@@ -180,7 +181,7 @@ public class TagManager implements Listener {
         List<Tag> categoryTags = getTagsByCategory(category, player);
 
         if (categoryTags.isEmpty()) {
-            player.sendMessage(msg("tag.gui.category-empty"));
+            player.sendMessage(txt("tag.gui.category-empty"));
             return;
         }
 
@@ -296,10 +297,10 @@ public class TagManager implements Listener {
                 if (!getPlayerTagDisplay(player).isEmpty()) {
                     setPlayerTag(player, null);
                     plugin.getRankManager().updatePlayerRankVisuals(player);
-                    player.sendMessage(msg("tag.gui.remove-success"));
+                    player.sendMessage(txt("tag.gui.remove-success"));
                     openMainMenu(player);
                 } else {
-                    player.sendMessage(msg("tag.gui.no-tag-equipped-action"));
+                    player.sendMessage(txt("tag.gui.no-tag-equipped-action"));
                 }
             }
             return;
@@ -343,16 +344,16 @@ public class TagManager implements Listener {
                     && clicked.getItemMeta().getDisplayName().equals(tag.getDisplayName())) {
 
                 if (!tag.getPermission().isEmpty() && !player.hasPermission(tag.getPermission())) {
-                    player.sendMessage(msg("tag.gui.no-permission"));
+                    player.sendMessage(txt("tag.gui.no-permission"));
                     return;
                 }
 
                 if (hasTagEquipped(player, tag.getId())) {
                     setPlayerTag(player, null);
-                    player.sendMessage(msg("tag.gui.removed").replace("{tag}", tag.getDisplayName()));
+                    player.sendMessage(txt("tag.gui.removed", "{tag}", tag.getDisplayName()));
                 } else {
                     setPlayerTag(player, tag.getId());
-                    player.sendMessage(msg("tag.gui.equipped").replace("{tag}", tag.getDisplayName()));
+                    player.sendMessage(txt("tag.gui.equipped", "{tag}", tag.getDisplayName()));
                 }
 
                 plugin.getRankManager().updatePlayerRankVisuals(player);
@@ -395,8 +396,22 @@ public class TagManager implements Listener {
         return Collections.unmodifiableMap(tags);
     }
 
-    private String msg(String path) {
-        return plugin.getConfigManager().translate(
-                plugin.getConfigManager().getMessage(path, "&c" + path));
+    private Component txt(String path) {
+        return plugin.getConfigManager().getMessageComponent(path);
+    }
+
+    private Component txt(String path, String placeholder, String value) {
+        return plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translateAndReplace(
+                        plugin.getConfigManager().getMessage(path, "&c" + path),
+                        placeholder, value));
+    }
+
+    private String legacyMsg(String path) {
+        return plugin.getConfigManager().toLegacyMessage(path);
+    }
+
+    private String legacyMsg(String path, String placeholder, String value) {
+        return plugin.getConfigManager().toLegacyMessage(path, placeholder, value);
     }
 }

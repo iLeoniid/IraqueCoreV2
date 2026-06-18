@@ -64,6 +64,17 @@ tag:
     tag-not-found: "&cTag not found. Available IDs: {ids}"
     success: "&aSet {player}'s tag to {tag}"
     notify: "&aYour tag has been set to {tag} by an admin."
+  gui:
+    category-empty: "&cThis category has no tags available!"
+    remove-success: "&aTag removed successfully!"
+    remove-title: "Remove Tag"
+    no-tag-equipped: "&7You don't have any tag equipped"
+    no-tag-equipped-action: "&cYou don't have any tag equipped!"
+    current-tag: "&7Current tag: {tag}"
+    click-remove: "&e\u25b8 Click to remove"
+    no-permission: "&cYou don't have permission to use this tag!"
+    removed: "&aTag {tag} removed!"
+    equipped: "&aTag equipped: {tag}"
 
 # ─── Join / Quit Messages ───
 join:
@@ -93,20 +104,6 @@ motd:
   no-permission: "&cNo permission."
   usage: "&cUsage: /motd reload"
   reloaded: "&aMOTD reloaded."
-
-# ─── Tag GUI Messages ───
-tag:
-  gui:
-    category-empty: "&cThis category has no tags available!"
-    remove-success: "&aTag removed successfully!"
-    remove-title: "Remove Tag"
-    no-tag-equipped: "&7You don't have any tag equipped"
-    no-tag-equipped-action: "&cYou don't have any tag equipped!"
-    current-tag: "&7Current tag: {tag}"
-    click-remove: "&e\u25b8 Click to remove"
-    no-permission: "&cYou don't have permission to use this tag!"
-    removed: "&aTag {tag} removed!"
-    equipped: "&aTag equipped: {tag}"
 
 # ─── Rank Help ───
 rank:
