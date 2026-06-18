@@ -158,16 +158,16 @@ public class TagManager implements Listener {
         String currentTagText = getPlayerTagDisplay(player);
         ItemStack removeItem = new ItemStack(Material.BARRIER);
         ItemMeta removeMeta = removeItem.getItemMeta();
-        removeMeta.setDisplayName(ChatColor.RED + "\u2716 Remover Tag");
+        removeMeta.setDisplayName(ChatColor.RED + "\u2716 " + msg("tag.gui.remove-title"));
         if (currentTagText.isEmpty()) {
             removeMeta.setLore(Arrays.asList(
-                    ChatColor.GRAY + "Voce nao tem nenhuma tag equipada"
+                    msg("tag.gui.no-tag-equipped")
             ));
         } else {
             removeMeta.setLore(Arrays.asList(
-                    ChatColor.GRAY + "Tag atual: " + currentTagText,
+                    msg("tag.gui.current-tag").replace("{tag}", currentTagText),
                     "",
-                    ChatColor.YELLOW + "\u25B8 Click para remover"
+                    msg("tag.gui.click-remove")
             ));
         }
         removeItem.setItemMeta(removeMeta);
@@ -180,7 +180,7 @@ public class TagManager implements Listener {
         List<Tag> categoryTags = getTagsByCategory(category, player);
 
         if (categoryTags.isEmpty()) {
-            player.sendMessage(ChatColor.RED + "Esta categoria nao tem tags disponiveis!");
+            player.sendMessage(msg("tag.gui.category-empty"));
             return;
         }
 
@@ -296,10 +296,10 @@ public class TagManager implements Listener {
                 if (!getPlayerTagDisplay(player).isEmpty()) {
                     setPlayerTag(player, null);
                     plugin.getRankManager().updatePlayerRankVisuals(player);
-                    player.sendMessage(ChatColor.GREEN + "Tag removida com sucesso!");
+                    player.sendMessage(msg("tag.gui.remove-success"));
                     openMainMenu(player);
                 } else {
-                    player.sendMessage(ChatColor.RED + "Voce nao tem nenhuma tag equipada!");
+                    player.sendMessage(msg("tag.gui.no-tag-equipped-action"));
                 }
             }
             return;
@@ -343,16 +343,16 @@ public class TagManager implements Listener {
                     && clicked.getItemMeta().getDisplayName().equals(tag.getDisplayName())) {
 
                 if (!tag.getPermission().isEmpty() && !player.hasPermission(tag.getPermission())) {
-                    player.sendMessage(ChatColor.RED + "Voce nao tem permissao para usar esta tag!");
+                    player.sendMessage(msg("tag.gui.no-permission"));
                     return;
                 }
 
                 if (hasTagEquipped(player, tag.getId())) {
                     setPlayerTag(player, null);
-                    player.sendMessage(ChatColor.GREEN + "Tag " + tag.getDisplayName() + ChatColor.GREEN + " removida!");
+                    player.sendMessage(msg("tag.gui.removed").replace("{tag}", tag.getDisplayName()));
                 } else {
                     setPlayerTag(player, tag.getId());
-                    player.sendMessage(ChatColor.GREEN + "Tag equipada: " + tag.getDisplayName());
+                    player.sendMessage(msg("tag.gui.equipped").replace("{tag}", tag.getDisplayName()));
                 }
 
                 plugin.getRankManager().updatePlayerRankVisuals(player);
@@ -393,5 +393,10 @@ public class TagManager implements Listener {
 
     public Map<String, Tag> getTags() {
         return Collections.unmodifiableMap(tags);
+    }
+
+    private String msg(String path) {
+        return plugin.getConfigManager().translate(
+                plugin.getConfigManager().getMessage(path, "&c" + path));
     }
 }

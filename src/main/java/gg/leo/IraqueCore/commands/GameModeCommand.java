@@ -30,7 +30,7 @@ public class GameModeCommand implements TabExecutor {
     }
 
     private Component txt(String path) {
-        return Component.text(msg(path));
+        return plugin.getConfigManager().getMessageComponent(path);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class GameModeCommand implements TabExecutor {
             playerArgIndex = 0;
         } else {
             if (args.length == 0) {
-                sender.sendMessage(Component.text(msg("gamemode.usage")
-                        .replace("{label}", label)));
+                sender.sendMessage(plugin.getConfigManager().deserialize(
+                        msg("gamemode.usage").replace("{label}", label)));
                 return true;
             }
             mode = parseMode(args[0]);
@@ -91,12 +91,13 @@ public class GameModeCommand implements TabExecutor {
 
         target.setGameMode(mode);
         String modeName = mode.name().toLowerCase();
-        target.sendMessage(Component.text(msg("gamemode.set")
-                .replace("{mode}", modeName)));
+        target.sendMessage(plugin.getConfigManager().deserialize(
+                msg("gamemode.set").replace("{mode}", modeName)));
         if (!target.equals(sender)) {
-            sender.sendMessage(Component.text(msg("gamemode.set-other")
-                    .replace("{player}", target.getName())
-                    .replace("{mode}", modeName)));
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("gamemode.set-other")
+                            .replace("{player}", target.getName())
+                            .replace("{mode}", modeName)));
         }
         return true;
     }

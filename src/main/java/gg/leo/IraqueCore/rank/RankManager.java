@@ -1,7 +1,7 @@
 package gg.leo.IraqueCore.rank;
 
 import gg.leo.IraqueCore.IraqueCore;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -160,7 +160,8 @@ public class RankManager {
             String tag    = plugin.getTagManager().getPlayerTagDisplay(player);
             String tagStr = tag.isEmpty() ? "" : tag + " ";
             String listNameRaw = rank.prefix() + " " + tagStr + rank.color() + player.getName();
-            player.playerListName(LegacyComponentSerializer.legacySection().deserialize(listNameRaw));
+            player.playerListName(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().translate(listNameRaw)));
 
             String prefix = buildPrefix(rank, tagStr);
             for (Player viewer : Bukkit.getOnlinePlayers()) {
@@ -205,9 +206,11 @@ public class RankManager {
             }
         }
 
-        team.prefix(LegacyComponentSerializer.legacySection().deserialize(prefix));
+        team.prefix(plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translate(prefix)));
         if (!rank.suffix().isEmpty()) {
-            team.suffix(LegacyComponentSerializer.legacySection().deserialize(rank.suffix()));
+            team.suffix(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().translate(rank.suffix())));
         }
         team.addEntry(target.getName());
     }

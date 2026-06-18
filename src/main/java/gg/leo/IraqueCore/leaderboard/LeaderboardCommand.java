@@ -17,10 +17,15 @@ public class LeaderboardCommand implements TabExecutor {
         this.plugin = plugin;
     }
 
+    private String msg(String path) {
+        return plugin.getConfigManager().translate(
+                plugin.getConfigManager().getMessage(path, "&c" + path));
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
+            sender.sendMessage(plugin.getConfigManager().deserialize(msg("leaderboard.player-only")));
             return true;
         }
 

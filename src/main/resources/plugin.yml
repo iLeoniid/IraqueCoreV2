@@ -45,6 +45,10 @@ commands:
   motd:
     description: Reload MOTD configuration
     permission: iraquecore.motd.reload
+  whitelist:
+    description: Manage server whitelist
+    aliases: [wl]
+    permission: iraquecore.whitelist
 
 permissions:
   iraquecore.*:
@@ -59,6 +63,7 @@ permissions:
       iraquecore.setspawn: true
       iraquecore.gamemode: true
       iraquecore.gamemode.other: true
+      iraquecore.whitelist: true
   iraquecore.admin:
     description: Access to admin commands
     default: op
@@ -103,4 +108,7 @@ permissions:
     default: true
   iraquecore.motd.reload:
     description: Reload MOTD configuration
+    default: op
+  iraquecore.whitelist:
+    description: Manage server whitelist
     default: op

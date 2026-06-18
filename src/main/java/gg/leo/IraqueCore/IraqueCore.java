@@ -3,6 +3,7 @@ package gg.leo.IraqueCore;
 import gg.leo.IraqueCore.commands.GameModeCommand;
 import gg.leo.IraqueCore.commands.ReloadCommand;
 import gg.leo.IraqueCore.commands.SpawnCommand;
+import gg.leo.IraqueCore.commands.WhitelistCommand;
 import gg.leo.IraqueCore.config.ConfigManager;
 import gg.leo.IraqueCore.discord.DiscordManager;
 import gg.leo.IraqueCore.leaderboard.LeaderboardCommand;
@@ -109,6 +110,7 @@ public final class IraqueCore extends JavaPlugin {
     public void reload() {
         reloadConfig();
         configManager.load();
+        configManager.reloadDiscordFile();
         rankManager.loadRanks();
         rankManager.updateAllVisuals();
         tagManager.reload();
@@ -159,6 +161,9 @@ public final class IraqueCore extends JavaPlugin {
 
         var motdCommand = new gg.leo.IraqueCore.motd.MotdCommand(this);
         register("motd", motdCommand, motdCommand);
+
+        var whitelistCommand = new WhitelistCommand(this);
+        register("whitelist", whitelistCommand, whitelistCommand);
     }
 
     /**

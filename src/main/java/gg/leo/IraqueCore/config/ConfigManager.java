@@ -1,6 +1,8 @@
 package gg.leo.IraqueCore.config;
 
 import gg.leo.IraqueCore.IraqueCore;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -9,7 +11,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
 
@@ -42,6 +46,37 @@ public class ConfigManager {
     private File messagesFile;
     private FileConfiguration messagesConfig;
 
+    private File discordFile;
+    private FileConfiguration discordConfig;
+
+    private static final MiniMessage MINI = MiniMessage.miniMessage();
+
+    private static final Map<Character, String> LEGACY_TO_MINI = new HashMap<>();
+    static {
+        LEGACY_TO_MINI.put('0', "<black>");
+        LEGACY_TO_MINI.put('1', "<dark_blue>");
+        LEGACY_TO_MINI.put('2', "<dark_green>");
+        LEGACY_TO_MINI.put('3', "<dark_aqua>");
+        LEGACY_TO_MINI.put('4', "<dark_red>");
+        LEGACY_TO_MINI.put('5', "<dark_purple>");
+        LEGACY_TO_MINI.put('6', "<gold>");
+        LEGACY_TO_MINI.put('7', "<gray>");
+        LEGACY_TO_MINI.put('8', "<dark_gray>");
+        LEGACY_TO_MINI.put('9', "<blue>");
+        LEGACY_TO_MINI.put('a', "<green>");
+        LEGACY_TO_MINI.put('b', "<aqua>");
+        LEGACY_TO_MINI.put('c', "<red>");
+        LEGACY_TO_MINI.put('d', "<light_purple>");
+        LEGACY_TO_MINI.put('e', "<yellow>");
+        LEGACY_TO_MINI.put('f', "<white>");
+        LEGACY_TO_MINI.put('k', "<obfuscated>");
+        LEGACY_TO_MINI.put('l', "<bold>");
+        LEGACY_TO_MINI.put('m', "<strikethrough>");
+        LEGACY_TO_MINI.put('n', "<underlined>");
+        LEGACY_TO_MINI.put('o', "<italic>");
+        LEGACY_TO_MINI.put('r', "<reset>");
+    }
+
     public ConfigManager(IraqueCore plugin) {
         this.plugin = plugin;
     }
@@ -51,6 +86,7 @@ public class ConfigManager {
         this.config = plugin.getConfig();
 
         loadMessages();
+        loadDiscordFile();
         loadGeneral();
         loadChat();
         loadDiscord();
@@ -63,6 +99,54 @@ public class ConfigManager {
             plugin.saveResource("messages.yml", false);
         }
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+    }
+
+    private void loadDiscordFile() {
+        discordFile = new File(plugin.getDataFolder(), "discord.yml");
+        if (!discordFile.exists()) {
+            plugin.saveResource("discord.yml", false);
+        }
+        discordConfig = YamlConfiguration.loadConfiguration(discordFile);
+    }
+
+    public void reloadDiscordFile() {
+        if (discordFile != null) {
+            discordConfig = YamlConfiguration.loadConfiguration(discordFile);
+        }
+    }
+
+    public String getDiscordWebhook(String type) {
+        if (discordConfig == null) return "";
+        String url = discordConfig.getString("webhooks." + type, "");
+        if (url == null || url.isBlank()) {
+            return webhookUrl;
+        }
+        return url;
+    }
+
+    public boolean isWhitelistEnabled() {
+        if (discordConfig == null) return false;
+        return discordConfig.getBoolean("whitelist.enabled", true);
+    }
+
+    public String getWhitelistPrompt() {
+        if (discordConfig == null) return "";
+        return discordConfig.getString("whitelist.prompt", "");
+    }
+
+    public String getWhitelistAdded() {
+        if (discordConfig == null) return "";
+        return discordConfig.getString("whitelist.added", "");
+    }
+
+    public String getWhitelistAlready() {
+        if (discordConfig == null) return "";
+        return discordConfig.getString("whitelist.already", "");
+    }
+
+    public String getWhitelistInvalid() {
+        if (discordConfig == null) return "";
+        return discordConfig.getString("whitelist.invalid", "");
     }
 
     public void reloadMessages() {
@@ -86,7 +170,38 @@ public class ConfigManager {
     }
 
     public String translate(String s) {
-        return s.replace('&', '\u00A7');
+        if (s == null) return "";
+        // &#RRGGBB → <#RRGGBB>
+        s = s.replaceAll("&#([0-9a-fA-F]{6})", "<#$1>");
+        // standalone #RRGGBB → <#RRGGBB> (not preceded by <)
+        s = s.replaceAll("(?<!<)#([0-9a-fA-F]{6})", "<#$1>");
+        // & codes → MiniMessage tags
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if ((c == '&' || c == '\u00A7') && i + 1 < s.length()) {
+                String tag = LEGACY_TO_MINI.get(Character.toLowerCase(s.charAt(i + 1)));
+                if (tag != null) {
+                    sb.append(tag);
+                    i++;
+                    continue;
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    public Component deserialize(String miniString) {
+        return MINI.deserialize(miniString);
+    }
+
+    public Component getMessageComponent(String path) {
+        return getMessageComponent(path, "&cMessage not found: " + path);
+    }
+
+    public Component getMessageComponent(String path, String fallback) {
+        return MINI.deserialize(translate(getMessage(path, fallback)));
     }
 
     public Location getSpawnLocation() {
@@ -124,19 +239,18 @@ public class ConfigManager {
     }
 
     private void loadDiscord() {
-        ConfigurationSection section = config.getConfigurationSection("discord");
-        if (section == null) return;
+        if (discordConfig == null) return;
 
-        this.discordEnabled = section.getBoolean("enabled", false);
-        this.discordToken = section.getString("token", "");
-        this.discordChannelId = section.getString("channel-id", "");
-        this.useWebhooks = section.getBoolean("use-webhooks", true);
-        this.webhookUrl = section.getString("webhook-url", "");
-        this.minecraftToDiscord = section.getString("minecraft-to-discord", "**{player}:** {message}");
-        this.discordToMinecraft = section.getString("discord-to-minecraft", "&9[Discord] &b{author}&7: {message}");
-        this.joinMessage = section.getString("join-message", "");
-        this.leaveMessage = section.getString("leave-message", "");
-        this.deathMessage = section.getString("death-message", "");
+        this.discordEnabled = discordConfig.getBoolean("enabled", false);
+        this.discordToken = discordConfig.getString("token", "");
+        this.discordChannelId = discordConfig.getString("channel-id", "");
+        this.useWebhooks = discordConfig.getBoolean("use-webhooks", true);
+        this.webhookUrl = discordConfig.getString("webhook-url", "");
+        this.minecraftToDiscord = discordConfig.getString("minecraft-to-discord", "**{player}:** {message}");
+        this.discordToMinecraft = discordConfig.getString("discord-to-minecraft", "&9[Discord] &b{author}&7: {message}");
+        this.joinMessage = discordConfig.getString("join-message", "");
+        this.leaveMessage = discordConfig.getString("leave-message", "");
+        this.deathMessage = discordConfig.getString("death-message", "");
     }
 
     private void loadStorage() {

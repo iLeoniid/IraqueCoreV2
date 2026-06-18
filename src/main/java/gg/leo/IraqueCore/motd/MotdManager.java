@@ -3,7 +3,6 @@ package gg.leo.IraqueCore.motd;
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.animation.TextAnimation;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,9 +17,6 @@ public class MotdManager {
     private boolean animated;
     private File motdFile;
     private FileConfiguration motdConfig;
-
-    private static final LegacyComponentSerializer LEGACY =
-            LegacyComponentSerializer.legacySection();
 
     public MotdManager(IraqueCore plugin) {
         this.plugin = plugin;
@@ -73,8 +69,8 @@ public class MotdManager {
     }
 
     private void setMotd(String text) {
-        Component component = LEGACY.deserialize(
-                text.replace('&', '\u00A7'));
+        Component component = plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translate(text));
         Bukkit.getServer().motd(component);
     }
 

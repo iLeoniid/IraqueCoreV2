@@ -1,0 +1,47 @@
+# ─────────────────────────────────────────────
+#   IraqueCore - Discord Configuration
+#   Bot settings, webhooks, and whitelist
+# ─────────────────────────────────────────────
+
+# Enable Discord integration
+enabled: false
+# Discord bot token
+token: "YOUR_BOT_TOKEN_HERE"
+# Channel ID for chat relay
+channel-id: "YOUR_CHANNEL_ID_HERE"
+# Use webhooks for cleaner messages
+use-webhooks: true
+# Main webhook URL (fallback if no per-type webhook is set below)
+webhook-url: "YOUR_WEBHOOK_URL_HERE"
+# Format for messages sent from Minecraft → Discord
+# Placeholders: {player}, {message}, {world}, {rank}
+minecraft-to-discord: "**{player}:** {message}"
+# Format for messages sent from Discord → Minecraft
+# Placeholders: {author}, {message}
+discord-to-minecraft: "&9[Discord] &b{author}&7: {message}"
+# Message sent when a player joins (leave empty to disable)
+join-message: "&9[Discord] &b{player} &7joined the game"
+# Message sent when a player leaves (leave empty to disable)
+leave-message: "&9[Discord] &b{player} &7left the game"
+# Message sent when a player dies (leave empty to disable)
+death-message: "&9[Discord] &c{player} {message}"
+
+# Per-type webhook URLs (leave empty to fall back to webhook-url above)
+webhooks:
+  chat: ""
+  join: ""
+  leave: ""
+  death: ""
+
+# Whitelist feature (only works when server whitelist is on)
+whitelist:
+  # Whether players can whitelist themselves via Discord chat
+  enabled: true
+  # Message shown when server is in whitelist mode
+  prompt: "&aServer is in whitelist mode. Type your Minecraft username to be added to the whitelist."
+  # Confirmation message when a player is whitelisted
+  added: "&a{player} has been added to the whitelist!"
+  # Message when player was already whitelisted
+  already: "&e{player} is already whitelisted."
+  # Message when the name is invalid
+  invalid: "&cInvalid Minecraft username. Use 3-16 alphanumeric characters or underscores."

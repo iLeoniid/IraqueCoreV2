@@ -28,7 +28,7 @@ public class RankCommand implements TabExecutor {
     }
 
     private Component txt(String path) {
-        return Component.text(msg(path));
+        return plugin.getConfigManager().getMessageComponent(path);
     }
 
     @Override
@@ -74,11 +74,13 @@ public class RankCommand implements TabExecutor {
         plugin.getRankManager().setRank(target.getUniqueId(), rankName);
         plugin.getRankManager().applyPermissions(target);
 
-        sender.sendMessage(Component.text(msg("rank.set")
-                .replace("{player}", target.getName())
-                .replace("{rank}", rankName)));
-        target.sendMessage(Component.text(msg("rank.given")
-                .replace("{rank}", rankName)));
+        sender.sendMessage(plugin.getConfigManager().deserialize(
+                msg("rank.set")
+                        .replace("{player}", target.getName())
+                        .replace("{rank}", rankName)));
+        target.sendMessage(plugin.getConfigManager().deserialize(
+                msg("rank.given")
+                        .replace("{rank}", rankName)));
     }
 
     private void handleCreate(CommandSender sender, String[] args) {
@@ -99,16 +101,18 @@ public class RankCommand implements TabExecutor {
             return;
         }
         plugin.getRankManager().removeRank(args[1]);
-        sender.sendMessage(Component.text(msg("rank.removed")
-                .replace("{rank}", args[1])));
+        sender.sendMessage(plugin.getConfigManager().deserialize(
+                msg("rank.removed")
+                        .replace("{rank}", args[1])));
     }
 
     private void handleList(CommandSender sender) {
         sender.sendMessage(txt("rank.list-header"));
         for (Rank rank : plugin.getRankManager().getRanks().values()) {
-            sender.sendMessage(Component.text(msg("rank.list-entry")
-                    .replace("{name}", rank.name())
-                    .replace("{weight}", String.valueOf(rank.weight()))));
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("rank.list-entry")
+                            .replace("{name}", rank.name())
+                            .replace("{weight}", String.valueOf(rank.weight()))));
         }
     }
 
@@ -116,28 +120,30 @@ public class RankCommand implements TabExecutor {
         if (sender instanceof Player player && args.length < 2) {
             Optional<Rank> rank = plugin.getRankManager().getPlayerRank(player.getUniqueId());
             if (rank.isPresent()) {
-                sender.sendMessage(Component.text(msg("rank.your-rank")
-                        .replace("{rank}", rank.get().name())));
+                sender.sendMessage(plugin.getConfigManager().deserialize(
+                        msg("rank.your-rank")
+                                .replace("{rank}", rank.get().name())));
             }
             return;
         }
         if (args.length >= 2) {
             plugin.getRankManager().getRank(args[1]).ifPresentOrElse(
-                    rank -> sender.sendMessage(Component.text(msg("rank.info-header")
-                            .replace("{name}", rank.name())
-                            .replace("{prefix}", rank.prefix())
-                            .replace("{weight}", String.valueOf(rank.weight())))),
+                    rank -> sender.sendMessage(plugin.getConfigManager().deserialize(
+                            msg("rank.info-header")
+                                    .replace("{name}", rank.name())
+                                    .replace("{prefix}", rank.prefix())
+                                    .replace("{weight}", String.valueOf(rank.weight())))),
                     () -> sender.sendMessage(txt("rank.not-found-info"))
             );
         }
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(Component.text("\u00A76\u2500\u2500\u2500 Rank Commands \u2500\u2500\u2500"));
-        sender.sendMessage(Component.text("\u00A7e/rank list"));
-        sender.sendMessage(Component.text("\u00A7e/rank info [player]"));
-        sender.sendMessage(Component.text("\u00A7e/rank set <player> <rank>"));
-        sender.sendMessage(Component.text("\u00A7e/rank create <name> <prefix> [weight]"));
+        sender.sendMessage(txt("rank.help-header"));
+        sender.sendMessage(txt("rank.help-list"));
+        sender.sendMessage(txt("rank.help-info"));
+        sender.sendMessage(txt("rank.help-set"));
+        sender.sendMessage(txt("rank.help-create"));
     }
 
     @Override

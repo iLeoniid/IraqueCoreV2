@@ -26,7 +26,7 @@ public class ScoreboardCommand implements TabExecutor {
     }
 
     private Component txt(String path) {
-        return Component.text(msg(path));
+        return plugin.getConfigManager().getMessageComponent(path);
     }
 
     @Override
@@ -38,8 +38,9 @@ public class ScoreboardCommand implements TabExecutor {
 
         if (args.length == 0) {
             boolean current = manager.isPlayerEnabled(player);
-            player.sendMessage(Component.text(msg("scoreboard.status")
-                    .replace("{status}", current ? "ON" : "OFF")));
+            player.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("scoreboard.status")
+                            .replace("{status}", current ? "ON" : "OFF")));
             player.sendMessage(txt("scoreboard.usage"));
             return true;
         }

@@ -9,8 +9,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +29,6 @@ public class DiscordManager extends ListenerAdapter {
     private JDA         jda;
     private TextChannel channel;
 
-    // `volatile` guarantees visibility across threads
     private volatile boolean running   = false;
     private volatile boolean cancelled = false;
 
@@ -36,12 +36,8 @@ public class DiscordManager extends ListenerAdapter {
         this.plugin = plugin;
     }
 
-    //  Lifecycle ──
+    //  Lifecycle
 
-    /**
-     * Starts the bot in an async thread to avoid blocking the server's main thread.
-     * awaitReady() can take several seconds — should never be called on the main thread.
-     */
     public void start() {
         String token = plugin.getConfigManager().getDiscordToken();
         if (token.isEmpty() || "YOUR_BOT_TOKEN_HERE".equals(token)) {
@@ -68,7 +64,6 @@ public class DiscordManager extends ListenerAdapter {
                         .build()
                         .awaitReady();
 
-                // Si shutdown() fue llamado mientras esperábamos, cancelamos limpiamente
                 if (cancelled) {
                     built.shutdown();
                     return;
@@ -81,12 +76,13 @@ public class DiscordManager extends ListenerAdapter {
                     return;
                 }
 
-                // Asignación atómica antes de poner running = true
                 jda     = built;
                 channel = ch;
                 running = true;
 
                 plugin.getPluginLogger().info("Discord bot connected successfully!");
+
+                sendWhitelistPrompt();
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -108,14 +104,13 @@ public class DiscordManager extends ListenerAdapter {
         channel = null;
     }
 
-    //  Minecraft → Discord 
+    //  Minecraft  Discord
 
     public void sendMinecraftToDiscord(Player player, String message) {
         if (!running || channel == null) return;
 
         String format = plugin.getConfigManager().getMinecraftToDiscordFormat();
 
-        // {rank} — empty string if the player has no assigned rank
         String rankName = plugin.getRankManager()
                 .getPlayerRank(player.getUniqueId())
                 .map(r -> r.name())
@@ -130,7 +125,7 @@ public class DiscordManager extends ListenerAdapter {
         formatted = stripColor(formatted);
 
         if (plugin.getConfigManager().isUseWebhooks()) {
-            sendWebhookMessage(player.getName(), player.getUniqueId().toString(), message);
+            sendWebhookMessage("chat", player.getName(), player.getUniqueId().toString(), message);
         } else {
             final String finalFormatted = formatted;
             channel.sendMessage(finalFormatted).queue(
@@ -148,7 +143,12 @@ public class DiscordManager extends ListenerAdapter {
         );
     }
 
-    //  Discord → Minecraft 
+    public void sendWebhookEvent(String type, String name, String uuid, String message) {
+        if (!running) return;
+        sendWebhookMessage(type, name, uuid, message);
+    }
+
+    //  Discord  Minecraft
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -159,26 +159,86 @@ public class DiscordManager extends ListenerAdapter {
         String content = event.getMessage().getContentDisplay();
         if (content.isBlank()) return;
 
+        handleWhitelist(content, event);
+        handleChatBridge(content, event);
+    }
+
+    private void handleWhitelist(String content, MessageReceivedEvent event) {
+        if (!plugin.getConfigManager().isWhitelistEnabled()) return;
+
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!Bukkit.hasWhitelist()) return;
+
+            String name = content.strip();
+            if (!isValidPlayerName(name)) {
+                sendDiscordMessage(plugin.getConfigManager().getWhitelistInvalid());
+                return;
+            }
+
+            OfflinePlayer offline = Bukkit.getOfflinePlayer(name);
+            if (offline.isWhitelisted()) {
+                sendDiscordMessage(plugin.getConfigManager().getWhitelistAlready()
+                        .replace("{player}", name));
+                return;
+            }
+
+            offline.setWhitelisted(true);
+            sendDiscordMessage(plugin.getConfigManager().getWhitelistAdded()
+                    .replace("{player}", name));
+
+            plugin.getPluginLogger().info("Whitelisted {} via Discord (user: {})", name, event.getAuthor().getName());
+        });
+    }
+
+    private boolean isValidPlayerName(String name) {
+        return name.length() >= 3 && name.length() <= 16 && name.matches("[a-zA-Z0-9_]+");
+    }
+
+    private void handleChatBridge(String content, MessageReceivedEvent event) {
         String author    = event.getAuthor().getName();
         String format    = plugin.getConfigManager().getDiscordToMinecraftFormat();
         String formatted = format
                 .replace("{author}",  author)
                 .replace("{message}", content);
 
-        // Translate & codes (only valid ones, not URLs nor &amp; etc.)
-        Component component = LegacyComponentSerializer.legacySection()
-                .deserialize(translateLegacy(formatted));
+        Component component = plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translate(formatted));
 
-        // Send to main thread — never modify Bukkit state from JDA thread
         Bukkit.getScheduler().runTask(plugin, () ->
                 Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(component))
         );
     }
 
-    //  Webhook 
+    //  Whitelist prompt
 
-    private void sendWebhookMessage(String name, String uuid, String message) {
-        String webhookUrl = plugin.getConfigManager().getWebhookUrl();
+    public void sendWhitelistPrompt() {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!running || channel == null) return;
+            if (!Bukkit.hasWhitelist()) return;
+            if (!plugin.getConfigManager().isWhitelistEnabled()) return;
+
+            String prompt = plugin.getConfigManager().getWhitelistPrompt();
+            if (!prompt.isBlank()) {
+                sendDiscordMessage(prompt);
+            }
+        });
+    }
+
+    private void sendDiscordMessage(String message) {
+        if (!running || channel == null) return;
+        String stripped = stripColor(message);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+                channel.sendMessage(stripped).queue(
+                        null,
+                        err -> plugin.getPluginLogger().warn("Failed to send Discord message: " + err.getMessage())
+                )
+        );
+    }
+
+    //  Webhook
+
+    private void sendWebhookMessage(String type, String name, String uuid, String message) {
+        String webhookUrl = plugin.getConfigManager().getDiscordWebhook(type);
         if (webhookUrl == null || webhookUrl.isBlank()) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -212,35 +272,15 @@ public class DiscordManager extends ListenerAdapter {
         });
     }
 
-    //  Helpers 
+    //  Helpers
 
-    /**
-     * Removes all color formats supported by the plugin:
-     *  - MiniMessage tags  : &lt;gold&gt;, &lt;bold&gt;, &lt;#RRGGBB&gt;, etc.
-     *  - Hex legacy        : &amp;#RRGGBB
-     *  - Spigot hex        : &amp;x&amp;R&amp;R&amp;G&amp;G&amp;B&amp;B
-     *  - Classic &amp; codes   : &amp;6, &amp;l, &amp;r, etc.
-     */
     private String stripColor(String text) {
         if (text == null) return "";
-        // MiniMessage tags (<gold>, <bold>, <#RRGGBB>, </gold>, etc.)
         text = text.replaceAll("<[^>]+>", "");
-        // Hex &#RRGGBB
         text = text.replaceAll("&#[0-9a-fA-F]{6}", "");
-        // Spigot hex &x&R&R&G&G&B&B
         text = text.replaceAll("&x(&[0-9a-fA-F]){6}", "");
-        // Classic & codes (case-insensitive)
         text = text.replaceAll("&[0-9a-fk-orA-FK-OR]", "");
         return text;
-    }
-
-    /**
-     * Translates valid &amp; codes to § for LegacyComponentSerializer.
-     * Only replaces &amp; followed by a valid code — does not touch URLs or &amp;amp;.
-     */
-    private String translateLegacy(String text) {
-        if (text == null) return "";
-        return text.replaceAll("&([0-9a-fk-orA-FK-OR])", "§$1");
     }
 
     private String escapeJson(String text) {

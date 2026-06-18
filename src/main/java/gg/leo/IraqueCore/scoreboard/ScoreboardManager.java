@@ -3,8 +3,7 @@ package gg.leo.IraqueCore.scoreboard;
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.animation.TextAnimation;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -48,15 +47,6 @@ public class ScoreboardManager implements Listener {
     // Persistence
     private File              statsFile;
     private FileConfiguration statsConfig;
-
-    // Adventure serializers
-    private static final MiniMessage              MINI   = MiniMessage.miniMessage();
-    private static final LegacyComponentSerializer LEGACY =
-            LegacyComponentSerializer.builder()
-                    .character('&')
-                    .hexColors()          // supports &#rrggbb and #rrggbb via &x legacy OR MiniMessage hex
-                    .useUnusualXRepeatedCharacterHexFormat() // &#RRGGBB -> &x&R&R&G&G&B&B
-                    .build();
 
     public ScoreboardManager(IraqueCore plugin) {
         this.plugin = plugin;
@@ -112,59 +102,15 @@ public class ScoreboardManager implements Listener {
     //  Color parsing 
 
     /**
-     * Parses a string that may contain:
-     *  - Legacy & codes        : &6&lText
-     *  - Hex & codes           : &#RRGGBBText  or  &x&R&R&G&G&B&B...
-     *  - MiniMessage tags      : <gold><bold>Text</bold></gold>
-     *  - Raw hex (MiniMessage) : <#RRGGBB>Text</#RRGGBB>
-     *
-     * Strategy: run MiniMessage first (it is strict and won't eat & codes),
-     * then fall back to legacy for anything MiniMessage doesn't touch.
+     * Parses a string that supports all color formats:
+     *  - & codes        : &6&lText
+     *  - MiniMessage     : <gold><bold>Text</bold></gold>
+     *  - Hex            : <#RRGGBB> or #RRGGBB or &#RRGGBB
      */
-    public static Component parse(String text) {
+    public Component parse(String text) {
         if (text == null || text.isEmpty()) return Component.empty();
-
-        // If it contains MiniMessage tags, parse with MiniMessage
-        if (text.contains("<") && text.contains(">")) {
-            // MiniMessage also supports inserting legacy inside via <legacy> — but for
-            // simplicity we pre-convert & codes to MiniMessage before parsing.
-            String converted = legacyToMiniMessage(text);
-            return MINI.deserialize(converted);
-        }
-
-        // Pure legacy / hex-legacy string
-        return LEGACY.deserialize(text);
-    }
-
-    /**
-     * Converts & color codes (including &#RRGGBB) inside a string to
-     * MiniMessage equivalents so MiniMessage can handle the full string.
-     */
-    private static String legacyToMiniMessage(String input) {
-        // &#RRGGBB -> <#RRGGBB>
-        input = input.replaceAll("&#([0-9a-fA-F]{6})", "<#$1>");
-        // &x&R&R&G&G&B&B (Spigot hex) -> <#RRGGBB>
-        input = input.replaceAll(
-                "&x&([0-9a-fA-F])&([0-9a-fA-F])&([0-9a-fA-F])&([0-9a-fA-F])&([0-9a-fA-F])&([0-9a-fA-F])",
-                "<#$1$2$3$4$5$6>"
-        );
-        // Classic & codes
-        input = input
-                .replace("&0", "<black>").replace("&1", "<dark_blue>")
-                .replace("&2", "<dark_green>").replace("&3", "<dark_aqua>")
-                .replace("&4", "<dark_red>").replace("&5", "<dark_purple>")
-                .replace("&6", "<gold>").replace("&7", "<gray>")
-                .replace("&8", "<dark_gray>").replace("&9", "<blue>")
-                .replace("&a", "<green>").replace("&b", "<aqua>")
-                .replace("&c", "<red>").replace("&d", "<light_purple>")
-                .replace("&e", "<yellow>").replace("&f", "<white>")
-                .replace("&A", "<green>").replace("&B", "<aqua>")
-                .replace("&C", "<red>").replace("&D", "<light_purple>")
-                .replace("&E", "<yellow>").replace("&F", "<white>")
-                .replace("&l", "<bold>").replace("&o", "<italic>")
-                .replace("&n", "<underlined>").replace("&m", "<strikethrough>")
-                .replace("&k", "<obfuscated>").replace("&r", "<reset>");
-        return input;
+        return plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translate(text));
     }
 
     //  Scoreboard logic 

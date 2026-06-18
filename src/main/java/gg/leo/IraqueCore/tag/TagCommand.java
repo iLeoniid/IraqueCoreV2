@@ -27,7 +27,7 @@ public class TagCommand implements TabExecutor {
     }
 
     private Component txt(String path) {
-        return Component.text(msg(path));
+        return plugin.getConfigManager().getMessageComponent(path);
     }
 
     @Override
@@ -80,17 +80,20 @@ public class TagCommand implements TabExecutor {
 
         String tagId = args[2].toLowerCase();
         if (plugin.getTagManager().getTag(tagId) == null) {
-            sender.sendMessage(Component.text(msg("tag.set.tag-not-found")
-                    .replace("{ids}", String.join(", ", plugin.getTagManager().getTags().keySet()))));
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("tag.set.tag-not-found")
+                            .replace("{ids}", String.join(", ", plugin.getTagManager().getTags().keySet()))));
             return;
         }
 
         plugin.getTagManager().setPlayerTag(target, tagId);
-        sender.sendMessage(Component.text(msg("tag.set.success")
-                .replace("{player}", target.getName())
-                .replace("{tag}", tagId)));
-        target.sendMessage(Component.text(msg("tag.set.notify")
-                .replace("{tag}", tagId)));
+        sender.sendMessage(plugin.getConfigManager().deserialize(
+                msg("tag.set.success")
+                        .replace("{player}", target.getName())
+                        .replace("{tag}", tagId)));
+        target.sendMessage(plugin.getConfigManager().deserialize(
+                msg("tag.set.notify")
+                        .replace("{tag}", tagId)));
     }
 
     @Override
