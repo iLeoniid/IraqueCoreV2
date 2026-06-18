@@ -278,20 +278,26 @@ public class ScoreboardManager implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        UUID id = event.getPlayer().getUniqueId();
+        Player player = event.getPlayer();
+        UUID   id     = player.getUniqueId();
         blocksBroken.put(id, blocksBroken.getOrDefault(id, 0) + 1);
+        if (isPlayerEnabled(player)) updateScoreboard(player);
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        UUID id = event.getPlayer().getUniqueId();
+        Player player = event.getPlayer();
+        UUID   id     = player.getUniqueId();
         blocksPlaced.put(id, blocksPlaced.getOrDefault(id, 0) + 1);
+        if (isPlayerEnabled(player)) updateScoreboard(player);
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        UUID id = event.getEntity().getUniqueId();
+        Player player = event.getEntity();
+        UUID   id     = player.getUniqueId();
         deaths.put(id, deaths.getOrDefault(id, 0) + 1);
+        if (isPlayerEnabled(player)) updateScoreboard(player);
     }
 
     @EventHandler
