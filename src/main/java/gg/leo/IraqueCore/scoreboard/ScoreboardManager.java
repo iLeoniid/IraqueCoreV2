@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -363,5 +364,22 @@ public class ScoreboardManager implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (isPlayerEnabled(player)) updateScoreboard(player);
         }, 10L);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        UUID id = event.getPlayer().getUniqueId();
+        if (statsConfig != null) {
+            String path = "players." + id + ".";
+            statsConfig.set(path + "name",          event.getPlayer().getName());
+            statsConfig.set(path + "blocks_broken", blocksBroken.getOrDefault(id, 0));
+            statsConfig.set(path + "blocks_placed", blocksPlaced.getOrDefault(id, 0));
+            statsConfig.set(path + "deaths",        deaths.getOrDefault(id, 0));
+            try {
+                statsConfig.save(statsFile);
+            } catch (IOException e) {
+                plugin.getPluginLogger().error("Failed to save stats.yml on quit", e);
+            }
+        }
     }
 }

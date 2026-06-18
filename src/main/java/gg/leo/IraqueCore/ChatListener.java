@@ -89,6 +89,16 @@ public class ChatListener implements Listener {
             }
         }, 12L);
 
+        if (!player.hasPlayedBefore()) {
+            event.joinMessage(Component.text(translateLegacy(
+                    plugin.getConfigManager().getMessage("join.first", "&6Welcome {player}!")
+                            .replace("{player}", player.getName()))));
+        } else {
+            event.joinMessage(Component.text(translateLegacy(
+                    plugin.getConfigManager().getMessage("join.normal", "&8[&a+&8] &7{player} &ejoined")
+                            .replace("{player}", player.getName()))));
+        }
+
         DiscordManager discord = plugin.getDiscordManager();
         if (discord != null) {
             String msg = plugin.getConfigManager().getJoinMessage();
@@ -104,6 +114,10 @@ public class ChatListener implements Listener {
         plugin.getRankManager().removePermissions(player);
         plugin.getRankManager().removePlayerFromTeams(player);
         plugin.getRankManager().savePlayer(player.getUniqueId());
+
+        event.quitMessage(Component.text(translateLegacy(
+                plugin.getConfigManager().getMessage("quit.normal", "&8[&c-&8] &7{player} &eleft")
+                        .replace("{player}", player.getName()))));
 
         DiscordManager discord = plugin.getDiscordManager();
         if (discord != null) {

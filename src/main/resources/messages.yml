@@ -65,6 +65,14 @@ tag:
     success: "&aSet {player}'s tag to {tag}"
     notify: "&aYour tag has been set to {tag} by an admin."
 
+# ─── Join / Quit Messages ───
+join:
+  first: "&6Welcome {player} &ato the server for the first time!"
+  normal: "&8[&a+&8] &7{player} &ejoined"
+
+quit:
+  normal: "&8[&c-&8] &7{player} &eleft"
+
 # ─── Scoreboard Command ───
 scoreboard:
   player-only: "&cOnly players can use this command."
