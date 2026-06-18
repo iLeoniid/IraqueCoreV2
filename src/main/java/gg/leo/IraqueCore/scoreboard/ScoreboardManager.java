@@ -48,8 +48,26 @@ public class ScoreboardManager implements Listener {
     private File              statsFile;
     private FileConfiguration statsConfig;
 
+    private final Set<UUID> dirtyPlayers = new HashSet<>();
+
     public ScoreboardManager(IraqueCore plugin) {
         this.plugin = plugin;
+    }
+
+    private void queueUpdate(Player player) {
+        if (dirtyPlayers.add(player.getUniqueId())) {
+            Bukkit.getScheduler().runTask(plugin, this::flushDirty);
+        }
+    }
+
+    private void flushDirty() {
+        for (UUID id : dirtyPlayers) {
+            Player player = Bukkit.getPlayer(id);
+            if (player != null && isPlayerEnabled(player)) {
+                updateScoreboard(player);
+            }
+        }
+        dirtyPlayers.clear();
     }
 
     //  Lifecycle 
@@ -281,7 +299,7 @@ public class ScoreboardManager implements Listener {
         Player player = event.getPlayer();
         UUID   id     = player.getUniqueId();
         blocksBroken.put(id, blocksBroken.getOrDefault(id, 0) + 1);
-        if (isPlayerEnabled(player)) updateScoreboard(player);
+        if (isPlayerEnabled(player)) queueUpdate(player);
     }
 
     @EventHandler
@@ -289,7 +307,7 @@ public class ScoreboardManager implements Listener {
         Player player = event.getPlayer();
         UUID   id     = player.getUniqueId();
         blocksPlaced.put(id, blocksPlaced.getOrDefault(id, 0) + 1);
-        if (isPlayerEnabled(player)) updateScoreboard(player);
+        if (isPlayerEnabled(player)) queueUpdate(player);
     }
 
     @EventHandler
@@ -297,7 +315,7 @@ public class ScoreboardManager implements Listener {
         Player player = event.getEntity();
         UUID   id     = player.getUniqueId();
         deaths.put(id, deaths.getOrDefault(id, 0) + 1);
-        if (isPlayerEnabled(player)) updateScoreboard(player);
+        if (isPlayerEnabled(player)) queueUpdate(player);
     }
 
     @EventHandler
