@@ -28,7 +28,7 @@ public class DiscordManager extends ListenerAdapter {
     private JDA         jda;
     private TextChannel channel;
 
-    // `volatile` garantiza visibilidad entre hilos
+    // `volatile` guarantees visibility across threads
     private volatile boolean running   = false;
     private volatile boolean cancelled = false;
 
@@ -39,8 +39,8 @@ public class DiscordManager extends ListenerAdapter {
     //  Lifecycle ──
 
     /**
-     * Inicia el bot en un hilo async para no bloquear el main thread del servidor.
-     * awaitReady() puede tardar varios segundos — nunca debe llamarse en el hilo principal.
+     * Starts the bot in an async thread to avoid blocking the server's main thread.
+     * awaitReady() can take several seconds — should never be called on the main thread.
      */
     public void start() {
         String token = plugin.getConfigManager().getDiscordToken();
@@ -115,7 +115,7 @@ public class DiscordManager extends ListenerAdapter {
 
         String format = plugin.getConfigManager().getMinecraftToDiscordFormat();
 
-        // {rank} — cadena vacía si el jugador no tiene rango asignado
+        // {rank} — empty string if the player has no assigned rank
         String rankName = plugin.getRankManager()
                 .getPlayerRank(player.getUniqueId())
                 .map(r -> r.name())
@@ -165,11 +165,11 @@ public class DiscordManager extends ListenerAdapter {
                 .replace("{author}",  author)
                 .replace("{message}", content);
 
-        // Traducir & codes (solo los válidos, no URLs ni &amp; etc.)
+        // Translate & codes (only valid ones, not URLs nor &amp; etc.)
         Component component = LegacyComponentSerializer.legacySection()
                 .deserialize(translateLegacy(formatted));
 
-        // Enviar al main thread — nunca modificar estado de Bukkit desde hilo de JDA
+        // Send to main thread — never modify Bukkit state from JDA thread
         Bukkit.getScheduler().runTask(plugin, () ->
                 Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(component))
         );
@@ -215,11 +215,11 @@ public class DiscordManager extends ListenerAdapter {
     //  Helpers 
 
     /**
-     * Elimina todos los formatos de color soportados por el plugin:
-     *  - MiniMessage tags  : <gold>, <bold>, <#RRGGBB>, etc.
-     *  - Hex legacy        : &#RRGGBB
-     *  - Spigot hex        : &x&R&R&G&G&B&B
-     *  - Classic & codes   : &6, &l, &r, etc.
+     * Removes all color formats supported by the plugin:
+     *  - MiniMessage tags  : &lt;gold&gt;, &lt;bold&gt;, &lt;#RRGGBB&gt;, etc.
+     *  - Hex legacy        : &amp;#RRGGBB
+     *  - Spigot hex        : &amp;x&amp;R&amp;R&amp;G&amp;G&amp;B&amp;B
+     *  - Classic &amp; codes   : &amp;6, &amp;l, &amp;r, etc.
      */
     private String stripColor(String text) {
         if (text == null) return "";
@@ -235,8 +235,8 @@ public class DiscordManager extends ListenerAdapter {
     }
 
     /**
-     * Traduce & codes válidos a § para LegacyComponentSerializer.
-     * Solo reemplaza & seguido de un código válido — no toca URLs ni &amp;.
+     * Translates valid &amp; codes to § for LegacyComponentSerializer.
+     * Only replaces &amp; followed by a valid code — does not touch URLs or &amp;amp;.
      */
     private String translateLegacy(String text) {
         if (text == null) return "";

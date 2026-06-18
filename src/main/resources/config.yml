@@ -122,22 +122,22 @@ scoreboard:
     amount: 2
     unit: "seconds"
 
-  #  Placeholders disponibles
-  # {player}        → nombre del jugador
-  # {displayname}   → display name del jugador
-  # {online}        → jugadores conectados
-  # {max}           → slots máximos del server
+  #  Available placeholders
+  # {player}        → player name
+  # {displayname}   → player display name
+  # {online}        → connected players
+  # {max}           → max server slots
   # {world}         → mundo actual
   # {ping}          → ping en ms
-  # {blocks_broken} → bloques rotos (tuyo)
-  # {blocks_placed} → bloques colocados (tuyo)
+  # {blocks_broken} → blocks broken (yours)
+  # {blocks_placed} → blocks placed (yours)
   # {deaths}        → muertes (tuyas)
-  # {players}       → lista de jugadores online (separados por coma)
+  # {players}       → list of online players (comma separated)
   #
-  # Colores soportados:
+  # Supported colors:
   #   & codes     → &6, &l, &r, etc.
-  #   Hex legacy  → &#RRGGBBTexto
-  #   MiniMessage → <gold><bold>Texto</bold></gold>  |  <#RRGGBB>Texto</#RRGGBB>
+  #   Hex legacy  → &#RRGGBBText
+  #   MiniMessage → <gold><bold>Text</bold></gold>  |  <#RRGGBB>Text</#RRGGBB>
 
   lines:
     - " "
