@@ -9,6 +9,8 @@ enabled: false
 token: "YOUR_BOT_TOKEN_HERE"
 # Channel ID for chat relay
 channel-id: "YOUR_CHANNEL_ID_HERE"
+# Channel ID for whitelist messages (leave empty to use channel-id above)
+whitelist-channel-id: ""
 # Use webhooks for cleaner messages
 use-webhooks: true
 # Main webhook URL (fallback if no per-type webhook is set below)

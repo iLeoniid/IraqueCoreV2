@@ -27,6 +27,7 @@ public class ConfigManager {
     private boolean discordEnabled;
     private String discordToken;
     private String discordChannelId;
+    private String discordWhitelistChannelId;
     private boolean useWebhooks;
     private String webhookUrl;
     private String minecraftToDiscord;
@@ -244,6 +245,7 @@ public class ConfigManager {
         this.discordEnabled = discordConfig.getBoolean("enabled", false);
         this.discordToken = discordConfig.getString("token", "");
         this.discordChannelId = discordConfig.getString("channel-id", "");
+        this.discordWhitelistChannelId = discordConfig.getString("whitelist-channel-id", "");
         this.useWebhooks = discordConfig.getBoolean("use-webhooks", true);
         this.webhookUrl = discordConfig.getString("webhook-url", "");
         this.minecraftToDiscord = discordConfig.getString("minecraft-to-discord", "**{player}:** {message}");
@@ -291,6 +293,7 @@ public class ConfigManager {
     public boolean isDiscordEnabled() { return discordEnabled; }
     public String getDiscordToken() { return discordToken; }
     public String getDiscordChannelId() { return discordChannelId; }
+    public String getDiscordWhitelistChannelId() { return discordWhitelistChannelId; }
     public boolean isUseWebhooks() { return useWebhooks; }
     public String getWebhookUrl() { return webhookUrl; }
     public String getMinecraftToDiscordFormat() { return minecraftToDiscord; }

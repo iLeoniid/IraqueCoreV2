@@ -28,6 +28,7 @@ public class DiscordManager extends ListenerAdapter {
     private final IraqueCore plugin;
     private JDA         jda;
     private TextChannel channel;
+    private TextChannel whitelistChannel;
 
     private volatile boolean running   = false;
     private volatile boolean cancelled = false;
@@ -80,6 +81,15 @@ public class DiscordManager extends ListenerAdapter {
                 channel = ch;
                 running = true;
 
+                String wlChannelId = plugin.getConfigManager().getDiscordWhitelistChannelId();
+                if (!wlChannelId.isBlank()) {
+                    TextChannel wlCh = built.getTextChannelById(wlChannelId);
+                    if (wlCh == null) {
+                        plugin.getPluginLogger().warn("Whitelist Discord channel not found: " + wlChannelId + " — falling back to main channel");
+                    }
+                    whitelistChannel = wlCh;
+                }
+
                 plugin.getPluginLogger().info("Discord bot connected successfully!");
 
                 sendWhitelistPrompt();
@@ -102,6 +112,7 @@ public class DiscordManager extends ListenerAdapter {
             jda = null;
         }
         channel = null;
+        whitelistChannel = null;
     }
 
     //  Minecraft  Discord
@@ -171,19 +182,19 @@ public class DiscordManager extends ListenerAdapter {
 
             String name = content.strip();
             if (!isValidPlayerName(name)) {
-                sendDiscordMessage(plugin.getConfigManager().getWhitelistInvalid());
+                sendWhitelistMessage(plugin.getConfigManager().getWhitelistInvalid());
                 return;
             }
 
             OfflinePlayer offline = Bukkit.getOfflinePlayer(name);
             if (offline.isWhitelisted()) {
-                sendDiscordMessage(plugin.getConfigManager().getWhitelistAlready()
+                sendWhitelistMessage(plugin.getConfigManager().getWhitelistAlready()
                         .replace("{player}", name));
                 return;
             }
 
             offline.setWhitelisted(true);
-            sendDiscordMessage(plugin.getConfigManager().getWhitelistAdded()
+            sendWhitelistMessage(plugin.getConfigManager().getWhitelistAdded()
                     .replace("{player}", name));
 
             plugin.getPluginLogger().info("Whitelisted {} via Discord (user: {})", name, event.getAuthor().getName());
@@ -219,16 +230,25 @@ public class DiscordManager extends ListenerAdapter {
 
             String prompt = plugin.getConfigManager().getWhitelistPrompt();
             if (!prompt.isBlank()) {
-                sendDiscordMessage(prompt);
+                sendWhitelistMessage(prompt);
             }
         });
     }
 
     private void sendDiscordMessage(String message) {
-        if (!running || channel == null) return;
+        sendToChannel(channel, message);
+    }
+
+    private void sendWhitelistMessage(String message) {
+        TextChannel target = (whitelistChannel != null) ? whitelistChannel : channel;
+        sendToChannel(target, message);
+    }
+
+    private void sendToChannel(TextChannel target, String message) {
+        if (!running || target == null) return;
         String stripped = stripColor(message);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
-                channel.sendMessage(stripped).queue(
+                target.sendMessage(stripped).queue(
                         null,
                         err -> plugin.getPluginLogger().warn("Failed to send Discord message: " + err.getMessage())
                 )
