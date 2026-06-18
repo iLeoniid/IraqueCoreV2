@@ -26,7 +26,7 @@ commands:
     permission: iraquecore.scoreboard
   reload:
     description: Reload all plugin configurations
-    aliases: [iraquecore:reload, icreload]
+    aliases: [icreload]
     permission: iraquecore.reload
   spawn:
     description: Teleport to spawn

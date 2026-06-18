@@ -19,7 +19,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.criteria.Criteria;
 
 import java.io.File;
 import java.io.IOException;
@@ -214,10 +213,10 @@ public class ScoreboardManager implements Listener {
         // Title — from animation, parsed as Component
         Component titleComponent = parse(titleAnimation.getText());
 
-        // Register new objective using Adventure Component API (Paper 1.20.4+)
+        // Paper 26.2: registerNewObjective con criterio como String + Component como título
         Objective obj = board.registerNewObjective(
                 "iraqueboard",
-                Criteria.DUMMY,
+                "dummy",
                 titleComponent
         );
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
