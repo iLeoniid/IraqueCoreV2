@@ -133,8 +133,8 @@ whitelist:
   not-whitelisted: "&e{player} is not whitelisted."
   list-header: "&6─── Whitelisted players ({count}) ───"
   list-empty: "&eNo players are whitelisted."
-  status-on: "&aWhitelist is currently &aenabled&a."
-  status-off: "&cWhitelist is currently &cdisabled&c."
+  status-on: "&aWhitelist is currently enabled."
+  status-off: "&cWhitelist is currently disabled."
 
 # ─── Scoreboard Command ───
 scoreboard:

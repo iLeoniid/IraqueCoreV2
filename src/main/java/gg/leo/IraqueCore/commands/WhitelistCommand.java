@@ -23,13 +23,14 @@ public class WhitelistCommand implements TabExecutor {
         this.plugin = plugin;
     }
 
-    private String msg(String path) {
-        return plugin.getConfigManager().translate(
-                plugin.getConfigManager().getMessage(path, "&c" + path));
-    }
-
     private Component txt(String path) {
         return plugin.getConfigManager().getMessageComponent(path);
+    }
+
+    private Component txt(String path, String key, String value) {
+        String raw = plugin.getConfigManager().getMessage(path, "&c" + path);
+        return plugin.getConfigManager().deserialize(
+                plugin.getConfigManager().translate(raw.replace(key, value)));
     }
 
     @Override
@@ -58,13 +59,13 @@ public class WhitelistCommand implements TabExecutor {
 
     private void handleOn(CommandSender sender) {
         Bukkit.setWhitelist(true);
-        sender.sendMessage(msg("whitelist.enabled"));
+        sender.sendMessage(txt("whitelist.enabled"));
         plugin.getPluginLogger().info("Whitelist enabled by {}", sender.getName());
     }
 
     private void handleOff(CommandSender sender) {
         Bukkit.setWhitelist(false);
-        sender.sendMessage(msg("whitelist.disabled"));
+        sender.sendMessage(txt("whitelist.disabled"));
         plugin.getPluginLogger().info("Whitelist disabled by {}", sender.getName());
     }
 
@@ -78,12 +79,12 @@ public class WhitelistCommand implements TabExecutor {
         OfflinePlayer offline = Bukkit.getOfflinePlayer(name);
 
         if (offline.isWhitelisted()) {
-            sender.sendMessage(msg("whitelist.already").replace("{player}", name));
+            sender.sendMessage(txt("whitelist.already", "{player}", name));
             return;
         }
 
         offline.setWhitelisted(true);
-        sender.sendMessage(msg("whitelist.added").replace("{player}", name));
+        sender.sendMessage(txt("whitelist.added", "{player}", name));
         plugin.getPluginLogger().info("{} whitelisted {} (added by {})", sender.getName(), name, sender.getName());
     }
 
@@ -97,12 +98,12 @@ public class WhitelistCommand implements TabExecutor {
         OfflinePlayer offline = Bukkit.getOfflinePlayer(name);
 
         if (!offline.isWhitelisted()) {
-            sender.sendMessage(msg("whitelist.not-whitelisted").replace("{player}", name));
+            sender.sendMessage(txt("whitelist.not-whitelisted", "{player}", name));
             return;
         }
 
         offline.setWhitelisted(false);
-        sender.sendMessage(msg("whitelist.removed").replace("{player}", name));
+        sender.sendMessage(txt("whitelist.removed", "{player}", name));
         plugin.getPluginLogger().info("{} unwhitelisted {} (removed by {})", sender.getName(), name, sender.getName());
     }
 
@@ -118,14 +119,13 @@ public class WhitelistCommand implements TabExecutor {
                 .filter(n -> n != null)
                 .collect(Collectors.joining(", "));
 
-        sender.sendMessage(msg("whitelist.list-header")
-                .replace("{count}", String.valueOf(whitelisted.size())));
+        sender.sendMessage(txt("whitelist.list-header", "{count}", String.valueOf(whitelisted.size())));
         sender.sendMessage(plugin.getConfigManager().deserialize("<gray>" + names));
     }
 
     private void handleStatus(CommandSender sender) {
         boolean on = Bukkit.hasWhitelist();
-        sender.sendMessage(msg(on ? "whitelist.status-on" : "whitelist.status-off"));
+        sender.sendMessage(txt(on ? "whitelist.status-on" : "whitelist.status-off"));
     }
 
     @Override

@@ -259,7 +259,7 @@ public class DiscordManager extends ListenerAdapter {
 
     private void sendWebhookMessage(String type, String name, String uuid, String message) {
         String webhookUrl = plugin.getConfigManager().getDiscordWebhook(type);
-        if (webhookUrl == null || webhookUrl.isBlank()) return;
+        if (webhookUrl == null || webhookUrl.isBlank() || !webhookUrl.startsWith("http")) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
