@@ -1,0 +1,81 @@
+name: IraqueCore
+version: 1.0.0
+main: gg.leo.IraqueCore.IraqueCore
+api-version: '26.2'
+
+commands:
+  rank:
+    description: Rank management command
+    aliases: [ranks]
+    permission: iraquecore.rank
+  tags:
+    description: Tag management with GUI
+    aliases: [tag]
+    permission: iraquecore.tags.use
+  msg:
+    description: Send a private message to a player
+    aliases: [message, whisper, tell, w, m]
+    permission: iraquecore.msg
+  r:
+    description: Reply to the last private message
+    aliases: [reply]
+    permission: iraquecore.msg
+  scoreboard:
+    description: Toggle your scoreboard on/off
+    aliases: [sb]
+    permission: iraquecore.scoreboard
+  reload:
+    description: Reload all plugin configurations
+    aliases: [iraquecore:reload, icreload]
+    permission: iraquecore.reload
+  spawn:
+    description: Teleport to spawn
+    aliases: [hub, lobby]
+  setspawn:
+    description: Set the spawn location
+    permission: iraquecore.setspawn
+
+permissions:
+  iraquecore.*:
+    description: All IraqueCore permissions
+    default: op
+    children:
+      iraquecore.admin: true
+      iraquecore.tags.use: true
+      iraquecore.tags.admin: true
+      iraquecore.msg: true
+      iraquecore.reload: true
+      iraquecore.setspawn: true
+  iraquecore.admin:
+    description: Access to admin commands
+    default: op
+  iraquecore.rank:
+    description: Access to rank commands
+    default: op
+  iraquecore.rank.set:
+    description: Set a player's rank
+    default: op
+  iraquecore.rank.create:
+    description: Create custom ranks
+    default: op
+  iraquecore.tags.use:
+    description: Use tag system
+    default: true
+  iraquecore.tags.admin:
+    description: Administer tags
+    default: op
+  iraquecore.msg:
+    description: Send and receive private messages
+    default: true
+  iraquecore.discord.reload:
+    description: Reload Discord bot
+    default: op
+  iraquecore.scoreboard:
+    description: Use scoreboard command
+    default: true
+  iraquecore.reload:
+    description: Reload all plugin configurations
+    default: op
+  iraquecore.setspawn:
+    description: Set the spawn location
+    default: op

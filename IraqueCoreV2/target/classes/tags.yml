@@ -1,0 +1,111 @@
+tags:
+  # ============================================
+  # CATEGORY: EMOJIS
+  # ============================================
+  star:
+    display-name: '&e\u2B50'
+    tag: '&e\u2B50'
+    permission: ''
+    category: 'emojis'
+    material: NETHER_STAR
+    lore:
+      - '&7Mostre seu brilho'
+  fire:
+    display-name: '&c\uD83D\uDD25'
+    tag: '&c\uD83D\uDD25'
+    permission: ''
+    category: 'emojis'
+    material: BLAZE_POWDER
+    lore:
+      - '&7Para jogadores ardentes'
+  heart:
+    display-name: '&c\u2764'
+    tag: '&c\u2764'
+    permission: ''
+    category: 'emojis'
+    material: REDSTONE
+    lore:
+      - '&7Cheio de amor'
+  crown:
+    display-name: '&6\uD83D\uDC51'
+    tag: '&6\uD83D\uDC51'
+    permission: ''
+    category: 'emojis'
+    material: GOLD_INGOT
+    lore:
+      - '&7Realeza absoluta'
+  skull:
+    display-name: '&8\uD83D\uDC80'
+    tag: '&8\uD83D\uDC80'
+    permission: ''
+    category: 'emojis'
+    material: SKELETON_SKULL
+    lore:
+      - '&7Sombrio e misterioso'
+  sword:
+    display-name: '&f\u2694'
+    tag: '&f\u2694'
+    permission: ''
+    category: 'emojis'
+    material: IRON_SWORD
+    lore:
+      - '&7For\u00E7a em batalha'
+  dragon:
+    display-name: '&5\uD83D\uDC09'
+    tag: '&5\uD83D\uDC09'
+    permission: ''
+    category: 'emojis'
+    material: DRAGON_HEAD
+    lore:
+      - '&7Poder ancestral'
+  magic:
+    display-name: '&5\u2728'
+    tag: '&5\u2728'
+    permission: ''
+    category: 'emojis'
+    material: ENCHANTING_TABLE
+    lore:
+      - '&7Energia m\u00E1gica'
+  money:
+    display-name: '&a\uD83D\uDCB0'
+    tag: '&a\uD83D\uDCB0'
+    permission: ''
+    category: 'emojis'
+    material: EMERALD
+    lore:
+      - '&7Muito rico'
+  lightning:
+    display-name: '&e\u26A1'
+    tag: '&e\u26A1'
+    permission: ''
+    category: 'emojis'
+    material: GLOWSTONE
+    lore:
+      - '&7Velocidade pura'
+
+  # ============================================
+  # CATEGORY: TEXT
+  # ============================================
+  ez:
+    display-name: '&eEZ'
+    tag: '&eEZ'
+    permission: ''
+    category: 'text'
+    material: PAPER
+    lore:
+      - '&7S\u00F3 vit\u00F3ria'
+  c4:
+    display-name: '&cC4'
+    tag: '&cC4'
+    permission: ''
+    category: 'text'
+    material: TNT
+    lore:
+      - '&7Estouro no PvP'
+
+  # ============================================
+  # CATEGORY: ESPECIAL
+  # ============================================
+  # Add special/staff tags here
+
+players: {}
