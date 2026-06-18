@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -227,7 +228,7 @@ public class ScoreboardManager implements Listener {
         int score  = lines.size();
 
         for (String raw : lines) {
-            String line = applyPlaceholders(raw, player, online, max);
+            String line = ChatColor.translateAlternateColorCodes('&', applyPlaceholders(raw, player, online, max));
             // Score entry name must be unique — pad with invisible chars if duplicate
             String entryName = ensureUnique(board, line, score);
             obj.getScore(entryName).setScore(score--);
@@ -310,6 +311,10 @@ public class ScoreboardManager implements Listener {
         String name = Bukkit.getOfflinePlayer(uuid).getName();
         return name != null ? name : "Unknown";
     }
+
+    public Map<UUID, Integer> getBlocksBroken() { return Collections.unmodifiableMap(blocksBroken); }
+    public Map<UUID, Integer> getBlocksPlaced() { return Collections.unmodifiableMap(blocksPlaced); }
+    public Map<UUID, Integer> getDeaths() { return Collections.unmodifiableMap(deaths); }
 
     //  Helpers 
 

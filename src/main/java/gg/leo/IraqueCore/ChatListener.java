@@ -53,14 +53,10 @@ public class ChatListener implements Listener {
             if (!display.isEmpty()) tagStr = display + " ";
         }
 
-        // getDisplayName() on Paper 1.21+ returns String (legacy already translated)
-        // If your API returns Component, serialize it: PlainTextComponentSerializer or LEGACY
-        String displayName = color + player.getName(); // safe fallback
+        String displayName = color + player.getName();
         try {
-            // Paper 26: displayName() returns Component
             displayName = color + LEGACY.serialize(player.displayName());
         } catch (Exception ignored) {
-            // In case the API changes between builds
         }
 
         String formatted = format
@@ -72,7 +68,6 @@ public class ChatListener implements Listener {
                 .replace("{world}",       player.getWorld().getName())
                 .replace("{message}",     message);
 
-        // Translate only valid & codes, not URLs nor &amp;
         Component rendered = LEGACY.deserialize(translateLegacy(formatted));
         event.renderer(ChatRenderer.viewerUnaware((source, sourceDisplayName, msg) -> rendered));
 
@@ -86,6 +81,13 @@ public class ChatListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         plugin.getRankManager().loadPlayer(player.getUniqueId());
+        plugin.getRankManager().applyPermissions(player);
+
+        org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline()) {
+                plugin.getRankManager().initVisuals(player);
+            }
+        }, 12L);
 
         DiscordManager discord = plugin.getDiscordManager();
         if (discord != null) {
@@ -99,6 +101,8 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        plugin.getRankManager().removePermissions(player);
+        plugin.getRankManager().removePlayerFromTeams(player);
         plugin.getRankManager().savePlayer(player.getUniqueId());
 
         DiscordManager discord = plugin.getDiscordManager();
@@ -118,7 +122,6 @@ public class ChatListener implements Listener {
         String msg = plugin.getConfigManager().getDeathMessage();
         if (msg.isEmpty()) return;
 
-        // Modern Paper: deathMessage() returns Component (may be null)
         Component deathComponent = event.deathMessage();
         if (deathComponent == null) return;
 
@@ -128,12 +131,6 @@ public class ChatListener implements Listener {
                 .replace("{message}", deathMsg)));
     }
 
-    //  Helpers 
-
-    /**
-     * Removes all color formats:
-     * MiniMessage tags, hex &#RRGGBB, Spigot hex, classic & codes.
-     */
     private String stripColor(String text) {
         if (text == null) return "";
         text = text.replaceAll("<[^>]+>", "");
@@ -143,11 +140,8 @@ public class ChatListener implements Listener {
         return text;
     }
 
-    /**
-     * Translates only valid & codes → § without touching URLs or &amp;.
-     */
     private String translateLegacy(String text) {
         if (text == null) return "";
-        return text.replaceAll("&([0-9a-fk-orA-FK-OR])", "§$1");
+        return text.replaceAll("&([0-9a-fk-orA-FK-OR])", "\u00A7$1");
     }
 }

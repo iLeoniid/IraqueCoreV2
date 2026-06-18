@@ -1,10 +1,14 @@
 package gg.leo.IraqueCore.rank;
 
 import gg.leo.IraqueCore.IraqueCore;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +17,8 @@ import java.util.*;
 public class RankManager {
 
     private final IraqueCore plugin;
-    private final Map<String, Rank>              ranks       = new LinkedHashMap<>();
-    private final Map<UUID, String>              playerRanks = new HashMap<>();
-
-    // Keep reference to attachments so we can remove them when changing rank
+    private final Map<String, Rank>               ranks       = new LinkedHashMap<>();
+    private final Map<UUID, String>               playerRanks = new HashMap<>();
     private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
 
     private File dataFile;
@@ -25,8 +27,6 @@ public class RankManager {
         this.plugin   = plugin;
         this.dataFile = new File(plugin.getDataFolder(), "player-ranks.yml");
     }
-
-    //  Rank loading 
 
     public void loadRanks() {
         ranks.clear();
@@ -50,20 +50,13 @@ public class RankManager {
         loadPlayerData();
     }
 
-    //  Player data ─
-
-    /**
-     * Loads an individual player's rank (called on onJoin).
-     */
     public void loadPlayer(UUID uuid) {
         if (!dataFile.exists()) {
             playerRanks.put(uuid, plugin.getConfigManager().getDefaultRankName());
             return;
         }
-
         YamlConfiguration data     = YamlConfiguration.loadConfiguration(dataFile);
         String            rankName = data.getString(uuid.toString());
-
         if (rankName != null && ranks.containsKey(rankName)) {
             playerRanks.put(uuid, rankName);
         } else {
@@ -71,13 +64,9 @@ public class RankManager {
         }
     }
 
-    /**
-     * Loads all players' ranks (called on loadRanks).
-     */
     public void loadPlayerData() {
         playerRanks.clear();
         if (!dataFile.exists()) return;
-
         YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
         for (String key : data.getKeys(false)) {
             try {
@@ -90,13 +79,6 @@ public class RankManager {
         }
     }
 
-    /**
-     * Saves an individual player's rank to file.
-     * Called on onQuit — avoids rewriting the entire file on every quit
-     * by saving only that player's entry incrementally.
-     * In practice for small servers saveAll() is acceptable,
-     * but kept separate for future optimization.
-     */
     public void savePlayer(UUID uuid) {
         saveAll();
     }
@@ -113,18 +95,16 @@ public class RankManager {
         }
     }
 
-    //  Rank assignment ──
-
     public void setRank(UUID uuid, String rankName) {
         if (!ranks.containsKey(rankName)) return;
         playerRanks.put(uuid, rankName);
         saveAll();
 
-        // Re-apply permissions if the player is online
         Player player = plugin.getServer().getPlayer(uuid);
         if (player != null) {
             removePermissions(player);
             applyPermissions(player);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> updatePlayerRankVisuals(player), 2L);
         }
     }
 
@@ -149,30 +129,17 @@ public class RankManager {
         return Collections.unmodifiableMap(ranks);
     }
 
-    public void addRank(Rank rank) {
-        ranks.put(rank.name(), rank);
-    }
+    public void addRank(Rank rank)         { ranks.put(rank.name(), rank); }
+    public void removeRank(String name)    { ranks.remove(name); }
 
-    public void removeRank(String name) {
-        ranks.remove(name);
-    }
-
-    //  Permissions ─
-
-    /**
-     * Applies the player's rank permissions.
-     * Stores the PermissionAttachment so it can be removed later.
-     */
     public void applyPermissions(Player player) {
         getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
-            // Remove previous attachment if it exists
             removePermissions(player);
-
             if (rank.permissions().isEmpty()) return;
 
             PermissionAttachment attachment = player.addAttachment(plugin);
             for (String perm : rank.permissions()) {
-                if (perm.equals("*")) continue; // wildcard not directly supported by Bukkit
+                if (perm.equals("*")) continue;
                 attachment.setPermission(perm, true);
             }
             attachments.put(player.getUniqueId(), attachment);
@@ -180,10 +147,6 @@ public class RankManager {
         });
     }
 
-    /**
-     * Removes the player's PermissionAttachment.
-     * Call before changing rank or on disconnect.
-     */
     public void removePermissions(Player player) {
         PermissionAttachment attachment = attachments.remove(player.getUniqueId());
         if (attachment != null) {
@@ -192,18 +155,92 @@ public class RankManager {
         }
     }
 
-    //  Helpers 
+    public void updatePlayerRankVisuals(Player player) {
+        getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
+            String tag    = plugin.getTagManager().getPlayerTagDisplay(player);
+            String tagStr = tag.isEmpty() ? "" : tag + " ";
+            String listNameRaw = rank.prefix() + " " + tagStr + rank.color() + player.getName();
+            player.playerListName(LegacyComponentSerializer.legacySection().deserialize(listNameRaw));
 
-    /**
-     * Translates only valid & codes → § without touching URLs or &amp;.
-     */
+            String prefix = buildPrefix(rank, tagStr);
+            for (Player viewer : Bukkit.getOnlinePlayers()) {
+                applyTeamForViewer(viewer, player, rank, prefix);
+            }
+        });
+    }
+
+    public void initVisuals(Player joining) {
+        for (Player other : Bukkit.getOnlinePlayers()) {
+            if (other.equals(joining)) continue;
+            getPlayerRank(other.getUniqueId()).ifPresent(rank -> {
+                String tag    = plugin.getTagManager().getPlayerTagDisplay(other);
+                String tagStr = tag.isEmpty() ? "" : tag + " ";
+                String prefix = buildPrefix(rank, tagStr);
+                applyTeamForViewer(joining, other, rank, prefix);
+            });
+        }
+        updatePlayerRankVisuals(joining);
+    }
+
+    private String buildPrefix(Rank rank, String tagStr) {
+        String full = rank.prefix() + " " + tagStr;
+        return full.length() > 64 ? full.substring(0, 64) : full;
+    }
+
+    private void applyTeamForViewer(Player viewer, Player target, Rank rank, String prefix) {
+        Scoreboard board = viewer.getScoreboard();
+        if (board == null) board = Bukkit.getScoreboardManager().getMainScoreboard();
+
+        String teamName = "irq" + String.format("%03d", rank.weight());
+
+        Team team = board.getTeam(teamName);
+        if (team == null) {
+            team = board.registerNewTeam(teamName);
+        }
+
+        for (Team t : board.getTeams()) {
+            if (t.getName().startsWith("irq") && !t.getName().equals(teamName)
+                    && t.hasEntry(target.getName())) {
+                t.removeEntry(target.getName());
+            }
+        }
+
+        team.prefix(LegacyComponentSerializer.legacySection().deserialize(prefix));
+        if (!rank.suffix().isEmpty()) {
+            team.suffix(LegacyComponentSerializer.legacySection().deserialize(rank.suffix()));
+        }
+        team.addEntry(target.getName());
+    }
+
+    public void removePlayerFromTeams(Player player) {
+        for (Player viewer : Bukkit.getOnlinePlayers()) {
+            Scoreboard board = viewer.getScoreboard();
+            if (board == null) continue;
+            for (Team t : board.getTeams()) {
+                if (t.getName().startsWith("irq") && t.hasEntry(player.getName())) {
+                    t.removeEntry(player.getName());
+                }
+            }
+        }
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        for (Team t : main.getTeams()) {
+            if (t.getName().startsWith("irq") && t.hasEntry(player.getName())) {
+                t.removeEntry(player.getName());
+            }
+        }
+    }
+
+    public void updateAllVisuals() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            updatePlayerRankVisuals(player);
+        }
+    }
+
     private String translateColors(String text) {
         if (text == null) return "";
-        // Hex &#RRGGBB → §x§R§R§G§G§B§B (Spigot legacy format)
         text = text.replaceAll("&#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})",
-                "§x§$1§$2§$3");
-        // Valid classic & codes
-        text = text.replaceAll("&([0-9a-fk-orA-FK-OR])", "§$1");
+                "\u00A7x\u00A7$1\u00A7$2\u00A7$3");
+        text = text.replaceAll("&([0-9a-fk-orA-FK-OR])", "\u00A7$1");
         return text;
     }
 }

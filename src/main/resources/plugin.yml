@@ -34,6 +34,17 @@ commands:
   setspawn:
     description: Set the spawn location
     permission: iraquecore.setspawn
+  gm:
+    description: Change gamemode
+    aliases: [gamemode, gmc, gms, gma, gmsp]
+    permission: iraquecore.gamemode
+  leaderboards:
+    description: View player leaderboards
+    aliases: [lb, leaders]
+    permission: iraquecore.leaderboard
+  motd:
+    description: Reload MOTD configuration
+    permission: iraquecore.motd.reload
 
 permissions:
   iraquecore.*:
@@ -46,6 +57,8 @@ permissions:
       iraquecore.msg: true
       iraquecore.reload: true
       iraquecore.setspawn: true
+      iraquecore.gamemode: true
+      iraquecore.gamemode.other: true
   iraquecore.admin:
     description: Access to admin commands
     default: op
@@ -78,4 +91,16 @@ permissions:
     default: op
   iraquecore.setspawn:
     description: Set the spawn location
+    default: op
+  iraquecore.gamemode:
+    description: Change your gamemode
+    default: op
+  iraquecore.gamemode.other:
+    description: Change other players' gamemode
+    default: op
+  iraquecore.leaderboard:
+    description: View leaderboards
+    default: true
+  iraquecore.motd.reload:
+    description: Reload MOTD configuration
     default: op

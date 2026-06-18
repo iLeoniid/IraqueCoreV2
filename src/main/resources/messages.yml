@@ -41,3 +41,34 @@ general:
   console-only: "&cOnly console can use this command."
   invalid-usage: "&cUsage: {usage}"
   player-not-found: "&cPlayer not found."
+
+# ─── Gamemode Command ───
+gamemode:
+  no-permission: "&cNo permission."
+  usage: "&cUsage: /{label} <mode> [player]"
+  invalid: "&cInvalid gamemode. Use: 0/1/2/3 or survival/creative/adventure/spectator."
+  no-permission-other: "&cNo permission to change other players' gamemode."
+  player-not-found: "&cPlayer not found."
+  player-only: "&cOnly players can use this command."
+  set: "&aYour gamemode has been set to {mode}"
+  set-other: "&aSet {player}'s gamemode to {mode}"
+
+# ─── Tag Command ───
+tag:
+  reloaded: "&aTags reloaded."
+  player-only: "&cOnly players can use this command."
+  no-permission: "&cNo permission."
+  set:
+    usage: "&cUsage: /tag set <player> <tagId>"
+    player-not-found: "&cPlayer not found."
+    tag-not-found: "&cTag not found. Available IDs: {ids}"
+    success: "&aSet {player}'s tag to {tag}"
+    notify: "&aYour tag has been set to {tag} by an admin."
+
+# ─── Scoreboard Command ───
+scoreboard:
+  player-only: "&cOnly players can use this command."
+  status: "&7Scoreboard: {status}"
+  usage: "&eUsage: /scoreboard on|off"
+  enabled: "&aScoreboard enabled."
+  disabled: "&cScoreboard disabled."

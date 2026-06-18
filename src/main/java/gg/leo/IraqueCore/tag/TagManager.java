@@ -295,6 +295,7 @@ public class TagManager implements Listener {
             } else if (slot == 22 && clicked.getType() == Material.BARRIER) {
                 if (!getPlayerTagDisplay(player).isEmpty()) {
                     setPlayerTag(player, null);
+                    plugin.getRankManager().updatePlayerRankVisuals(player);
                     player.sendMessage(ChatColor.GREEN + "Tag removida com sucesso!");
                     openMainMenu(player);
                 } else {
@@ -353,6 +354,8 @@ public class TagManager implements Listener {
                     setPlayerTag(player, tag.getId());
                     player.sendMessage(ChatColor.GREEN + "Tag equipada: " + tag.getDisplayName());
                 }
+
+                plugin.getRankManager().updatePlayerRankVisuals(player);
 
                 String category = playerCategory.getOrDefault(player.getUniqueId(), "emojis");
                 int page = playerPages.getOrDefault(player.getUniqueId(), 0);
