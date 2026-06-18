@@ -114,7 +114,7 @@ public class ScoreboardManager implements Listener {
             @Override public void run() {
                 if (statsConfig != null) saveStats();
             }
-        }.runTaskTimer(plugin, 6000L, 6000L);
+        }.runTaskTimer(plugin, 1200L, 1200L);
     }
 
     //  Color parsing 
