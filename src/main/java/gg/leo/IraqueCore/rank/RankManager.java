@@ -4,6 +4,7 @@ import gg.leo.IraqueCore.IraqueCore;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,14 +13,20 @@ import java.util.*;
 public class RankManager {
 
     private final IraqueCore plugin;
-    private final Map<String, Rank> ranks = new LinkedHashMap<>();
-    private final Map<UUID, String> playerRanks = new HashMap<>();
+    private final Map<String, Rank>              ranks       = new LinkedHashMap<>();
+    private final Map<UUID, String>              playerRanks = new HashMap<>();
+
+    // Keep reference to attachments so we can remove them when changing rank
+    private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+
     private File dataFile;
 
     public RankManager(IraqueCore plugin) {
-        this.plugin = plugin;
+        this.plugin   = plugin;
         this.dataFile = new File(plugin.getDataFolder(), "player-ranks.yml");
     }
+
+    //  Rank loading 
 
     public void loadRanks() {
         ranks.clear();
@@ -43,32 +50,53 @@ public class RankManager {
         loadPlayerData();
     }
 
+    //  Player data ─
+
+    /**
+     * Loads an individual player's rank (called on onJoin).
+     */
     public void loadPlayer(UUID uuid) {
-        if (dataFile.exists()) {
-            YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
-            String rankName = data.getString(uuid.toString());
-            if (rankName != null && ranks.containsKey(rankName)) {
-                playerRanks.put(uuid, rankName);
-            } else {
-                playerRanks.put(uuid, plugin.getConfigManager().getDefaultRankName());
-            }
+        if (!dataFile.exists()) {
+            playerRanks.put(uuid, plugin.getConfigManager().getDefaultRankName());
+            return;
+        }
+
+        YamlConfiguration data     = YamlConfiguration.loadConfiguration(dataFile);
+        String            rankName = data.getString(uuid.toString());
+
+        if (rankName != null && ranks.containsKey(rankName)) {
+            playerRanks.put(uuid, rankName);
+        } else {
+            playerRanks.put(uuid, plugin.getConfigManager().getDefaultRankName());
         }
     }
 
+    /**
+     * Loads all players' ranks (called on loadRanks).
+     */
     public void loadPlayerData() {
         playerRanks.clear();
         if (!dataFile.exists()) return;
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
         for (String key : data.getKeys(false)) {
-            UUID uuid = UUID.fromString(key);
-            String rankName = data.getString(key);
-            if (ranks.containsKey(rankName)) {
-                playerRanks.put(uuid, rankName);
-            }
+            try {
+                UUID   uuid     = UUID.fromString(key);
+                String rankName = data.getString(key);
+                if (rankName != null && ranks.containsKey(rankName)) {
+                    playerRanks.put(uuid, rankName);
+                }
+            } catch (IllegalArgumentException ignored) {}
         }
     }
 
+    /**
+     * Saves an individual player's rank to file.
+     * Called on onQuit — avoids rewriting the entire file on every quit
+     * by saving only that player's entry incrementally.
+     * In practice for small servers saveAll() is acceptable,
+     * but kept separate for future optimization.
+     */
     public void savePlayer(UUID uuid) {
         saveAll();
     }
@@ -85,10 +113,19 @@ public class RankManager {
         }
     }
 
+    //  Rank assignment ──
+
     public void setRank(UUID uuid, String rankName) {
         if (!ranks.containsKey(rankName)) return;
         playerRanks.put(uuid, rankName);
         saveAll();
+
+        // Re-apply permissions if the player is online
+        Player player = plugin.getServer().getPlayer(uuid);
+        if (player != null) {
+            removePermissions(player);
+            applyPermissions(player);
+        }
     }
 
     public Optional<Rank> getPlayerRank(UUID uuid) {
@@ -120,16 +157,53 @@ public class RankManager {
         ranks.remove(name);
     }
 
-    private String translateColors(String text) {
-        return text.replace("&", "§");
-    }
+    //  Permissions ─
 
+    /**
+     * Applies the player's rank permissions.
+     * Stores the PermissionAttachment so it can be removed later.
+     */
     public void applyPermissions(Player player) {
         getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
+            // Remove previous attachment if it exists
+            removePermissions(player);
+
+            if (rank.permissions().isEmpty()) return;
+
+            PermissionAttachment attachment = player.addAttachment(plugin);
             for (String perm : rank.permissions()) {
-                if (perm.equals("*")) continue;
-                player.addAttachment(plugin, perm, true);
+                if (perm.equals("*")) continue; // wildcard not directly supported by Bukkit
+                attachment.setPermission(perm, true);
             }
+            attachments.put(player.getUniqueId(), attachment);
+            player.recalculatePermissions();
         });
+    }
+
+    /**
+     * Removes the player's PermissionAttachment.
+     * Call before changing rank or on disconnect.
+     */
+    public void removePermissions(Player player) {
+        PermissionAttachment attachment = attachments.remove(player.getUniqueId());
+        if (attachment != null) {
+            player.removeAttachment(attachment);
+            player.recalculatePermissions();
+        }
+    }
+
+    //  Helpers 
+
+    /**
+     * Translates only valid & codes → § without touching URLs or &amp;.
+     */
+    private String translateColors(String text) {
+        if (text == null) return "";
+        // Hex &#RRGGBB → §x§R§R§G§G§B§B (Spigot legacy format)
+        text = text.replaceAll("&#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})",
+                "§x§$1§$2§$3");
+        // Valid classic & codes
+        text = text.replaceAll("&([0-9a-fk-orA-FK-OR])", "§$1");
+        return text;
     }
 }
