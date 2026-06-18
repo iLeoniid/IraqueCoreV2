@@ -262,6 +262,8 @@ public class ScoreboardManager implements Listener {
 
         try {
             statsConfig.save(statsFile);
+            Component msg = plugin.getConfigManager().getMessageComponent("stats.saved");
+            Bukkit.broadcast(msg);
         } catch (IOException e) {
             plugin.getPluginLogger().error("Failed to save stats.yml", e);
         }

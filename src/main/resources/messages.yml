@@ -140,3 +140,7 @@ scoreboard:
   usage: "&eUsage: /scoreboard on|off"
   enabled: "&aScoreboard enabled."
   disabled: "&cScoreboard disabled."
+
+# ─── Stats ───
+stats:
+  saved: "&aStats have been saved successfully."
