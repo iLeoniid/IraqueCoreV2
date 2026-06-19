@@ -188,6 +188,20 @@ playtime:
   enabled: true
 
 
+#   GRAVES
+#   When a player dies, a chest spawns with their items
+
+graves:
+  enabled: true
+
+#   DURABILITY WARNING
+#   Warn players when their tool is about to break
+
+durability-warning:
+  enabled: true
+  threshold: 0.1
+
+
 #   DATA STORAGE
 
 storage:

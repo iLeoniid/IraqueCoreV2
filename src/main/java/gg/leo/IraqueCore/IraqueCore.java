@@ -8,7 +8,11 @@ import gg.leo.IraqueCore.commands.ReloadCommand;
 import gg.leo.IraqueCore.commands.SpawnCommand;
 import gg.leo.IraqueCore.commands.WhitelistCommand;
 import gg.leo.IraqueCore.config.ConfigManager;
+import gg.leo.IraqueCore.discord.AdvancementListener;
 import gg.leo.IraqueCore.discord.DiscordManager;
+import gg.leo.IraqueCore.durability.DurabilityListener;
+import gg.leo.IraqueCore.grave.GraveListener;
+import gg.leo.IraqueCore.stats.StatsCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardManager;
 import gg.leo.IraqueCore.motd.MotdManager;
@@ -42,6 +46,7 @@ public final class IraqueCore extends JavaPlugin {
     private AfkManager        afkManager;
     private SleepManager      sleepManager;
     private PlaytimeManager   playtimeManager;
+    private StatsCommand      statsCommand;
 
     // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
     private ComponentLogger componentLogger;
@@ -90,6 +95,12 @@ public final class IraqueCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AnvilColorListener(this), this);
         getServer().getPluginManager().registerEvents(sleepManager, this);
         getServer().getPluginManager().registerEvents(playtimeManager, this);
+        getServer().getPluginManager().registerEvents(new GraveListener(this), this);
+        getServer().getPluginManager().registerEvents(new AdvancementListener(this), this);
+        getServer().getPluginManager().registerEvents(new DurabilityListener(this), this);
+
+        this.statsCommand = new StatsCommand(this);
+        getServer().getPluginManager().registerEvents(statsCommand, this);
 
         this.leaderboardManager = new LeaderboardManager(this);
         getServer().getPluginManager().registerEvents(leaderboardManager, this);
@@ -207,6 +218,8 @@ public final class IraqueCore extends JavaPlugin {
 
         var playtimeCommand = new PlaytimeCommand(this);
         register("playtime", playtimeCommand, playtimeCommand);
+
+        register("stats", statsCommand, statsCommand);
     }
 
     /**

@@ -53,6 +53,10 @@ commands:
     description: Check your playtime
     aliases: [pt]
     permission: iraquecore.playtime
+  stats:
+    description: View player stats
+    aliases: [me]
+    permission: iraquecore.stats
 
 permissions:
   iraquecore.*:
@@ -127,4 +131,10 @@ permissions:
     default: true
   iraquecore.armorstand:
     description: Use armor stand editor
+    default: true
+  iraquecore.stats:
+    description: View your stats
+    default: true
+  iraquecore.stats.other:
+    description: View other players' stats
     default: true

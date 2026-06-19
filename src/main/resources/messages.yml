@@ -176,6 +176,14 @@ playtime:
   your: "&aYour playtime: &e{time}"
   other: "&a{player}'s playtime: &e{time}"
 
+# ─── Grave ───
+grave:
+  created: "&6{player} &edied. Items are in a grave at &6{x}, {y}, {z}"
+
+# ─── Durability Warning ───
+durability:
+  warning: "&cYour {item} is about to break! (&7{remaining}/{max}&c)"
+
 # ─── Stats ───
 stats:
   saved: "&aStats have been saved successfully."

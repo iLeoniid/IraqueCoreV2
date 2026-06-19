@@ -27,6 +27,9 @@ join-message: "&9[Discord] &b{player} &7joined the game"
 leave-message: "&9[Discord] &b{player} &7left the game"
 # Message sent when a player dies (leave empty to disable)
 death-message: "&9[Discord] &c{player} {message}"
+# Message sent when a player earns an advancement (leave empty to disable)
+# Placeholders: {player}, {title}
+advancement-message: "\uD83C\uDFC6 **{player}** has made the advancement **{title}**\n*{description}*"
 
 # Per-type webhook URLs (leave empty to fall back to webhook-url above)
 webhooks:
