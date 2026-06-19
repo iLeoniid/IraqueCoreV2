@@ -83,40 +83,21 @@ scoreboard:
     text: "&6&lIRAQUE"
     animated: true
     ticks: 5
-    animation:
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &f&lI&6&lRAQUE SURVIVAL   "
-      - "   &6&lI&f&lR&6&lAQUE SURVIVAL   "
-      - "   &6&lIR&f&lA&6&lQUE SURVIVAL   "
-      - "   &6&lIRA&f&lQ&6&lUE SURVIVAL   "
-      - "   &6&lIRAQ&f&lU&6&lE SURVIVAL   "
-      - "   &6&lIRAQU&f&lE&6&l SURVIVAL   "
-      - "   &6&lIRAQUE &f&lS&6&lURVIVAL   "
-      - "   &6&lIRAQUE S&f&lU&6&lRVIVAL   "
-      - "   &6&lIRAQUE SU&f&lR&6&lVIVAL   "
-      - "   &6&lIRAQUE SUR&f&lV&6&lIVAL   "
-      - "   &6&lIRAQUE SURV&f&lI&6&lVAL   "
-      - "   &6&lIRAQUE SURVI&f&lV&6&lAL   "
-      - "   &6&lIRAQUE SURVIV&f&lA&6&lL   "
-      - "   &6&lIRAQUE SURVIVA&f&lL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVA&f&lL   "
-      - "   &6&lIRAQUE SURVIV&f&lA&6&lL   "
-      - "   &6&lIRAQUE SURVI&f&lV&6&lAL   "
-      - "   &6&lIRAQUE SURV&f&lI&6&lVAL   "
-      - "   &6&lIRAQUE SUR&f&lV&6&lIVAL   "
-      - "   &6&lIRAQUE SU&f&lR&6&lVIVAL   "
-      - "   &6&lIRAQUE S&f&lU&6&lRVIVAL   "
-      - "   &6&lIRAQUE &f&lS&6&lURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &f&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &f&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
-      - "   &6&lIRAQUE SURVIVAL   "
+    # ── Fade animation ──
+    # Smooth color wave across the text (cleaner than manual frame lists).
+    # Overrides 'animation' list below when enabled.
+    fade: true
+    fade-colors:
+      - "&e"
+      - "&6"
+      - "&c"
+      - "&d"
+      - "&5"
+      - "&3"
+      - "&b"
+      - "&a"
+    # ── Manual frames (only used if fade: false) ──
+    animation: []
 
   update:
     amount: 2
