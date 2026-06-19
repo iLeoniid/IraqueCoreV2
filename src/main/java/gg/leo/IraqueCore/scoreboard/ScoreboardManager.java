@@ -30,25 +30,25 @@ public class ScoreboardManager implements Listener {
 
     private final IraqueCore plugin;
 
-    // Per-player toggle
     private final Map<UUID, Boolean> playerEnabled = new HashMap<>();
 
-    // Stats
     private final Map<UUID, Integer> blocksBroken = new HashMap<>();
     private final Map<UUID, Integer> blocksPlaced = new HashMap<>();
     private final Map<UUID, Integer> deaths       = new HashMap<>();
 
-    // Config values
     private long          updateInterval;
     private TextAnimation titleAnimation;
     private List<String>  lines;
     private boolean       globalEnabled;
 
-    // Persistence
     private File              statsFile;
     private FileConfiguration statsConfig;
 
     private final Set<UUID> dirtyPlayers = new HashSet<>();
+
+    private final Map<UUID, Objective> playerObjectives = new HashMap<>();
+    private final Map<UUID, String> lastTitles = new HashMap<>();
+    private final Map<UUID, List<String>> lastLines = new HashMap<>();
 
     public ScoreboardManager(IraqueCore plugin) {
         this.plugin = plugin;
@@ -69,8 +69,6 @@ public class ScoreboardManager implements Listener {
         }
         dirtyPlayers.clear();
     }
-
-    //  Lifecycle 
 
     public void load() {
         statsFile = new File(plugin.getDataFolder(), "stats.yml");
@@ -101,37 +99,35 @@ public class ScoreboardManager implements Listener {
     }
 
     public void startTasks() {
-        // Scoreboard update task
+        if (titleAnimation != null && titleAnimation.isAnimated()) {
+            long animInterval = Math.max(titleAnimation.getTicks(), 5L);
+            new BukkitRunnable() {
+                @Override public void run() {
+                    if (!globalEnabled || Bukkit.getOnlinePlayers().isEmpty()) return;
+                    updateTitlesOnly();
+                }
+            }.runTaskTimer(plugin, 20L, animInterval);
+        }
+
         new BukkitRunnable() {
             @Override public void run() {
                 if (!globalEnabled || Bukkit.getOnlinePlayers().isEmpty()) return;
-                updateAll();
+                updateAllLines();
             }
         }.runTaskTimer(plugin, 20L, updateInterval);
 
-        // Auto-save stats every 5 minutes
         new BukkitRunnable() {
             @Override public void run() {
                 if (statsConfig != null) saveStats();
             }
-        }.runTaskTimer(plugin, 1200L, 1200L);
+        }.runTaskTimer(plugin, 6000L, 6000L);
     }
 
-    //  Color parsing 
-
-    /**
-     * Parses a string that supports all color formats:
-     *  - & codes        : &6&lText
-     *  - MiniMessage     : <gold><bold>Text</bold></gold>
-     *  - Hex            : <#RRGGBB> or #RRGGBB or &#RRGGBB
-     */
     public Component parse(String text) {
         if (text == null || text.isEmpty()) return Component.empty();
         return plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().translate(text));
     }
-
-    //  Scoreboard logic 
 
     public void setPlayerEnabled(Player player, boolean enabled) {
         playerEnabled.put(player.getUniqueId(), enabled);
@@ -151,11 +147,43 @@ public class ScoreboardManager implements Listener {
         if (board == null) return;
         Objective old = board.getObjective("iraqueboard");
         if (old != null) old.unregister();
+        playerObjectives.remove(player.getUniqueId());
+        lastTitles.remove(player.getUniqueId());
+        lastLines.remove(player.getUniqueId());
     }
 
     public void updateAll() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (isPlayerEnabled(player)) updateScoreboard(player);
+        }
+    }
+
+    private void updateTitlesOnly() {
+        String currentTitle = titleAnimation.nextFrame();
+        Component titleComponent = parse(currentTitle);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!isPlayerEnabled(player)) continue;
+
+            UUID id = player.getUniqueId();
+            Objective obj = playerObjectives.get(id);
+
+            if (obj == null) {
+                updateScoreboard(player);
+                continue;
+            }
+
+            String lastTitle = lastTitles.get(id);
+            if (lastTitle != null && lastTitle.equals(currentTitle)) continue;
+
+            obj.displayName(titleComponent);
+            lastTitles.put(id, currentTitle);
+        }
+    }
+
+    private void updateAllLines() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (isPlayerEnabled(player)) updateScoreboardLines(player);
         }
     }
 
@@ -165,44 +193,51 @@ public class ScoreboardManager implements Listener {
             return;
         }
 
-        // Ensure the player has a custom scoreboard (not the main one)
+        UUID id = player.getUniqueId();
+
         Scoreboard board = player.getScoreboard();
         if (board == null || board == Bukkit.getScoreboardManager().getMainScoreboard()) {
             board = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(board);
         }
 
-        // Unregister old objective
-        Objective old = board.getObjective("iraqueboard");
-        if (old != null) old.unregister();
+        Objective obj = board.getObjective("iraqueboard");
+        if (obj == null) {
+            Component titleComponent = parse(titleAnimation.getCurrentText());
+            obj = board.registerNewObjective("iraqueboard", "dummy", titleComponent);
+            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            lastTitles.put(id, titleAnimation.getCurrentText());
+        }
+        playerObjectives.put(id, obj);
 
-        // Title — from animation, parsed as Component
-        Component titleComponent = parse(titleAnimation.getText());
+        updateScoreboardLines(player);
+    }
 
-        // Paper 26.2: registerNewObjective con criterio como String + Component como título
-        Objective obj = board.registerNewObjective(
-                "iraqueboard",
-                "dummy",
-                titleComponent
-        );
-        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+    private void updateScoreboardLines(Player player) {
+        UUID id = player.getUniqueId();
+        Scoreboard board = player.getScoreboard();
+        Objective obj = board.getObjective("iraqueboard");
 
-        // Build lines
+        if (obj == null) {
+            updateScoreboard(player);
+            return;
+        }
+
         int online = Bukkit.getOnlinePlayers().size();
         int max    = Bukkit.getMaxPlayers();
         int score  = lines.size();
+        List<String> currentLines = new ArrayList<>();
 
         for (String raw : lines) {
             String line = ChatColor.translateAlternateColorCodes('&', applyPlaceholders(raw, player, online, max));
-            // Score entry name must be unique — pad with invisible chars if duplicate
+            currentLines.add(line);
             String entryName = ensureUnique(board, line, score);
             obj.getScore(entryName).setScore(score--);
         }
+
+        lastLines.put(id, currentLines);
     }
 
-    /**
-     * Replaces all supported placeholders in a scoreboard line.
-     */
     private String applyPlaceholders(String raw, Player player, int online, int max) {
         return raw
                 .replace("{online}",       String.valueOf(online))
@@ -218,21 +253,13 @@ public class ScoreboardManager implements Listener {
                         .map(Player::getName).collect(Collectors.joining(", ")));
     }
 
-    /**
-     * Scoreboard entries must be unique strings. If two lines resolve to the
-     * same text (e.g. multiple blank lines) we append invisible § characters.
-     */
     private String ensureUnique(Scoreboard board, String line, int score) {
         String candidate = line;
-        // Use section symbols (invisible in-game when not followed by a valid code)
-        // to differentiate duplicate entries
         while (board.getEntries().contains(candidate)) {
             candidate = candidate + "§";
         }
         return candidate;
     }
-
-    //  Stats persistence 
 
     private void loadStats() {
         if (statsConfig == null || !statsConfig.contains("players")) return;
@@ -262,8 +289,7 @@ public class ScoreboardManager implements Listener {
 
         try {
             statsConfig.save(statsFile);
-            Component msg = plugin.getConfigManager().getMessageComponent("stats.saved");
-            Bukkit.broadcast(msg);
+            plugin.getPluginLogger().info("Stats saved successfully.");
         } catch (IOException e) {
             plugin.getPluginLogger().error("Failed to save stats.yml", e);
         }
@@ -283,8 +309,6 @@ public class ScoreboardManager implements Listener {
     public Map<UUID, Integer> getBlocksPlaced() { return Collections.unmodifiableMap(blocksPlaced); }
     public Map<UUID, Integer> getDeaths() { return Collections.unmodifiableMap(deaths); }
 
-    //  Helpers 
-
     private long convertToTicks(int time, String unit) {
         return switch (unit) {
             case "seconds" -> time * 20L;
@@ -293,8 +317,6 @@ public class ScoreboardManager implements Listener {
             default        -> 10 * 20L;
         };
     }
-
-    //  Events 
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -341,6 +363,10 @@ public class ScoreboardManager implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         UUID id = event.getPlayer().getUniqueId();
+        playerObjectives.remove(id);
+        lastTitles.remove(id);
+        lastLines.remove(id);
+
         if (statsConfig != null) {
             String path = "players." + id + ".";
             statsConfig.set(path + "name",          event.getPlayer().getName());

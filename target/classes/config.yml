@@ -82,7 +82,7 @@ scoreboard:
   title:
     text: "&6&lIRAQUE"
     animated: true
-    ticks: 2
+    ticks: 5
     animation:
       - "   &6&lIRAQUE SURVIVAL   "
       - "   &6&lIRAQUE SURVIVAL   "

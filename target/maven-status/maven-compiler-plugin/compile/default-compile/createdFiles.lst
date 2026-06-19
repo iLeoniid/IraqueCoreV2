@@ -12,6 +12,7 @@ gg\leo\IraqueCore\armorstand\ArmorStandEditor.class
 gg\leo\IraqueCore\sleep\SleepManager.class
 gg\leo\IraqueCore\ChatListener.class
 gg\leo\IraqueCore\rank\Rank.class
+gg\leo\IraqueCore\scoreboard\ScoreboardManager$3.class
 gg\leo\IraqueCore\IraqueCore.class
 gg\leo\IraqueCore\armorstand\ArmorStandEditor$ArmorStandPose.class
 gg\leo\IraqueCore\tag\TagCommand.class
