@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.tag;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,9 +61,9 @@ public class TagManager implements Listener {
 
         for (String key : tagsConfig.getConfigurationSection("tags").getKeys(false)) {
             String path = "tags." + key;
-            String displayName = ChatColor.translateAlternateColorCodes('&',
+            String displayName = ItemBuilder.color(
                     tagsConfig.getString(path + ".display-name", key));
-            String tagText = ChatColor.translateAlternateColorCodes('&',
+            String tagText = ItemBuilder.color(
                     tagsConfig.getString(path + ".tag", ""));
             String permission = tagsConfig.getString(path + ".permission", "");
             String category = tagsConfig.getString(path + ".category", "emojis");
@@ -72,7 +73,7 @@ public class TagManager implements Listener {
 
             List<String> lore = tagsConfig.getStringList(path + ".lore");
             List<String> coloredLore = lore.stream()
-                    .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+                    .map(ItemBuilder::color)
                     .collect(Collectors.toList());
 
             Tag tag = new Tag(key, displayName, tagText, permission, material, coloredLore);

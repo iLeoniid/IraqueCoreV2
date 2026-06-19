@@ -2,10 +2,10 @@ package gg.leo.IraqueCore.scoreboard;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.animation.TextAnimation;
+import gg.leo.IraqueCore.utils.ItemBuilder;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -229,7 +229,7 @@ public class ScoreboardManager implements Listener {
         List<String> currentLines = new ArrayList<>();
 
         for (String raw : lines) {
-            String line = ChatColor.translateAlternateColorCodes('&', applyPlaceholders(raw, player, online, max));
+            String line = ItemBuilder.color(applyPlaceholders(raw, player, online, max));
             currentLines.add(line);
             String entryName = ensureUnique(board, line, score);
             obj.getScore(entryName).setScore(score--);

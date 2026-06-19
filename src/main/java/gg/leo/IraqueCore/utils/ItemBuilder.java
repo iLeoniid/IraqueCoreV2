@@ -29,15 +29,22 @@ public class ItemBuilder {
         return new ItemBuilder(material, amount);
     }
 
+    public static String color(String text) {
+        if (text == null) return null;
+        return ChatColor.translateAlternateColorCodes('&',
+                text.replaceAll("&#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
+                        "§x§$1§$2§$3§$4§$5§$6"));
+    }
+
     public ItemBuilder name(String name) {
         if (name == null) return this;
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        meta.setDisplayName(color(name));
         return this;
     }
 
     public ItemBuilder lore(String... lines) {
         meta.setLore(Arrays.stream(lines)
-                .map(l -> ChatColor.translateAlternateColorCodes('&', l))
+                .map(ItemBuilder::color)
                 .collect(Collectors.toList()));
         return this;
     }
@@ -45,7 +52,7 @@ public class ItemBuilder {
     public ItemBuilder lore(List<String> lines) {
         if (lines == null) return this;
         meta.setLore(lines.stream()
-                .map(l -> ChatColor.translateAlternateColorCodes('&', l))
+                .map(ItemBuilder::color)
                 .collect(Collectors.toList()));
         return this;
     }
