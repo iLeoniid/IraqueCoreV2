@@ -4,6 +4,7 @@ import gg.leo.IraqueCore.afk.AfkManager;
 import gg.leo.IraqueCore.anvil.AnvilColorListener;
 import gg.leo.IraqueCore.armorstand.ArmorStandEditor;
 import gg.leo.IraqueCore.commands.GameModeCommand;
+import gg.leo.IraqueCore.commands.IraqueCoreCommand;
 import gg.leo.IraqueCore.commands.ReloadCommand;
 import gg.leo.IraqueCore.commands.SpawnCommand;
 import gg.leo.IraqueCore.commands.WhitelistCommand;
@@ -220,6 +221,9 @@ public final class IraqueCore extends JavaPlugin {
         register("playtime", playtimeCommand, playtimeCommand);
 
         register("stats", statsCommand, statsCommand);
+
+        var infoCommand = new IraqueCoreCommand(this);
+        register("iraquecore", infoCommand, null);
     }
 
     /**

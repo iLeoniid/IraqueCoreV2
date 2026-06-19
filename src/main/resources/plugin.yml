@@ -57,6 +57,10 @@ commands:
     description: View player stats
     aliases: [me]
     permission: iraquecore.stats
+  iraquecore:
+    description: Plugin info
+    aliases: [ic, core]
+    permission: iraquecore.info
 
 permissions:
   iraquecore.*:
@@ -137,4 +141,7 @@ permissions:
     default: true
   iraquecore.stats.other:
     description: View other players' stats
+    default: true
+  iraquecore.info:
+    description: View plugin info
     default: true
