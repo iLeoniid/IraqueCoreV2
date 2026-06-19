@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -80,6 +81,10 @@ public class PlaytimeManager implements Listener {
 
     public long getPlaytime(UUID uuid) {
         return playtime.getOrDefault(uuid, 0L);
+    }
+
+    public Map<UUID, Long> getPlaytimeMap() {
+        return Collections.unmodifiableMap(playtime);
     }
 
     public static String formatTime(long seconds) {

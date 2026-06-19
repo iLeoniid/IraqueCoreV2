@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.leaderboard;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.playtime.PlaytimeManager;
 import gg.leo.IraqueCore.utils.ItemBuilder;
 import gg.leo.IraqueCore.utils.MenuHolder;
 import org.bukkit.Bukkit;
@@ -41,21 +42,34 @@ public class LeaderboardManager implements Listener {
         inv.setItem(15, ItemBuilder.of(Material.SKELETON_SKULL)
                 .name("&cDeaths")
                 .lore("&7Click to view top players").build());
+        inv.setItem(22, ItemBuilder.of(Material.CLOCK)
+                .name("&ePlaytime")
+                .lore("&7Click to view top players").build());
 
         player.openInventory(inv);
     }
 
     public void openCategory(Player player, String category, int page) {
-        Map<UUID, Integer> stats = switch (category) {
-            case "blocks_broken" -> plugin.getScoreboardManager().getBlocksBroken();
-            case "blocks_placed" -> plugin.getScoreboardManager().getBlocksPlaced();
-            case "deaths" -> plugin.getScoreboardManager().getDeaths();
-            default -> Collections.emptyMap();
-        };
+        boolean isPlaytime = category.equals("playtime");
 
-        List<Map.Entry<UUID, Integer>> sorted = stats.entrySet().stream()
-                .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
-                .collect(Collectors.toList());
+        List<Map.Entry<UUID, ? extends Number>> sorted;
+        if (isPlaytime) {
+            var ptm = plugin.getPlaytimeManager();
+            sorted = (ptm != null ? ptm.getPlaytimeMap() : Collections.<UUID, Long>emptyMap())
+                    .entrySet().stream()
+                    .sorted(Map.Entry.<UUID, Long>comparingByValue().reversed())
+                    .collect(Collectors.toList());
+        } else {
+            Map<UUID, Integer> stats = switch (category) {
+                case "blocks_broken" -> plugin.getScoreboardManager().getBlocksBroken();
+                case "blocks_placed" -> plugin.getScoreboardManager().getBlocksPlaced();
+                case "deaths" -> plugin.getScoreboardManager().getDeaths();
+                default -> Collections.emptyMap();
+            };
+            sorted = stats.entrySet().stream()
+                    .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+                    .collect(Collectors.toList());
+        }
 
         int totalPages = Math.max(1, (int) Math.ceil((double) sorted.size() / ITEMS_PER_PAGE));
         page = Math.max(0, Math.min(page, totalPages - 1));
@@ -63,7 +77,9 @@ public class LeaderboardManager implements Listener {
         String title = switch (category) {
             case "blocks_broken" -> "§8Blocks Broken";
             case "blocks_placed" -> "§8Blocks Placed";
-            default -> "§8Deaths";
+            case "deaths" -> "§8Deaths";
+            case "playtime" -> "§8Playtime";
+            default -> "§8Leaderboard";
         };
 
         MenuHolder holder = new MenuHolder("leaderboard_category", category, page);
@@ -73,14 +89,18 @@ public class LeaderboardManager implements Listener {
         int start = page * ITEMS_PER_PAGE;
         int slot = 0;
         for (int i = start; i < sorted.size() && slot < ITEMS_PER_PAGE; i++, slot++) {
-            Map.Entry<UUID, Integer> entry = sorted.get(i);
+            Map.Entry<UUID, ? extends Number> entry = sorted.get(i);
             String playerName = getPlayerName(entry.getKey());
             int position = i + 1;
+
+            String valueStr = isPlaytime
+                    ? PlaytimeManager.formatTime(entry.getValue().longValue())
+                    : String.valueOf(entry.getValue().intValue());
 
             ItemStack head = ItemBuilder.of(Material.PLAYER_HEAD, 1)
                     .skullOwner(playerName)
                     .name("&e#" + position + " &6" + playerName)
-                    .lore("&7Value: &f" + entry.getValue())
+                    .lore("&7Value: &f" + valueStr)
                     .build();
             inv.setItem(slot, head);
         }
@@ -109,6 +129,7 @@ public class LeaderboardManager implements Listener {
                     case 11 -> openCategory(player, "blocks_broken", 0);
                     case 13 -> openCategory(player, "blocks_placed", 0);
                     case 15 -> openCategory(player, "deaths", 0);
+                    case 22 -> openCategory(player, "playtime", 0);
                 }
             }
             case "leaderboard_category" -> {
