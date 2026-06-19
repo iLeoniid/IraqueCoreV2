@@ -154,38 +154,37 @@ scoreboard:
     - "&ewww.iraque.gg"
 
 
-#   AFK SYSTEM
-#   When a player stays still for X minutes, their prefix changes to the AFK prefix
+#   DISCORD-MINECRAFT CHAT BRIDGE
 
-afk:
-  enabled: true
-  time-minutes: 5
-  prefix: "&7[AFK] &7"
-
-#   ARMOR STAND EDITOR
-#   Sneak + right-click an armor stand to open the editor
-
-armorstand:
-  enabled: true
-
-#   ANVIL COLORS
-#   Allow players to use color codes (&) in anvils
-
-anvil:
-  enabled: true
-
-#   SLEEP VOTING
-#   When enough players sleep, night is skipped
-
-sleep:
-  enabled: true
-  percentage: 50.0
-
-#   PLAYTIME TRACKING
-#   Track how long each player has been online
-
-playtime:
-  enabled: true
+discord:
+  # Enable Discord integration
+  enabled: false
+  # Discord bot token
+  token: "YOUR_BOT_TOKEN_HERE"
+  # Channel ID for chat relay
+  channel-id: "YOUR_CHANNEL_ID_HERE"
+  # Use webhooks for cleaner messages
+  use-webhooks: true
+  # Webhook URL (if use-webhooks is true)
+  webhook-url: "YOUR_WEBHOOK_URL_HERE"
+  # Format for messages sent from Minecraft → Discord
+  # Placeholders:
+  #   {player} - Player name
+  #   {message} - Chat message
+  #   {world} - World name
+  #   {rank} - Player rank
+  minecraft-to-discord: "**{player}:** {message}"
+  # Format for messages sent from Discord → Minecraft
+  # Placeholders:
+  #   {author} - Discord user name
+  #   {message} - Message content
+  discord-to-minecraft: "&9[Discord] &b{author}&7: {message}"
+  # Message sent when a player joins (leave empty to disable)
+  join-message: "&9[Discord] &b{player} &7joined the game"
+  # Message sent when a player leaves (leave empty to disable)
+  leave-message: "&9[Discord] &b{player} &7left the game"
+  # Message sent when a player dies (leave empty to disable)
+  death-message: "&9[Discord] &c{player} {message}"
 
 
 #   DATA STORAGE
