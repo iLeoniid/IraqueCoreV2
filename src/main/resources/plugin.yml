@@ -100,6 +100,11 @@ permissions:
   iraquecore.discord.reload:
     description: Reload Discord bot
     default: op
+  iraque.scoreboard.admin:
+    description: Admin del scoreboard
+    default: op
+    children:
+      iraquecore.scoreboard: true
   iraquecore.scoreboard:
     description: Use scoreboard command
     default: true

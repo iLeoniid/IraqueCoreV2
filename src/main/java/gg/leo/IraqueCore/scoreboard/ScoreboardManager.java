@@ -308,6 +308,30 @@ public class ScoreboardManager implements Listener {
     public Map<UUID, Integer> getBlocksPlaced() { return Collections.unmodifiableMap(blocksPlaced); }
     public Map<UUID, Integer> getDeaths() { return Collections.unmodifiableMap(deaths); }
 
+    public List<String> getTopBlocksBroken(int limit) {
+        return blocksBroken.entrySet().stream()
+            .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+            .limit(limit)
+            .map(e -> getPlayerName(e.getKey()) + ": <yellow>" + e.getValue())
+            .toList();
+    }
+
+    public List<String> getTopBlocksPlaced(int limit) {
+        return blocksPlaced.entrySet().stream()
+            .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+            .limit(limit)
+            .map(e -> getPlayerName(e.getKey()) + ": <yellow>" + e.getValue())
+            .toList();
+    }
+
+    public List<String> getTopDeaths(int limit) {
+        return deaths.entrySet().stream()
+            .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+            .limit(limit)
+            .map(e -> getPlayerName(e.getKey()) + ": <red>" + e.getValue())
+            .toList();
+    }
+
     private long convertToTicks(int time, String unit) {
         return switch (unit) {
             case "seconds" -> time * 20L;

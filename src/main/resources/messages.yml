@@ -135,11 +135,13 @@ whitelist:
 
 # ─── Scoreboard Command ───
 scoreboard:
-  player-only: "&cOnly players can use this command."
-  status: "&7Scoreboard: {status}"
-  usage: "&eUsage: /scoreboard on|off"
-  enabled: "&aScoreboard enabled."
-  disabled: "&cScoreboard disabled."
+  player-only: "&cSolo jugadores pueden usar este comando."
+  status: "&7Estado del scoreboard: {status}"
+  enabled: "&aScoreboard activado."
+  disabled: "&cScoreboard desactivado."
+  unknown: "&cSubcomando desconocido. Usa &e/{label} help"
+  reloaded: "&aScoreboard recargado correctamente."
+  no-permission: "&cNo tienes permiso para hacer esto."
 
 # ─── AFK ───
 afk:
@@ -163,6 +165,8 @@ armorstand:
   copy-pose: "&aCopy Pose"
   paste-pose: "&aPaste Pose"
   close: "&aClose"
+  marker: "&6Marker"
+  can-move: "&6Can Move"
   pose-copied: "&aPose copied!"
   no-pose: "&cNo pose copied yet!"
 
@@ -179,6 +183,7 @@ playtime:
 # ─── Grave ───
 grave:
   created: "&6{player} &edied. Items are in a grave at &6{x}, {y}, {z}"
+  hologram: "&6Cadaver de &e{player}"
 
 # ─── Durability Warning ───
 durability:

@@ -31,6 +31,10 @@ import gg.leo.IraqueCore.sleep.SleepManager;
 import gg.leo.IraqueCore.tag.TagCommand;
 import gg.leo.IraqueCore.tag.TagManager;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class IraqueCore extends JavaPlugin {
@@ -104,6 +108,16 @@ public final class IraqueCore extends JavaPlugin {
 
         this.statsCommand = new StatsCommand(this);
         getServer().getPluginManager().registerEvents(statsCommand, this);
+
+        getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onRespawn(PlayerRespawnEvent event) {
+                Location spawn = configManager.getSpawnLocation();
+                if (spawn != null && spawn.getWorld() != null) {
+                    event.setRespawnLocation(spawn);
+                }
+            }
+        }, this);
 
         this.leaderboardManager = new LeaderboardManager(this);
         getServer().getPluginManager().registerEvents(leaderboardManager, this);

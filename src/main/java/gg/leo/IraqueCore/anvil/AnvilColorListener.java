@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.anvil;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.ItemBuilder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,8 +29,7 @@ public class AnvilColorListener implements Listener {
         ItemStack result = event.getResult();
         if (result == null || result.getType().isAir()) return;
 
-        String colored = plugin.getConfigManager().translate(
-                "&r" + renameText.replace("\u00A7", "&"));
+        String colored = ItemBuilder.color("&r" + renameText.replace("\u00A7", "&"));
 
         ItemMeta meta = result.getItemMeta();
         if (meta == null) return;

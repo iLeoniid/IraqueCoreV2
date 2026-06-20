@@ -1,13 +1,13 @@
 package gg.leo.IraqueCore.grave;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.ItemBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
-import org.bukkit.block.data.Directional;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,14 +18,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class GraveListener implements Listener {
 
     private final IraqueCore plugin;
-    private final Set<Location> graves = new HashSet<>();
+    private final Map<Location, ArmorStand> graves = new HashMap<>();
 
     public GraveListener(IraqueCore plugin) {
         this.plugin = plugin;
@@ -56,20 +56,17 @@ public class GraveListener implements Listener {
 
         event.getDrops().clear();
 
-        Block above = loc.getBlock().getRelative(BlockFace.UP);
-        above.setType(Material.OAK_WALL_SIGN);
-        if (above.getState() instanceof Sign sign) {
-            if (sign.getBlockData() instanceof Directional dir) {
-                dir.setFacing(getPlayerFacing(player));
-                sign.setBlockData(dir);
-            }
-            sign.setLine(0, "§6Cadaver de");
-            sign.setLine(1, "§e" + player.getName());
-            sign.setWaxed(true);
-            sign.update(true, false);
-        }
+        ArmorStand hologram = (ArmorStand) loc.getWorld().spawnEntity(
+                loc.getBlock().getLocation().add(0.5, 1.3, 0.5), EntityType.ARMOR_STAND);
+        hologram.setVisible(false);
+        hologram.setGravity(false);
+        hologram.setMarker(true);
+        hologram.setCustomNameVisible(true);
+        hologram.setCustomName(ItemBuilder.color(
+                plugin.getConfigManager().getMessage("grave.hologram", "&6Cadaver de &e{player}")
+                        .replace("{player}", player.getName())));
 
-        graves.add(loc.getBlock().getLocation());
+        graves.put(loc.getBlock().getLocation(), hologram);
 
         plugin.getServer().broadcast(plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().translate(
@@ -79,15 +76,6 @@ public class GraveListener implements Listener {
                                 .replace("{x}", String.valueOf(loc.getBlockX()))
                                 .replace("{y}", String.valueOf(loc.getBlockY()))
                                 .replace("{z}", String.valueOf(loc.getBlockZ())))));
-    }
-
-    private BlockFace getPlayerFacing(Player player) {
-        float yaw = player.getLocation().getYaw();
-        if (yaw < 0) yaw += 360;
-        if (yaw >= 315 || yaw < 45) return BlockFace.SOUTH;
-        if (yaw >= 45 && yaw < 135) return BlockFace.WEST;
-        if (yaw >= 135 && yaw < 225) return BlockFace.NORTH;
-        return BlockFace.EAST;
     }
 
     @EventHandler
@@ -104,7 +92,7 @@ public class GraveListener implements Listener {
     private void checkEmptyAndRemove(org.bukkit.inventory.Inventory inv) {
         if (inv.getLocation() == null) return;
         Location chestLoc = inv.getLocation().getBlock().getLocation();
-        if (!graves.contains(chestLoc)) return;
+        if (!graves.containsKey(chestLoc)) return;
 
         if (isEmpty(inv)) {
             removeGrave(chestLoc);
@@ -123,22 +111,18 @@ public class GraveListener implements Listener {
         if (block.getType() == Material.CHEST) {
             block.setType(Material.AIR);
         }
-        Block above = loc.getBlock().getRelative(BlockFace.UP);
-        if (above.getState() instanceof Sign) {
-            above.setType(Material.AIR);
+        ArmorStand holo = graves.remove(loc);
+        if (holo != null) {
+            holo.remove();
         }
-        graves.remove(loc);
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Location loc = event.getBlock().getLocation();
-        if (graves.contains(loc)) {
-            Block above = loc.getBlock().getRelative(BlockFace.UP);
-            if (above.getState() instanceof Sign) {
-                above.setType(Material.AIR);
-            }
-            graves.remove(loc);
+        ArmorStand holo = graves.remove(loc);
+        if (holo != null) {
+            holo.remove();
         }
     }
 }
