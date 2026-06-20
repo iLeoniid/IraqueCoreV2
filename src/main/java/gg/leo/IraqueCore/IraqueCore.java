@@ -16,6 +16,7 @@ import gg.leo.IraqueCore.grave.GraveListener;
 import gg.leo.IraqueCore.stats.StatsCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardManager;
+import gg.leo.IraqueCore.motd.ImageMotdManager;
 import gg.leo.IraqueCore.motd.MotdManager;
 import gg.leo.IraqueCore.msg.MsgCommand;
 import gg.leo.IraqueCore.msg.MsgManager;
@@ -44,6 +45,7 @@ public final class IraqueCore extends JavaPlugin {
     private MsgManager        msgManager;
     private LeaderboardManager leaderboardManager;
     private MotdManager       motdManager;
+    private ImageMotdManager  imageMotdManager;
     private AfkManager        afkManager;
     private SleepManager      sleepManager;
     private PlaytimeManager   playtimeManager;
@@ -109,6 +111,10 @@ public final class IraqueCore extends JavaPlugin {
         this.motdManager = new MotdManager(this);
         motdManager.load();
 
+        this.imageMotdManager = new ImageMotdManager(this);
+        imageMotdManager.load();
+        getServer().getPluginManager().registerEvents(imageMotdManager, this);
+
         //  Commands 
         registerCommands();
 
@@ -173,6 +179,9 @@ public final class IraqueCore extends JavaPlugin {
 
         if (motdManager != null) {
             motdManager.reload();
+        }
+        if (imageMotdManager != null) {
+            imageMotdManager.reload();
         }
 
         // Discord: always restart to apply possible token/channel changes

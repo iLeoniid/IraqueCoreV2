@@ -183,6 +183,20 @@ durability-warning:
   threshold: 0.1
 
 
+#   IMAGE MOTD
+#   Show an image as text art in the server list
+#   Place the image file in plugins/IraqueCore/ folder
+
+motd-image:
+  enabled: false
+  # Image file inside plugins/IraqueCore/images/
+  file: "motd-image.png"
+  # Output size in characters (width x height)
+  char-width: 40
+  char-height: 10
+  # Also set the server favicon (64x64) from the same image
+  set-favicon: true
+
 #   DATA STORAGE
 
 storage:

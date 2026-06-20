@@ -21,6 +21,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -206,6 +208,7 @@ public class ScoreboardManager implements Listener {
             Component titleComponent = parse(titleAnimation.getCurrentText());
             obj = board.registerNewObjective("iraqueboard", "dummy", titleComponent);
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            obj.numberFormat(NumberFormat.blank());
             lastTitles.put(id, titleAnimation.getCurrentText());
         }
         playerObjectives.put(id, obj);
@@ -223,6 +226,11 @@ public class ScoreboardManager implements Listener {
             return;
         }
 
+        // clear old entries from the previous update to avoid stale duplicates
+        for (String entry : new HashSet<>(board.getEntries())) {
+            board.resetScores(entry);
+        }
+
         int online = Bukkit.getOnlinePlayers().size();
         int max    = Bukkit.getMaxPlayers();
         int score  = lines.size();
@@ -231,8 +239,7 @@ public class ScoreboardManager implements Listener {
         for (String raw : lines) {
             String line = ItemBuilder.color(applyPlaceholders(raw, player, online, max));
             currentLines.add(line);
-            String entryName = ensureUnique(board, line, score);
-            obj.getScore(entryName).setScore(score--);
+            obj.getScore(line + "§" + score).setScore(score--);
         }
 
         lastLines.put(id, currentLines);
@@ -251,14 +258,6 @@ public class ScoreboardManager implements Listener {
                 .replace("{deaths}",       String.valueOf(deaths.getOrDefault(player.getUniqueId(), 0)))
                 .replace("{players}",      Bukkit.getOnlinePlayers().stream()
                         .map(Player::getName).collect(Collectors.joining(", ")));
-    }
-
-    private String ensureUnique(Scoreboard board, String line, int score) {
-        String candidate = line;
-        while (board.getEntries().contains(candidate)) {
-            candidate = candidate + "§";
-        }
-        return candidate;
     }
 
     private void loadStats() {

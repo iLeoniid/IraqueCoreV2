@@ -30,12 +30,14 @@ public class ArmorStandEditor implements Listener {
     private static final int SLOT_VISIBLE = 13;
     private static final int SLOT_SMALL = 14;
     private static final int SLOT_GLOW = 15;
-    private static final int SLOT_RESET = 16;
+    private static final int SLOT_MARKER = 16;
+    private static final int SLOT_CAN_MOVE = 17;
     private static final int SLOT_ROTATE_L = 20;
     private static final int SLOT_ROTATE_R = 21;
-    private static final int SLOT_COPY = 22;
-    private static final int SLOT_PASTE = 23;
-    private static final int SLOT_CLOSE = 24;
+    private static final int SLOT_RESET = 22;
+    private static final int SLOT_COPY = 23;
+    private static final int SLOT_PASTE = 24;
+    private static final int SLOT_CLOSE = 25;
 
     public ArmorStandEditor(IraqueCore plugin) {
         this.plugin = plugin;
@@ -95,6 +97,16 @@ public class ArmorStandEditor implements Listener {
                 .name(plugin.getConfigManager().getMessage("armorstand.glow", "&6Glow"))
                 .lore(status(glow)).build());
 
+        boolean marker = stand.isMarker();
+        inv.setItem(SLOT_MARKER, ItemBuilder.of(Material.ENDER_PEARL)
+                .name(plugin.getConfigManager().getMessage("armorstand.marker", "&6Marker"))
+                .lore(status(marker)).build());
+
+        boolean canMove = stand.canMove();
+        inv.setItem(SLOT_CAN_MOVE, ItemBuilder.of(Material.LEATHER_BOOTS)
+                .name(plugin.getConfigManager().getMessage("armorstand.can-move", "&6Can Move"))
+                .lore(status(canMove)).build());
+
         inv.setItem(SLOT_RESET, ItemBuilder.of(Material.BARRIER)
                 .name(plugin.getConfigManager().getMessage("armorstand.reset", "&cReset Pose")).build());
 
@@ -119,6 +131,7 @@ public class ArmorStandEditor implements Listener {
     private boolean isOptionSlot(int slot) {
         return slot == SLOT_ARMS || slot == SLOT_BASE_PLATE || slot == SLOT_GRAVITY
                 || slot == SLOT_VISIBLE || slot == SLOT_SMALL || slot == SLOT_GLOW
+                || slot == SLOT_MARKER || slot == SLOT_CAN_MOVE
                 || slot == SLOT_RESET || slot == SLOT_ROTATE_L || slot == SLOT_ROTATE_R
                 || slot == SLOT_COPY || slot == SLOT_PASTE || slot == SLOT_CLOSE;
     }
@@ -163,6 +176,14 @@ public class ArmorStandEditor implements Listener {
             }
             case SLOT_GLOW -> {
                 stand.setGlowing(!stand.isGlowing());
+                refreshGUI(player, stand);
+            }
+            case SLOT_MARKER -> {
+                stand.setMarker(!stand.isMarker());
+                refreshGUI(player, stand);
+            }
+            case SLOT_CAN_MOVE -> {
+                stand.setCanMove(!stand.canMove());
                 refreshGUI(player, stand);
             }
             case SLOT_RESET -> {
