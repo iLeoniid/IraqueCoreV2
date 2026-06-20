@@ -133,18 +133,29 @@ public class RankManager {
     public void removeRank(String name)    { ranks.remove(name); }
 
     public void applyPermissions(Player player) {
-        getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
-            removePermissions(player);
-            if (rank.permissions().isEmpty()) return;
+        removePermissions(player);
 
-            PermissionAttachment attachment = player.addAttachment(plugin);
+        PermissionAttachment attachment = player.addAttachment(plugin);
+
+        // Apply rank permissions
+        getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
             for (String perm : rank.permissions()) {
                 if (perm.equals("*")) continue;
                 attachment.setPermission(perm, true);
             }
-            attachments.put(player.getUniqueId(), attachment);
-            player.recalculatePermissions();
         });
+
+        // Apply player-specific permissions from PermissionManager
+        var permManager = plugin.getPermissionManager();
+        if (permManager != null) {
+            for (String perm : permManager.getPermissions(player.getUniqueId())) {
+                if (perm.equals("*")) continue;
+                attachment.setPermission(perm, true);
+            }
+        }
+
+        attachments.put(player.getUniqueId(), attachment);
+        player.recalculatePermissions();
     }
 
     public void removePermissions(Player player) {

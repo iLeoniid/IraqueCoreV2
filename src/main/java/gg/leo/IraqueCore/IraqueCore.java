@@ -16,6 +16,8 @@ import gg.leo.IraqueCore.grave.GraveListener;
 import gg.leo.IraqueCore.stats.StatsCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardManager;
+import gg.leo.IraqueCore.permission.PermissionManager;
+import gg.leo.IraqueCore.permission.PermissionsCommand;
 import gg.leo.IraqueCore.motd.ImageMotdManager;
 import gg.leo.IraqueCore.motd.MotdManager;
 import gg.leo.IraqueCore.msg.MsgCommand;
@@ -52,8 +54,9 @@ public final class IraqueCore extends JavaPlugin {
     private ImageMotdManager  imageMotdManager;
     private AfkManager        afkManager;
     private SleepManager      sleepManager;
-    private PlaytimeManager   playtimeManager;
-    private StatsCommand      statsCommand;
+    private PlaytimeManager    playtimeManager;
+    private PermissionManager  permissionManager;
+    private StatsCommand       statsCommand;
 
     // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
     private ComponentLogger componentLogger;
@@ -87,6 +90,9 @@ public final class IraqueCore extends JavaPlugin {
         tagManager.load();
 
         this.msgManager = new MsgManager();
+
+        this.permissionManager = new PermissionManager(this);
+        permissionManager.load();
 
         //  Scoreboard 
         this.scoreboardManager = new ScoreboardManager(this);
@@ -153,6 +159,9 @@ public final class IraqueCore extends JavaPlugin {
         if (tagManager != null) {
             tagManager.savePlayerTags();
         }
+        if (permissionManager != null) {
+            permissionManager.saveAll();
+        }
         if (scoreboardManager != null) {
             scoreboardManager.saveStats();
         }
@@ -191,6 +200,10 @@ public final class IraqueCore extends JavaPlugin {
             playtimeManager.load();
         }
 
+        if (permissionManager != null) {
+            permissionManager.load();
+        }
+
         if (motdManager != null) {
             motdManager.reload();
         }
@@ -212,6 +225,7 @@ public final class IraqueCore extends JavaPlugin {
     //  Command registration 
 
     private void registerCommands() {
+        var permissionsCommand = new PermissionsCommand(this);
         var rankCommand      = new RankCommand(this);
         var tagCommand       = new TagCommand(this);
         var scoreboardCmd    = new ScoreboardCommand(scoreboardManager, this);
@@ -244,6 +258,8 @@ public final class IraqueCore extends JavaPlugin {
         register("playtime", playtimeCommand, playtimeCommand);
 
         register("stats", statsCommand, statsCommand);
+
+        register("perm", permissionsCommand, permissionsCommand);
 
         var infoCommand = new IraqueCoreCommand(this);
         register("iraquecore", infoCommand, null);
@@ -279,6 +295,7 @@ public final class IraqueCore extends JavaPlugin {
     public AfkManager         getAfkManager()          { return afkManager; }
     public SleepManager       getSleepManager()        { return sleepManager; }
     public PlaytimeManager    getPlaytimeManager()      { return playtimeManager; }
+    public PermissionManager  getPermissionManager()    { return permissionManager; }
 
     /**
      * Native Paper logger with Adventure Components support.

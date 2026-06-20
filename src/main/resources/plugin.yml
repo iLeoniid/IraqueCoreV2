@@ -57,6 +57,10 @@ commands:
     description: View player stats
     aliases: [me]
     permission: iraquecore.stats
+  perm:
+    description: Manage player permissions
+    aliases: [permission, perms]
+    permission: iraquecore.permission
   iraquecore:
     description: Plugin info
     aliases: [ic, core]
@@ -76,6 +80,12 @@ permissions:
       iraquecore.gamemode: true
       iraquecore.gamemode.other: true
       iraquecore.whitelist: true
+      iraquecore.permission: true
+      iraquecore.permission.add: true
+      iraquecore.permission.remove: true
+      iraquecore.permission.list: true
+      iraquecore.permission.clear: true
+      iraquecore.permission.check: true
   iraquecore.admin:
     description: Access to admin commands
     default: op
@@ -150,3 +160,21 @@ permissions:
   iraquecore.info:
     description: View plugin info
     default: true
+  iraquecore.permission:
+    description: Access to permission commands
+    default: op
+  iraquecore.permission.add:
+    description: Add permissions to players
+    default: op
+  iraquecore.permission.remove:
+    description: Remove permissions from players
+    default: op
+  iraquecore.permission.list:
+    description: List a player's permissions
+    default: op
+  iraquecore.permission.clear:
+    description: Clear all permissions from a player
+    default: op
+  iraquecore.permission.check:
+    description: Check if a player has a permission
+    default: op

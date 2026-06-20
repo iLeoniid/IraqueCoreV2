@@ -189,6 +189,30 @@ grave:
 durability:
   warning: "&cYour {item} is about to break! (&7{remaining}/{max}&c)"
 
+# ─── Permission Command ───
+permission:
+  no-permission: "&cYou don't have permission to manage permissions."
+  player-not-found: "&cPlayer not found."
+  usage-add: "&cUsage: /perm add <player> <permission>"
+  usage-remove: "&cUsage: /perm remove <player> <permission>"
+  usage-list: "&cUsage: /perm list <player>"
+  usage-clear: "&cUsage: /perm clear <player>"
+  usage-check: "&cUsage: /perm check <player> <permission>"
+  added: "&aAdded permission &e{permission} &ato &e{player}"
+  removed: "&cRemoved permission &e{permission} &cfrom &e{player}"
+  cleared: "&eAll player-specific permissions cleared for &e{player}"
+  list-header: "&6─── Permissions for {player} ({count}) ───"
+  list-entry: "&7  - &e{permission}"
+  list-empty: "&7No player-specific permissions."
+  check-true: "&a{player} &ahas permission &e{permission}"
+  check-false: "&c{player} &cdoes NOT have permission &e{permission}"
+  help-header: "&6─── Permission Commands ───"
+  help-add: "&e/perm add <player> <permission> &7- Add a permission"
+  help-remove: "&e/perm remove <player> <permission> &7- Remove a permission"
+  help-list: "&e/perm list <player> &7- List player permissions"
+  help-clear: "&e/perm clear <player> &7- Clear all player permissions"
+  help-check: "&e/perm check <player> <permission> &7- Check if player has permission"
+
 # ─── Stats ───
 stats:
   saved: "&aStats have been saved successfully."
