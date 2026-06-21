@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.armorstand.menu;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.armorstand.ArmorStandEditor;
+import gg.leo.IraqueCore.armorstand.glow.ArmorStandGlowMenu;
 import gg.leo.IraqueCore.utils.menu.Button;
 import gg.leo.IraqueCore.utils.menu.Menu;
 import org.bukkit.Bukkit;
@@ -61,6 +62,11 @@ public class ArmorStandMenu extends Menu {
                 stand.isCustomNameVisible(), () -> stand.setCustomNameVisible(!stand.isCustomNameVisible())));
         buttons.put(23, toggleButton(Material.NOTE_BLOCK, "armorstand.silent", "&6Silent",
                 stand.isSilent(), () -> stand.setSilent(!stand.isSilent())));
+
+        // Navegacion a submenus
+        buttons.put(24, navButton(Material.GLOWSTONE_DUST, "armorstand.glow-color", "&6Glow Color",
+                List.of("&7Select a glow color", "&7for the armor stand."),
+                () -> new ArmorStandGlowMenu(plugin, player, stand, editor)));
 
         // Fila de acciones y navegación
         buttons.put(28, actionButton(Material.FEATHER, "armorstand.rotate-left", "&eRotate Left",

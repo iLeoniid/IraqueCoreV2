@@ -165,9 +165,16 @@ armorstand:
   paste-pose: "&aPaste Pose"
   close: "&aClose"
   marker: "&6Marker"
-  can-move: "&6Can Move"
+  no-item-in-hand: "&cYou must hold an item in your hand!"
   pose-copied: "&aPose copied!"
   no-pose: "&cNo pose copied yet!"
+  equipment-editor: "&bEquipment Editor"
+  pose-editor: "&bPose Editor"
+  can-move: "&6Can Move"
+  glow-color: "&6Glow Color"
+  invulnerable: "&6Invulnerable"
+  custom-name-visible: "&6Custom Name Visible"
+  silent: "&6Silent"
 
 # ─── Sleep ───
 sleep:
