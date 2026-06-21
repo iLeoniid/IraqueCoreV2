@@ -8,8 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class Menu {
 
@@ -31,6 +31,10 @@ public abstract class Menu {
             if (key > highest) highest = key;
         }
         return (int) (Math.ceil((highest + 1) / 9.0) * 9.0);
+    }
+
+    public boolean isStealable() {
+        return stealable;
     }
 
     public void openMenu() {

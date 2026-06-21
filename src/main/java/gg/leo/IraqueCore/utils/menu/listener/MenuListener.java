@@ -5,11 +5,13 @@ import gg.leo.IraqueCore.utils.menu.Menu;
 import gg.leo.IraqueCore.utils.menu.MenuController;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,74 +21,67 @@ public class MenuListener implements Listener {
 
     private final Map<UUID, Long> timestamps = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onMenuClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
         Menu menu = MenuController.menus.get(player.getUniqueId());
-
-        if (menu != null && event.getClickedInventory() != player.getInventory()) {
-            event.setCancelled(!menu.stealable);
-
-            if (event.getClick() == ClickType.CREATIVE || event.getClick() == ClickType.MIDDLE) {
-                event.setCancelled(true);
-                return;
-            }
-
-            Long time = timestamps.get(player.getUniqueId());
-            if (time != null && System.currentTimeMillis() - time < 300L) {
-                event.setCancelled(true);
-                timestamps.remove(player.getUniqueId());
-                return;
-            }
-            timestamps.put(player.getUniqueId(), System.currentTimeMillis());
-
-            Button button = menu.getButtons(player).get(event.getSlot());
-            if (button != null) {
-                button.onClick(player, event.getSlot(), event.getClick());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPaginatedMenuClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
         var paginated = MenuController.paginatedMenus.get(player.getUniqueId());
 
-        if (paginated != null && event.getClickedInventory() != player.getInventory()) {
-            event.setCancelled(true);
+        if (menu == null && paginated == null) return;
 
-            if (event.getClick() == ClickType.DOUBLE_CLICK) {
-                event.setCancelled(true);
-                return;
-            }
+        event.setCancelled(true);
 
-            Long time = timestamps.get(player.getUniqueId());
-            if (time != null && System.currentTimeMillis() - time < 300L) {
-                event.setCancelled(true);
-                timestamps.remove(player.getUniqueId());
-                return;
-            }
-            timestamps.put(player.getUniqueId(), System.currentTimeMillis());
+        if (event.getClickedInventory() == null) return;
+        if (event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+        if (event.getSlot() < 0) return;
 
-            var buttons = paginated.getButtonsInRange(player);
-            Button button = buttons.get(event.getSlot());
-            if (button != null) {
-                button.onClick(player, event.getSlot(), event.getClick());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onDrag(InventoryDragEvent event) {
-        Player player = (Player) event.getWhoClicked();
-
-        Menu menu = MenuController.menus.get(player.getUniqueId());
-        if (menu != null) {
-            event.setCancelled(!menu.stealable);
+        ClickType click = event.getClick();
+        if (click == ClickType.CREATIVE ||
+            click == ClickType.MIDDLE ||
+            click == ClickType.SHIFT_LEFT ||
+            click == ClickType.SHIFT_RIGHT ||
+            click == ClickType.DOUBLE_CLICK ||
+            click == ClickType.NUMBER_KEY ||
+            click == ClickType.DROP ||
+            click == ClickType.CONTROL_DROP ||
+            click == ClickType.WINDOW_BORDER_LEFT ||
+            click == ClickType.WINDOW_BORDER_RIGHT ||
+            click == ClickType.UNKNOWN) {
             return;
         }
 
-        if (MenuController.paginatedMenus.containsKey(player.getUniqueId())) {
+        long now = System.currentTimeMillis();
+        Long last = timestamps.get(player.getUniqueId());
+        if (last != null && now - last < 300L) return;
+        timestamps.put(player.getUniqueId(), now);
+
+        Button btn = null;
+        if (paginated != null) {
+            btn = paginated.getButtonsInRange(player).get(event.getSlot());
+        } else if (menu != null) {
+            if (menu.isStealable() && event.getClickedInventory().getType() == InventoryType.PLAYER) {
+                event.setCancelled(false);
+                return;
+            }
+            btn = menu.getButtons(player).get(event.getSlot());
+        }
+
+        if (btn != null) {
+            final Button fbtn = btn;
+            org.bukkit.Bukkit.getScheduler().runTask(
+                gg.leo.IraqueCore.IraqueCore.getInstance(),
+                () -> fbtn.onClick(player, event.getSlot(), event.getClick())
+            );
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onDrag(InventoryDragEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
+        if (MenuController.menus.containsKey(player.getUniqueId()) ||
+            MenuController.paginatedMenus.containsKey(player.getUniqueId())) {
             event.setCancelled(true);
         }
     }
