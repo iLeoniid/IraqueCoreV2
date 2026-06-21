@@ -29,7 +29,7 @@ public class ChatListener implements Listener {
         Player player  = event.getPlayer();
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
 
-        if (plugin.getGrantListener() != null && plugin.getGrantListener().handleChatInput(player, message)) {
+        if (plugin.getGrantListener() != null && plugin.getGrantListener().getGrantMenu().handleChatInput(player, message)) {
             event.setCancelled(true);
             return;
         }
@@ -37,7 +37,8 @@ public class ChatListener implements Listener {
         String format    = plugin.getConfigManager().getChatFormat();
         String prefix    = "";
         String suffix    = "";
-        String color     = "&7";
+        String nameColor = "&7";
+        String chatColor = "&f";
 
         if (plugin.getConfigManager().isUseRanks()) {
             Optional<Rank> rankOpt = plugin.getRankManager().getPlayerRank(player.getUniqueId());
@@ -51,14 +52,14 @@ public class ChatListener implements Listener {
                 }
 
                 suffix = rank.suffix();
-                color  = rank.color();
+                nameColor = rank.color();
             }
         }
 
         if (plugin.getChatColorManager() != null) {
             String chatColorCode = plugin.getChatColorManager().getActiveColorCode(player.getUniqueId());
             if (chatColorCode != null) {
-                color = chatColorCode;
+                chatColor = chatColorCode;
             }
         }
 
@@ -68,20 +69,20 @@ public class ChatListener implements Listener {
             if (!display.isEmpty()) tagStr = display + " ";
         }
 
-        String displayName = color + player.getName();
+        String displayName = nameColor + player.getName();
         try {
-            displayName = color + net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(player.displayName());
+            displayName = nameColor + net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(player.displayName());
         } catch (Exception ignored) {
         }
 
         String formatted = format
                 .replace("{prefix}",      prefix)
                 .replace("{suffix}",      suffix)
-                .replace("{player}",      color + player.getName())
+                .replace("{player}",      nameColor + player.getName())
                 .replace("{displayname}", displayName)
                 .replace("{tag}",         tagStr)
                 .replace("{world}",       player.getWorld().getName())
-                .replace("{message}",     message);
+                .replace("{message}",     chatColor + message);
 
         Component rendered = plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().translate(formatted));
@@ -98,7 +99,6 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
         plugin.getRankManager().loadPlayer(player.getUniqueId());
 
-        // Apply active grants on join
         plugin.getGrantManager().applyGrant(player.getUniqueId());
 
         plugin.getRankManager().applyPermissions(player);
