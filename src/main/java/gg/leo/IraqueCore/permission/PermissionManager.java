@@ -13,23 +13,37 @@ public class PermissionManager {
 
     private final IraqueCore plugin;
     private final Map<UUID, Set<String>> playerPermissions = new HashMap<>();
+    private final Map<String, Set<String>> rankPermissions = new HashMap<>();
     private File dataFile;
+    private File rankPermFile;
 
     public PermissionManager(IraqueCore plugin) {
         this.plugin = plugin;
         this.dataFile = new File(plugin.getDataFolder(), "player-permissions.yml");
+        this.rankPermFile = new File(plugin.getDataFolder(), "rank-permissions.yml");
     }
 
     public void load() {
         playerPermissions.clear();
-        if (!dataFile.exists()) return;
-        YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
-        for (String key : data.getKeys(false)) {
-            try {
-                UUID uuid = UUID.fromString(key);
-                List<String> perms = data.getStringList(key);
-                playerPermissions.put(uuid, new LinkedHashSet<>(perms));
-            } catch (IllegalArgumentException ignored) {}
+        rankPermissions.clear();
+
+        if (dataFile.exists()) {
+            YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
+            for (String key : data.getKeys(false)) {
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    List<String> perms = data.getStringList(key);
+                    playerPermissions.put(uuid, new LinkedHashSet<>(perms));
+                } catch (IllegalArgumentException ignored) {}
+            }
+        }
+
+        if (rankPermFile.exists()) {
+            YamlConfiguration data = YamlConfiguration.loadConfiguration(rankPermFile);
+            for (String rank : data.getKeys(false)) {
+                List<String> perms = data.getStringList(rank);
+                rankPermissions.put(rank.toLowerCase(), new LinkedHashSet<>(perms));
+            }
         }
     }
 
@@ -42,6 +56,16 @@ public class PermissionManager {
             data.save(dataFile);
         } catch (IOException e) {
             plugin.getPluginLogger().error("Failed to save player permissions", e);
+        }
+
+        YamlConfiguration rankData = new YamlConfiguration();
+        for (Map.Entry<String, Set<String>> entry : rankPermissions.entrySet()) {
+            rankData.set(entry.getKey(), new ArrayList<>(entry.getValue()));
+        }
+        try {
+            rankData.save(rankPermFile);
+        } catch (IOException e) {
+            plugin.getPluginLogger().error("Failed to save rank permissions", e);
         }
     }
 
@@ -87,6 +111,31 @@ public class PermissionManager {
         playerPermissions.remove(uuid);
         saveAll();
         applyToPlayer(uuid);
+    }
+
+    public Set<String> getRankPermissions(String rankName) {
+        return rankPermissions.getOrDefault(rankName.toLowerCase(), Collections.emptySet());
+    }
+
+    public void addRankPermission(String rankName, String permission) {
+        rankPermissions.computeIfAbsent(rankName.toLowerCase(), k -> new LinkedHashSet<>()).add(permission);
+        saveAll();
+    }
+
+    public void removeRankPermission(String rankName, String permission) {
+        Set<String> perms = rankPermissions.get(rankName.toLowerCase());
+        if (perms != null) {
+            perms.remove(permission);
+            if (perms.isEmpty()) {
+                rankPermissions.remove(rankName.toLowerCase());
+            }
+            saveAll();
+        }
+    }
+
+    public void clearRankPermissions(String rankName) {
+        rankPermissions.remove(rankName.toLowerCase());
+        saveAll();
     }
 
     public void applyToPlayer(UUID uuid) {

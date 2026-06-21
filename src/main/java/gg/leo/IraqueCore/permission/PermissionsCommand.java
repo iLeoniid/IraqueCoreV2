@@ -55,25 +55,44 @@ public class PermissionsCommand implements TabExecutor {
             sender.sendMessage(txt("permission.no-permission"));
             return;
         }
-        if (args.length < 3) {
+        if (args.length < 4) {
             sender.sendMessage(plugin.getConfigManager().deserialize(
-                    msg("permission.usage-add")));
+                    msg("permission.usage-add") + " &7Usage: /perm add <player/rank> <name> <permission>"));
             return;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
-        if (target == null) {
-            sender.sendMessage(txt("permission.player-not-found"));
-            return;
+        String type = args[1].toLowerCase();
+        String name = args[2];
+        String perm = args[3];
+
+        if (type.equals("player")) {
+            Player target = Bukkit.getPlayer(name);
+            if (target == null) {
+                sender.sendMessage(txt("permission.player-not-found"));
+                return;
+            }
+            plugin.getPermissionManager().addPermission(target.getUniqueId(), perm);
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("permission.added")
+                            .replace("{player}", target.getName())
+                            .replace("{permission}", perm)));
+        } else if (type.equals("rank")) {
+            if (plugin.getRankManager().getRank(name).isEmpty()) {
+                sender.sendMessage(txt("rank.not-found"));
+                return;
+            }
+            plugin.getPermissionManager().addRankPermission(name, perm);
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("permission.rank-added")
+                            .replace("{rank}", name)
+                            .replace("{permission}", perm)));
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                plugin.getRankManager().applyPermissions(online);
+            }
+        } else {
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    "&cTipo invalido. Usa: player o rank"));
         }
-
-        String perm = args[2];
-        plugin.getPermissionManager().addPermission(target.getUniqueId(), perm);
-
-        sender.sendMessage(plugin.getConfigManager().deserialize(
-                msg("permission.added")
-                        .replace("{player}", target.getName())
-                        .replace("{permission}", perm)));
     }
 
     private void handleRemove(CommandSender sender, String[] args) {
@@ -81,25 +100,44 @@ public class PermissionsCommand implements TabExecutor {
             sender.sendMessage(txt("permission.no-permission"));
             return;
         }
-        if (args.length < 3) {
+        if (args.length < 4) {
             sender.sendMessage(plugin.getConfigManager().deserialize(
-                    msg("permission.usage-remove")));
+                    msg("permission.usage-remove") + " &7Usage: /perm remove <player/rank> <name> <permission>"));
             return;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
-        if (target == null) {
-            sender.sendMessage(txt("permission.player-not-found"));
-            return;
+        String type = args[1].toLowerCase();
+        String name = args[2];
+        String perm = args[3];
+
+        if (type.equals("player")) {
+            Player target = Bukkit.getPlayer(name);
+            if (target == null) {
+                sender.sendMessage(txt("permission.player-not-found"));
+                return;
+            }
+            plugin.getPermissionManager().removePermission(target.getUniqueId(), perm);
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("permission.removed")
+                            .replace("{player}", target.getName())
+                            .replace("{permission}", perm)));
+        } else if (type.equals("rank")) {
+            if (plugin.getRankManager().getRank(name).isEmpty()) {
+                sender.sendMessage(txt("rank.not-found"));
+                return;
+            }
+            plugin.getPermissionManager().removeRankPermission(name, perm);
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("permission.rank-removed")
+                            .replace("{rank}", name)
+                            .replace("{permission}", perm)));
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                plugin.getRankManager().applyPermissions(online);
+            }
+        } else {
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    "&cTipo invalido. Usa: player o rank"));
         }
-
-        String perm = args[2];
-        plugin.getPermissionManager().removePermission(target.getUniqueId(), perm);
-
-        sender.sendMessage(plugin.getConfigManager().deserialize(
-                msg("permission.removed")
-                        .replace("{player}", target.getName())
-                        .replace("{permission}", perm)));
     }
 
     private void handleList(CommandSender sender, String[] args) {
@@ -107,23 +145,40 @@ public class PermissionsCommand implements TabExecutor {
             sender.sendMessage(txt("permission.no-permission"));
             return;
         }
-        if (args.length < 2) {
+        if (args.length < 3) {
             sender.sendMessage(plugin.getConfigManager().deserialize(
-                    msg("permission.usage-list")));
+                    msg("permission.usage-list") + " &7Usage: /perm list <player/rank> <name>"));
             return;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
-        if (target == null) {
-            sender.sendMessage(txt("permission.player-not-found"));
-            return;
+        String type = args[1].toLowerCase();
+        String name = args[2];
+
+        if (type.equals("player")) {
+            Player target = Bukkit.getPlayer(name);
+            if (target == null) {
+                sender.sendMessage(txt("permission.player-not-found"));
+                return;
+            }
+            Set<String> perms = plugin.getPermissionManager().getPermissions(target.getUniqueId());
+            sendPermList(sender, target.getName(), perms);
+        } else if (type.equals("rank")) {
+            if (plugin.getRankManager().getRank(name).isEmpty()) {
+                sender.sendMessage(txt("rank.not-found"));
+                return;
+            }
+            Set<String> perms = plugin.getPermissionManager().getRankPermissions(name);
+            sendPermList(sender, "Rank: " + name, perms);
+        } else {
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    "&cTipo invalido. Usa: player o rank"));
         }
+    }
 
-        Set<String> perms = plugin.getPermissionManager().getPermissions(target.getUniqueId());
-
+    private void sendPermList(CommandSender sender, String targetName, Set<String> perms) {
         sender.sendMessage(plugin.getConfigManager().deserialize(
                 msg("permission.list-header")
-                        .replace("{player}", target.getName())
+                        .replace("{player}", targetName)
                         .replace("{count}", String.valueOf(perms.size()))));
 
         if (perms.isEmpty()) {
@@ -142,23 +197,41 @@ public class PermissionsCommand implements TabExecutor {
             sender.sendMessage(txt("permission.no-permission"));
             return;
         }
-        if (args.length < 2) {
+        if (args.length < 3) {
             sender.sendMessage(plugin.getConfigManager().deserialize(
-                    msg("permission.usage-clear")));
+                    msg("permission.usage-clear") + " &7Usage: /perm clear <player/rank> <name>"));
             return;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
-        if (target == null) {
-            sender.sendMessage(txt("permission.player-not-found"));
-            return;
+        String type = args[1].toLowerCase();
+        String name = args[2];
+
+        if (type.equals("player")) {
+            Player target = Bukkit.getPlayer(name);
+            if (target == null) {
+                sender.sendMessage(txt("permission.player-not-found"));
+                return;
+            }
+            plugin.getPermissionManager().clearPermissions(target.getUniqueId());
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("permission.cleared")
+                            .replace("{player}", target.getName())));
+        } else if (type.equals("rank")) {
+            if (plugin.getRankManager().getRank(name).isEmpty()) {
+                sender.sendMessage(txt("rank.not-found"));
+                return;
+            }
+            plugin.getPermissionManager().clearRankPermissions(name);
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    msg("permission.rank-cleared")
+                            .replace("{rank}", name)));
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                plugin.getRankManager().applyPermissions(online);
+            }
+        } else {
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    "&cTipo invalido. Usa: player o rank"));
         }
-
-        plugin.getPermissionManager().clearPermissions(target.getUniqueId());
-
-        sender.sendMessage(plugin.getConfigManager().deserialize(
-                msg("permission.cleared")
-                        .replace("{player}", target.getName())));
     }
 
     private void handleCheck(CommandSender sender, String[] args) {
@@ -168,7 +241,7 @@ public class PermissionsCommand implements TabExecutor {
         }
         if (args.length < 3) {
             sender.sendMessage(plugin.getConfigManager().deserialize(
-                    msg("permission.usage-check")));
+                    msg("permission.usage-check") + " &7Usage: /perm check <player> <permission>"));
             return;
         }
 
@@ -204,10 +277,23 @@ public class PermissionsCommand implements TabExecutor {
         }
         if (args.length == 2) {
             String sub = args[0].toLowerCase();
-            if (List.of("add", "remove", "list", "clear", "check").contains(sub)) {
+            if (List.of("add", "remove", "list", "clear").contains(sub)) {
+                return List.of("player", "rank").stream()
+                        .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+        }
+        if (args.length == 3) {
+            String sub = args[0].toLowerCase();
+            String type = args[1].toLowerCase();
+            if (type.equals("player")) {
                 return Bukkit.getOnlinePlayers().stream()
                         .map(Player::getName)
-                        .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase()))
+                        .collect(Collectors.toList());
+            } else if (type.equals("rank")) {
+                return plugin.getRankManager().getRanks().keySet().stream()
+                        .filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase()))
                         .collect(Collectors.toList());
             }
         }
