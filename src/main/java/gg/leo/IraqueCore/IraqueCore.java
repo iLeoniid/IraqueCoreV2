@@ -34,6 +34,7 @@ import gg.leo.IraqueCore.rank.RankCommand;
 import gg.leo.IraqueCore.rank.RankManager;
 import gg.leo.IraqueCore.scoreboard.ScoreboardCommand;
 import gg.leo.IraqueCore.scoreboard.ScoreboardManager;
+import gg.leo.IraqueCore.utils.menu.listener.MenuListener;
 import gg.leo.IraqueCore.sleep.SleepManager;
 import gg.leo.IraqueCore.tag.TagCommand;
 import gg.leo.IraqueCore.tag.TagManager;
@@ -125,6 +126,7 @@ public final class IraqueCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AdvancementListener(this), this);
         getServer().getPluginManager().registerEvents(new DurabilityListener(this), this);
         getServer().getPluginManager().registerEvents(grantListener, this);
+        getServer().getPluginManager().registerEvents(new MenuListener(), this);
 
         this.statsCommand = new StatsCommand(this);
         getServer().getPluginManager().registerEvents(statsCommand, this);
