@@ -73,6 +73,10 @@ commands:
     description: Revoke active grants from a player
     aliases: [un grant]
     permission: iraquecore.grant.revoke
+  chatcolor:
+    description: Open the chat color selector GUI
+    aliases: [chatcolors, cc, colors]
+    permission: iraquecore.chatcolor
   iraquecore:
     description: Plugin info
     aliases: [ic, core]
@@ -101,6 +105,7 @@ permissions:
       iraquecore.grant: true
       iraquecore.grants: true
       iraquecore.grant.revoke: true
+      iraquecore.chatcolor: true
   iraquecore.admin:
     description: Access to admin commands
     default: op
@@ -202,3 +207,6 @@ permissions:
   iraquecore.grant.revoke:
     description: Revoke grants from players
     default: op
+  iraquecore.chatcolor:
+    description: Use chat color commands
+    default: true

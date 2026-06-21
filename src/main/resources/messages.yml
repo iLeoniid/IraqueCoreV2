@@ -213,6 +213,14 @@ permission:
   help-clear: "&e/perm clear <player> &7- Clear all player permissions"
   help-check: "&e/perm check <player> <permission> &7- Check if player has permission"
 
+# ─── ChatColor ───
+chatcolor:
+  player-only: "&cOnly players can use this command."
+  no-permission: "&cYou don't have permission to use chat colors."
+  reset: "&aYou have reset your chat color to normal."
+  updated: "&aUpdated your chat color to {color}&a!"
+  no-own: "&cYou do not own this color."
+
 # ─── Grant System ───
 grant:
   no-permission: "&cYou don't have permission to grant ranks."

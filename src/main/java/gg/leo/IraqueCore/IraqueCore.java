@@ -13,6 +13,8 @@ import gg.leo.IraqueCore.discord.AdvancementListener;
 import gg.leo.IraqueCore.discord.DiscordManager;
 import gg.leo.IraqueCore.durability.DurabilityListener;
 import gg.leo.IraqueCore.grant.GrantCommand;
+import gg.leo.IraqueCore.chatcolor.ChatColorCommand;
+import gg.leo.IraqueCore.chatcolor.ChatColorManager;
 import gg.leo.IraqueCore.grant.GrantListener;
 import gg.leo.IraqueCore.grant.GrantManager;
 import gg.leo.IraqueCore.grant.GrantsCommand;
@@ -64,6 +66,7 @@ public final class IraqueCore extends JavaPlugin {
     private PermissionManager  permissionManager;
     private GrantManager       grantManager;
     private GrantListener      grantListener;
+    private ChatColorManager   chatColorManager;
     private StatsCommand       statsCommand;
 
     // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
@@ -107,6 +110,9 @@ public final class IraqueCore extends JavaPlugin {
         grantManager.startTask();
 
         this.grantListener = new GrantListener(this);
+
+        this.chatColorManager = new ChatColorManager(this);
+        chatColorManager.load();
 
         //  Scoreboard 
         this.scoreboardManager = new ScoreboardManager(this);
@@ -177,6 +183,9 @@ public final class IraqueCore extends JavaPlugin {
         if (grantManager != null) {
             grantManager.saveAll();
         }
+        if (chatColorManager != null) {
+            chatColorManager.saveAll();
+        }
         if (scoreboardManager != null) {
             scoreboardManager.saveStats();
         }
@@ -220,6 +229,9 @@ public final class IraqueCore extends JavaPlugin {
         }
         if (grantManager != null) {
             grantManager.load();
+        }
+        if (chatColorManager != null) {
+            chatColorManager.load();
         }
 
         if (motdManager != null) {
@@ -283,6 +295,9 @@ public final class IraqueCore extends JavaPlugin {
         register("grants", new GrantsCommand(this), new GrantsCommand(this));
         register("revoke", new RevokeCommand(this), new RevokeCommand(this));
 
+        var chatColorCommand = new ChatColorCommand(chatColorManager);
+        register("chatcolor", chatColorCommand, null);
+
         var infoCommand = new IraqueCoreCommand(this);
         register("iraquecore", infoCommand, null);
     }
@@ -320,6 +335,7 @@ public final class IraqueCore extends JavaPlugin {
     public PermissionManager  getPermissionManager()    { return permissionManager; }
     public GrantManager       getGrantManager()         { return grantManager; }
     public GrantListener      getGrantListener()        { return grantListener; }
+    public ChatColorManager   getChatColorManager()     { return chatColorManager; }
 
     /**
      * Native Paper logger with Adventure Components support.

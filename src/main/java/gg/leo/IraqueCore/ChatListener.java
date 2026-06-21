@@ -55,6 +55,13 @@ public class ChatListener implements Listener {
             }
         }
 
+        if (plugin.getChatColorManager() != null) {
+            String chatColorCode = plugin.getChatColorManager().getActiveColorCode(player.getUniqueId());
+            if (chatColorCode != null) {
+                color = chatColorCode;
+            }
+        }
+
         String tagStr = "";
         if (plugin.getConfigManager().isUseTags()) {
             String display = plugin.getTagManager().getPlayerTagDisplay(player);
