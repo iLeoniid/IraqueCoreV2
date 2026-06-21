@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class ConfigManager {
 
@@ -177,6 +178,16 @@ public class ConfigManager {
         s = s.replaceAll("&#([0-9a-fA-F]{6})", "<#$1>");
         // standalone #RRGGBB → <#RRGGBB> (not preceded by <)
         s = s.replaceAll("(?<!<)#([0-9a-fA-F]{6})", "<#$1>");
+        // §x§R§R§G§G§B§B → <#RRGGBB>
+        s = Pattern.compile("\u00A7x(\u00A7[0-9a-fA-F]){6}")
+                .matcher(s).replaceAll(mr -> {
+                    String m = mr.group();
+                    StringBuilder hex = new StringBuilder("<#");
+                    for (int i = 2; i < m.length(); i += 2) {
+                        hex.append(Character.toLowerCase(m.charAt(i + 1)));
+                    }
+                    return hex.append('>').toString();
+                });
         // & codes → MiniMessage tags
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
