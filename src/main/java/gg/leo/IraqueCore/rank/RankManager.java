@@ -2,7 +2,9 @@ package gg.leo.IraqueCore.rank;
 
 import gg.leo.IraqueCore.IraqueCore;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -137,16 +139,23 @@ public class RankManager {
 
         PermissionAttachment attachment = player.addAttachment(plugin);
 
-        // Apply rank permissions
+        var permManager = plugin.getPermissionManager();
+
+        // Apply rank permissions (config + custom)
         getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
             for (String perm : rank.permissions()) {
                 if (perm.equals("*")) continue;
                 attachment.setPermission(perm, true);
             }
+            if (permManager != null) {
+                for (String perm : permManager.getRankPermissions(rank.name())) {
+                    if (perm.equals("*")) continue;
+                    attachment.setPermission(perm, true);
+                }
+            }
         });
 
         // Apply player-specific permissions from PermissionManager
-        var permManager = plugin.getPermissionManager();
         if (permManager != null) {
             for (String perm : permManager.getPermissions(player.getUniqueId())) {
                 if (perm.equals("*")) continue;
@@ -178,7 +187,7 @@ public class RankManager {
                 displayPrefix = rank.prefix();
             }
 
-            String listNameRaw = displayPrefix + " " + tagStr + rank.color() + player.getName();
+            String listNameRaw = rank.color() + player.getName();
             player.playerListName(plugin.getConfigManager().deserialize(
                     plugin.getConfigManager().translate(listNameRaw)));
 
@@ -239,6 +248,39 @@ public class RankManager {
             team.suffix(plugin.getConfigManager().deserialize(
                     plugin.getConfigManager().translate(rank.suffix())));
         }
+
+        String colorStr = rank.color();
+        if (colorStr != null && colorStr.length() >= 2 && colorStr.charAt(0) == '\u00A7') {
+            char code = colorStr.charAt(1);
+            if (code != 'x') {
+                ChatColor cc = ChatColor.getByChar(code);
+                if (cc != null && cc.isColor()) {
+                    NamedTextColor named = switch (cc) {
+                        case BLACK -> NamedTextColor.BLACK;
+                        case DARK_BLUE -> NamedTextColor.DARK_BLUE;
+                        case DARK_GREEN -> NamedTextColor.DARK_GREEN;
+                        case DARK_AQUA -> NamedTextColor.DARK_AQUA;
+                        case DARK_RED -> NamedTextColor.DARK_RED;
+                        case DARK_PURPLE -> NamedTextColor.DARK_PURPLE;
+                        case GOLD -> NamedTextColor.GOLD;
+                        case GRAY -> NamedTextColor.GRAY;
+                        case DARK_GRAY -> NamedTextColor.DARK_GRAY;
+                        case BLUE -> NamedTextColor.BLUE;
+                        case GREEN -> NamedTextColor.GREEN;
+                        case AQUA -> NamedTextColor.AQUA;
+                        case RED -> NamedTextColor.RED;
+                        case LIGHT_PURPLE -> NamedTextColor.LIGHT_PURPLE;
+                        case YELLOW -> NamedTextColor.YELLOW;
+                        case WHITE -> NamedTextColor.WHITE;
+                        default -> null;
+                    };
+                    if (named != null) {
+                        team.color(named);
+                    }
+                }
+            }
+        }
+
         team.addEntry(target.getName());
     }
 
