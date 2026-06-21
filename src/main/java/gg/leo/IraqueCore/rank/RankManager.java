@@ -187,7 +187,7 @@ public class RankManager {
                 displayPrefix = rank.prefix();
             }
 
-            String listNameRaw = rank.color() + player.getName();
+            String listNameRaw = displayPrefix + " " + tagStr + rank.color() + player.getName();
             player.playerListName(plugin.getConfigManager().deserialize(
                     plugin.getConfigManager().translate(listNameRaw)));
 
