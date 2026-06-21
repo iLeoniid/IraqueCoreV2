@@ -20,57 +20,65 @@ public class ChatColorMenu {
     }
 
     public void open(Player player) {
-        List<ChatColor> available = manager.getColors().values().stream()
-                .filter(c -> c.getPermission().isEmpty() || player.hasPermission(c.getPermission()))
-                .toList();
+        ChatColorPaginatedMenu menu = new ChatColorPaginatedMenu(player);
+        menu.updateMenu();
+    }
 
-        new BorderedPaginatedMenu(player) {
-            @Override
-            public Map<Integer, Button> getPagesButtons(Player p) {
-                Map<Integer, Button> buttons = new LinkedHashMap<>();
-                int index = 0;
-                for (ChatColor color : available) {
-                    boolean isActive = isColorActive(p, color);
-                    buttons.put(index++, new ColorButton(color, p, isActive, manager));
-                }
-                return buttons;
+    private class ChatColorPaginatedMenu extends BorderedPaginatedMenu {
+
+        ChatColorPaginatedMenu(Player player) {
+            super(player);
+        }
+
+        @Override
+        public Map<Integer, Button> getPagesButtons(Player p) {
+            List<ChatColor> available = manager.getColors().values().stream()
+                    .filter(c -> c.getPermission().isEmpty() || p.hasPermission(c.getPermission()))
+                    .toList();
+
+            Map<Integer, Button> buttons = new LinkedHashMap<>();
+            int index = 0;
+            for (ChatColor color : available) {
+                boolean isActive = isColorActive(p, color);
+                buttons.put(index++, new ColorButton(color, p, isActive, manager, this));
+            }
+            return buttons;
+        }
+
+        @Override
+        public String getTitle(Player p) {
+            return org.bukkit.ChatColor.BLUE + "Select a Chat Color";
+        }
+
+        @Override
+        public Map<Integer, Button> getHeaderItems(Player p) {
+            Map<Integer, Button> headers = super.getHeaderItems(p);
+            ChatColor active = manager.getActiveColor(p.getUniqueId());
+            String current;
+            if (active != null) {
+                current = active.getChatColor() + ChatColorManager.proper(active.getDisplayName());
+            } else {
+                current = org.bukkit.ChatColor.GRAY + "None";
             }
 
-            @Override
-            public String getTitle(Player p) {
-                return org.bukkit.ChatColor.BLUE + "Select a Chat Color";
-            }
+            List<String> lore = List.of(
+                    " ",
+                    "&7Click to reset your current",
+                    "&7chat color.",
+                    " ",
+                    "&eCurrently: " + current + " &eequipped",
+                    " "
+            );
 
-            @Override
-            public Map<Integer, Button> getHeaderItems(Player p) {
-                Map<Integer, Button> headers = super.getHeaderItems(p);
-                ChatColor active = manager.getActiveColor(p.getUniqueId());
-                String current;
-                if (active != null) {
-                    current = active.getChatColor() + ChatColorManager.proper(active.getDisplayName());
-                } else {
-                    current = org.bukkit.ChatColor.GRAY + "None";
-                }
-
-                List<String> lore = List.of(
-                        " ",
-                        "&7Click to reset your current",
-                        "&7chat color.",
-                        " ",
-                        "&eCurrently: " + current + " &eequipped",
-                        " "
-                );
-
-                headers.put(4, new SimpleActionButton(
-                        Material.PAPER, lore, "&cReset ChatColor", 0
-                ).onClick((pl, slot) -> {
-                    manager.setActiveColor(pl.getUniqueId(), null);
-                    pl.sendMessage(org.bukkit.ChatColor.GREEN + "You have reset your chat color to normal.");
-                    updateMenu();
-                }));
-                return headers;
-            }
-        }.updateMenu();
+            headers.put(4, new SimpleActionButton(
+                    Material.PAPER, lore, "&cReset ChatColor", 0
+            ).onClick((pl, slot) -> {
+                manager.setActiveColor(pl.getUniqueId(), null);
+                pl.sendMessage(org.bukkit.ChatColor.GREEN + "You have reset your chat color to normal.");
+                this.updateMenu();
+            }));
+            return headers;
+        }
     }
 
     private boolean isColorActive(Player player, ChatColor color) {
@@ -84,17 +92,19 @@ public class ChatColorMenu {
         private final Player player;
         private final boolean active;
         private final ChatColorManager manager;
+        private final BorderedPaginatedMenu menu;
 
-        ColorButton(ChatColor chatColor, Player player, boolean active, ChatColorManager manager) {
+        ColorButton(ChatColor chatColor, Player player, boolean active, ChatColorManager manager, BorderedPaginatedMenu menu) {
             this.chatColor = chatColor;
             this.player = player;
             this.active = active;
             this.manager = manager;
+            this.menu = menu;
         }
 
         @Override
         public Material getMaterial(Player p) {
-            return Material.WOOL;
+            return Material.WHITE_WOOL;
         }
 
         @Override
@@ -102,10 +112,10 @@ public class ChatColorMenu {
             List<String> desc = new ArrayList<>();
             desc.add("&6&m------------------");
             desc.add("&eColor:");
-            desc.add("&e│ &r" + chatColor.getChatColor() + ChatColorManager.proper(chatColor.getDisplayName()));
+            desc.add("&e\u2502 &r" + chatColor.getChatColor() + ChatColorManager.proper(chatColor.getDisplayName()));
             desc.add(" ");
             desc.add("&eExample:");
-            desc.add("&e│ &r" + chatColor.getChatColor() + "Hello!");
+            desc.add("&e\u2502 &r" + chatColor.getChatColor() + "Hello!");
             desc.add(" ");
             if (p.hasPermission(chatColor.getPermission())) {
                 if (active) {
@@ -129,14 +139,6 @@ public class ChatColorMenu {
 
         @Override
         public int getData(Player p) {
-            try {
-                String colorChar = chatColor.getChatColor().replace("&", "§");
-                org.bukkit.ChatColor bukkit = org.bukkit.ChatColor.getByChar(colorChar.charAt(1));
-                if (bukkit != null) {
-                    org.bukkit.DyeColor dye = org.bukkit.DyeColor.getByColor(bukkit.asBungee().getColor());
-                    if (dye != null) return dye.getWoolData();
-                }
-            } catch (Exception ignored) {}
             return 0;
         }
 
@@ -155,7 +157,7 @@ public class ChatColorMenu {
                         "&aUpdated your chat color to " + chatColor.getChatColor()
                                 + ChatColorManager.proper(chatColor.getDisplayName()) + "&a!"));
             }
-            updateMenu();
+            menu.updateMenu();
         }
     }
 }
