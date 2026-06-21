@@ -96,7 +96,7 @@ public class GrantCommand implements TabExecutor {
         }
 
         // GUI mode: /grant <player>
-        plugin.getGrantListener().startGrant(player, target);
+        plugin.getGrantListener().getGrantMenu().startGrant(player, target);
         return true;
     }
 
