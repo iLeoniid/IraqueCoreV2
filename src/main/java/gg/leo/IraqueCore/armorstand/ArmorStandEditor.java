@@ -1,7 +1,8 @@
 package gg.leo.IraqueCore.armorstand;
 
 import gg.leo.IraqueCore.IraqueCore;
-import gg.leo.IraqueCore.menu.ArmorStandMenu;
+import gg.leo.IraqueCore.armorstand.menu.ArmorStandMenu;
+
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,7 @@ public class ArmorStandEditor implements Listener {
 
     private final IraqueCore plugin;
     private final Map<UUID, ArmorStand> editing = new HashMap<>();
-    final Map<UUID, ArmorStandPose> copiedPose = new HashMap<>();
+    public final Map<UUID, ArmorStandPose> copiedPose = new HashMap<>();
 
     public ArmorStandEditor(IraqueCore plugin) {
         this.plugin = plugin;
