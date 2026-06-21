@@ -3,22 +3,17 @@ package gg.leo.IraqueCore.tag;
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.menu.TagMenu;
 import gg.leo.IraqueCore.utils.ItemBuilder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TagManager implements Listener {
+public class TagManager {
 
     private final IraqueCore plugin;
     private final Map<String, Tag> tags = new LinkedHashMap<>();
@@ -27,9 +22,7 @@ public class TagManager implements Listener {
     private YamlConfiguration tagsConfig;
     private File tagsFile;
 
-    private static final int PREV_BUTTON_SLOT = 48;
-    private static final int BACK_BUTTON_SLOT = 49;
-    private static final int NEXT_BUTTON_SLOT = 50;
+
 
     public TagManager(IraqueCore plugin) {
         this.plugin = plugin;
@@ -126,97 +119,6 @@ public class TagManager implements Listener {
                 .collect(Collectors.toList());
     }
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) return;
-
-        String title = event.getView().getTitle();
-
-        if (title.contains("Selecionar Categoria")) {
-            event.setCancelled(true);
-            ItemStack clicked = event.getCurrentItem();
-            if (clicked == null || clicked.getType() == Material.AIR) return;
-
-            int slot = event.getSlot();
-            if (slot == 11 && clicked.getType() == Material.NETHER_STAR) {
-                openCategoryGUI(player, "emojis", 0);
-            } else if (slot == 13 && clicked.getType() == Material.PAPER) {
-                openCategoryGUI(player, "text", 0);
-            } else if (slot == 15 && clicked.getType() == Material.DRAGON_HEAD) {
-                openCategoryGUI(player, "especial", 0);
-            } else if (slot == 22 && clicked.getType() == Material.BARRIER) {
-                if (!getPlayerTagDisplay(player).isEmpty()) {
-                    setPlayerTag(player, null);
-                    plugin.getRankManager().updatePlayerRankVisuals(player);
-                    player.sendMessage(txt("tag.gui.remove-success"));
-                    openMainMenu(player);
-                } else {
-                    player.sendMessage(txt("tag.gui.no-tag-equipped-action"));
-                }
-            }
-            return;
-        }
-
-        if (title.contains("Emojis") || title.contains("Texto") || title.contains("Especial")) {
-            event.setCancelled(true);
-            ItemStack clicked = event.getCurrentItem();
-            if (clicked == null || clicked.getType() == Material.AIR) return;
-
-            int slot = event.getSlot();
-
-            if (slot == PREV_BUTTON_SLOT && clicked.getType() == Material.ARROW) {
-                int currentPage = menu.getPlayerPage(player);
-                String category = menu.getPlayerCategory(player);
-                openCategoryGUI(player, category, currentPage - 1);
-                return;
-            }
-
-            if (slot == BACK_BUTTON_SLOT && clicked.getType() == Material.BARRIER) {
-                openMainMenu(player);
-                return;
-            }
-
-            if (slot == NEXT_BUTTON_SLOT && clicked.getType() == Material.ARROW) {
-                int currentPage = menu.getPlayerPage(player);
-                String category = menu.getPlayerCategory(player);
-                openCategoryGUI(player, category, currentPage + 1);
-                return;
-            }
-
-            handleTagClick(clicked, player);
-        }
-    }
-
-    private void handleTagClick(ItemStack clicked, Player player) {
-        for (Tag tag : tags.values()) {
-            if (clicked.getType() == tag.getMaterial()
-                    && clicked.hasItemMeta()
-                    && clicked.getItemMeta().hasDisplayName()
-                    && clicked.getItemMeta().getDisplayName().equals(tag.getDisplayName())) {
-
-                if (!tag.getPermission().isEmpty() && !player.hasPermission(tag.getPermission())) {
-                    player.sendMessage(txt("tag.gui.no-permission"));
-                    return;
-                }
-
-                if (hasTagEquipped(player, tag.getId())) {
-                    setPlayerTag(player, null);
-                    player.sendMessage(txt("tag.gui.removed", "{tag}", tag.getDisplayName()));
-                } else {
-                    setPlayerTag(player, tag.getId());
-                    player.sendMessage(txt("tag.gui.equipped", "{tag}", tag.getDisplayName()));
-                }
-
-                plugin.getRankManager().updatePlayerRankVisuals(player);
-
-                String category = menu.getPlayerCategory(player);
-                int page = menu.getPlayerPage(player);
-                openCategoryGUI(player, category, page);
-                return;
-            }
-        }
-    }
-
     public void setPlayerTag(Player player, String tagId) {
         if (tagId == null) {
             playerTags.remove(player.getUniqueId());
@@ -247,22 +149,4 @@ public class TagManager implements Listener {
         return Collections.unmodifiableMap(tags);
     }
 
-    private Component txt(String path) {
-        return plugin.getConfigManager().getMessageComponent(path);
-    }
-
-    private Component txt(String path, String placeholder, String value) {
-        return plugin.getConfigManager().deserialize(
-                plugin.getConfigManager().translateAndReplace(
-                        plugin.getConfigManager().getMessage(path, "&c" + path),
-                        placeholder, value));
-    }
-
-    private String legacyMsg(String path) {
-        return plugin.getConfigManager().toLegacyMessage(path);
-    }
-
-    private String legacyMsg(String path, String placeholder, String value) {
-        return plugin.getConfigManager().toLegacyMessage(path, placeholder, value);
-    }
 }

@@ -115,7 +115,6 @@ public final class IraqueCore extends JavaPlugin {
 
         //  Events ─
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-        getServer().getPluginManager().registerEvents(tagManager, this);
         getServer().getPluginManager().registerEvents(scoreboardManager, this);
         getServer().getPluginManager().registerEvents(afkManager, this);
         getServer().getPluginManager().registerEvents(new ArmorStandEditor(this), this);
@@ -125,11 +124,9 @@ public final class IraqueCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GraveListener(this), this);
         getServer().getPluginManager().registerEvents(new AdvancementListener(this), this);
         getServer().getPluginManager().registerEvents(new DurabilityListener(this), this);
-        getServer().getPluginManager().registerEvents(grantListener, this);
         getServer().getPluginManager().registerEvents(new MenuListener(), this);
 
         this.statsCommand = new StatsCommand(this);
-        getServer().getPluginManager().registerEvents(statsCommand, this);
 
         getServer().getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -142,7 +139,6 @@ public final class IraqueCore extends JavaPlugin {
         }, this);
 
         this.leaderboardManager = new LeaderboardManager(this);
-        getServer().getPluginManager().registerEvents(leaderboardManager, this);
 
         this.motdManager = new MotdManager(this);
         motdManager.load();

@@ -2,21 +2,17 @@ package gg.leo.IraqueCore.stats;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.menu.StatsMenu;
-import gg.leo.IraqueCore.utils.MenuHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 
-public class StatsCommand implements TabExecutor, Listener {
+public class StatsCommand implements TabExecutor {
 
     private final IraqueCore plugin;
     private final StatsMenu menu;
@@ -61,13 +57,6 @@ public class StatsCommand implements TabExecutor, Listener {
 
         menu.open(player, targetId, targetName);
         return true;
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof MenuHolder holder)) return;
-        if (!"stats".equals(holder.getType())) return;
-        event.setCancelled(true);
     }
 
     @Override

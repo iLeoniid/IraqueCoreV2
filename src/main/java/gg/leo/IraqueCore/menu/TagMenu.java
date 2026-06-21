@@ -2,12 +2,13 @@ package gg.leo.IraqueCore.menu;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.tag.Tag;
-import gg.leo.IraqueCore.utils.ItemBuilder;
-import org.bukkit.Bukkit;
+import gg.leo.IraqueCore.utils.menu.Button;
+import gg.leo.IraqueCore.utils.menu.Menu;
+import gg.leo.IraqueCore.utils.menu.type.BorderedPaginatedMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -17,82 +18,104 @@ import java.util.stream.Collectors;
 public class TagMenu {
 
     private final IraqueCore plugin;
-    private final Map<UUID, Integer> playerPages = new HashMap<>();
-    private final Map<UUID, String> playerCategory = new HashMap<>();
-
-    private static final int ITEMS_PER_PAGE = 45;
-    private static final int PREV_BUTTON_SLOT = 48;
-    private static final int BACK_BUTTON_SLOT = 49;
-    private static final int NEXT_BUTTON_SLOT = 50;
 
     public TagMenu(IraqueCore plugin) {
         this.plugin = plugin;
     }
 
     public void openMainMenu(Player player) {
-        Inventory gui = Bukkit.createInventory(null, 27,
-                ChatColor.DARK_PURPLE + "\u00BB " + ChatColor.LIGHT_PURPLE + "Selecionar Categoria");
-
         var tagManager = plugin.getTagManager();
-
-        ItemStack emojisItem = new ItemStack(Material.NETHER_STAR);
-        ItemMeta emojisMeta = emojisItem.getItemMeta();
-        emojisMeta.setDisplayName(ChatColor.YELLOW + "\u2B50 Emojis");
         int emojisCount = tagManager.getTagsByCategory("emojis", player).size();
-        emojisMeta.setLore(Arrays.asList(
-                ChatColor.GRAY + "Tags con emojis y simbolos",
-                ChatColor.GRAY + "Total: " + ChatColor.WHITE + emojisCount + " tags",
-                "",
-                ChatColor.GREEN + "\u25B8 Click para abrir"
-        ));
-        emojisItem.setItemMeta(emojisMeta);
-        gui.setItem(11, emojisItem);
-
-        ItemStack textItem = new ItemStack(Material.PAPER);
-        ItemMeta textMeta = textItem.getItemMeta();
-        textMeta.setDisplayName(ChatColor.AQUA + "Texto");
         int textCount = tagManager.getTagsByCategory("text", player).size();
-        textMeta.setLore(Arrays.asList(
-                ChatColor.GRAY + "Tags con texto personalizado",
-                ChatColor.GRAY + "Total: " + ChatColor.WHITE + textCount + " tags",
-                "",
-                ChatColor.GREEN + "\u25B8 Click para abrir"
-        ));
-        textItem.setItemMeta(textMeta);
-        gui.setItem(13, textItem);
-
-        ItemStack especialItem = new ItemStack(Material.DRAGON_HEAD);
-        ItemMeta especialMeta = especialItem.getItemMeta();
-        especialMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "\u2728 Especial");
         int especialCount = tagManager.getTagsByCategory("especial", player).size();
-        especialMeta.setLore(Arrays.asList(
-                ChatColor.GRAY + "Tags unicas y exclusivas",
-                ChatColor.GRAY + "Total: " + ChatColor.WHITE + especialCount + " tags",
-                "",
-                ChatColor.GREEN + "\u25B8 Click para abrir"
-        ));
-        especialItem.setItemMeta(especialMeta);
-        gui.setItem(15, especialItem);
-
         String currentTagText = tagManager.getPlayerTagDisplay(player);
-        ItemStack removeItem = new ItemStack(Material.BARRIER);
-        ItemMeta removeMeta = removeItem.getItemMeta();
-        removeMeta.setDisplayName(ChatColor.RED + "\u2716 " + legacyMsg("tag.gui.remove-title"));
-        if (currentTagText.isEmpty()) {
-            removeMeta.setLore(Arrays.asList(
-                    legacyMsg("tag.gui.no-tag-equipped")
-            ));
-        } else {
-            removeMeta.setLore(Arrays.asList(
-                    legacyMsg("tag.gui.current-tag", "{tag}", currentTagText),
-                    "",
-                    legacyMsg("tag.gui.click-remove")
-            ));
-        }
-        removeItem.setItemMeta(removeMeta);
-        gui.setItem(22, removeItem);
 
-        player.openInventory(gui);
+        new Menu(player) {
+            {
+                staticSize = 27;
+                placeholder = true;
+            }
+
+            @Override
+            public Map<Integer, Button> getButtons(Player p) {
+                Map<Integer, Button> buttons = new HashMap<>();
+
+                buttons.put(11, new Button() {
+                    @Override public Material getMaterial(Player p) { return Material.NETHER_STAR; }
+                    @Override public List<String> getDescription(Player p) {
+                        return List.of(
+                                "&7Tags con emojis y simbolos",
+                                "&7Total: &f" + emojisCount + " tags",
+                                "",
+                                "&a\u25B8 Click para abrir"
+                        );
+                    }
+                    @Override public String getDisplayName(Player p) { return "&e\u2B50 Emojis"; }
+                    @Override public int getData(Player p) { return 0; }
+                    @Override public void onClick(Player p, int slot, ClickType type) { openCategoryGUI(p, "emojis", 0); }
+                });
+                buttons.put(13, new Button() {
+                    @Override public Material getMaterial(Player p) { return Material.PAPER; }
+                    @Override public List<String> getDescription(Player p) {
+                        return List.of(
+                                "&7Tags con texto personalizado",
+                                "&7Total: &f" + textCount + " tags",
+                                "",
+                                "&a\u25B8 Click para abrir"
+                        );
+                    }
+                    @Override public String getDisplayName(Player p) { return "&bTexto"; }
+                    @Override public int getData(Player p) { return 0; }
+                    @Override public void onClick(Player p, int slot, ClickType type) { openCategoryGUI(p, "text", 0); }
+                });
+                buttons.put(15, new Button() {
+                    @Override public Material getMaterial(Player p) { return Material.DRAGON_HEAD; }
+                    @Override public List<String> getDescription(Player p) {
+                        return List.of(
+                                "&7Tags unicas y exclusivas",
+                                "&7Total: &f" + especialCount + " tags",
+                                "",
+                                "&a\u25B8 Click para abrir"
+                        );
+                    }
+                    @Override public String getDisplayName(Player p) { return "&d\u2728 Especial"; }
+                    @Override public int getData(Player p) { return 0; }
+                    @Override public void onClick(Player p, int slot, ClickType type) { openCategoryGUI(p, "especial", 0); }
+                });
+                buttons.put(22, new Button() {
+                    @Override public Material getMaterial(Player p) { return Material.BARRIER; }
+                    @Override public List<String> getDescription(Player p) {
+                        if (currentTagText.isEmpty()) {
+                            return List.of(legacyMsg("tag.gui.no-tag-equipped"));
+                        }
+                        return List.of(
+                                legacyMsg("tag.gui.current-tag", "{tag}", currentTagText),
+                                "",
+                                legacyMsg("tag.gui.click-remove")
+                        );
+                    }
+                    @Override public String getDisplayName(Player p) { return "&c\u2716 " + legacyMsg("tag.gui.remove-title"); }
+                    @Override public int getData(Player p) { return 0; }
+                    @Override public void onClick(Player p, int slot, ClickType type) {
+                        if (!tagManager.getPlayerTagDisplay(p).isEmpty()) {
+                            tagManager.setPlayerTag(p, null);
+                            plugin.getRankManager().updatePlayerRankVisuals(p);
+                            p.sendMessage(plugin.getConfigManager().getMessageComponent("tag.gui.remove-success"));
+                            openMainMenu(p);
+                        } else {
+                            p.sendMessage(plugin.getConfigManager().getMessageComponent("tag.gui.no-tag-equipped-action"));
+                        }
+                    }
+                });
+
+                return buttons;
+            }
+
+            @Override
+            public String getTitle(Player p) {
+                return ChatColor.DARK_PURPLE + "\u00BB " + ChatColor.LIGHT_PURPLE + "Selecionar Categoria";
+            }
+        }.openMenu();
     }
 
     public void openCategoryGUI(Player player, String category, int page) {
@@ -104,78 +127,90 @@ public class TagMenu {
             return;
         }
 
-        int totalPages = (int) Math.ceil((double) categoryTags.size() / ITEMS_PER_PAGE);
-        if (totalPages == 0) totalPages = 1;
-        if (page < 0) page = 0;
-        if (page >= totalPages) page = totalPages - 1;
-
-        playerPages.put(player.getUniqueId(), page);
-        playerCategory.put(player.getUniqueId(), category);
-
         String categoryName = getCategoryDisplayName(category);
-        String title = ChatColor.BLUE + categoryName + " " + ChatColor.GRAY + "(" + (page + 1) + "/" + totalPages + ")";
-        Inventory gui = Bukkit.createInventory(null, 54, title);
+        String title = ChatColor.BLUE + categoryName;
 
-        int startIndex = page * ITEMS_PER_PAGE;
-        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, categoryTags.size());
+        new BorderedPaginatedMenu(player) {
+            { currentPage = Math.max(1, Math.min(page + 1, Math.max(1, (int) Math.ceil((double) categoryTags.size() / getButtonsPerPage())))); }
 
-        int slot = 0;
-        for (int i = startIndex; i < endIndex; i++) {
-            gui.setItem(slot, createTagItem(categoryTags.get(i), player));
-            slot++;
-        }
+            @Override
+            public Map<Integer, Button> getPagesButtons(Player p) {
+                Map<Integer, Button> buttons = new LinkedHashMap<>();
+                int index = 0;
+                for (Tag tag : categoryTags) {
+                    List<String> lore = new ArrayList<>(tag.getLore().stream()
+                            .map(l -> ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', l)))
+                            .map(l -> "&7" + l)
+                            .toList());
+                    lore.add("");
+                    boolean equipped = tagManager.hasTagEquipped(p, tag.getId());
+                    if (equipped) {
+                        lore.add("&a\u2713 Equipada");
+                        lore.add("&7Click para remover");
+                    } else {
+                        lore.add("&e\u25B8 Click para equipar");
+                    }
+                    List<String> fLore = lore;
+                    String tagId = tag.getId();
+                    buttons.put(index, new Button() {
+                        @Override public Material getMaterial(Player p) { return tag.getMaterial(); }
+                        @Override public List<String> getDescription(Player p) { return fLore; }
+                        @Override public String getDisplayName(Player p) { return tag.getDisplayName(); }
+                        @Override public int getData(Player p) { return 0; }
+                        @Override public void onClick(Player p, int slot, ClickType type) {
+                            handleTagClick(p, tag, tagId, category);
+                        }
+                    });
+                    index++;
+                }
+                return buttons;
+            }
 
-        if (page > 0) {
-            ItemStack prevButton = new ItemStack(Material.ARROW);
-            ItemMeta prevMeta = prevButton.getItemMeta();
-            prevMeta.setDisplayName(ChatColor.YELLOW + "\u2190 Pagina Anterior");
-            prevMeta.setLore(Arrays.asList(
-                    ChatColor.GRAY + "Ir para a pagina " + page
-            ));
-            prevButton.setItemMeta(prevMeta);
-            gui.setItem(PREV_BUTTON_SLOT, prevButton);
-        }
+            @Override
+            public String getTitle(Player p) {
+                return title;
+            }
 
-        ItemStack backButton = new ItemStack(Material.BARRIER);
-        ItemMeta backMeta = backButton.getItemMeta();
-        backMeta.setDisplayName(ChatColor.RED + "\u2190 Volver");
-        backMeta.setLore(Arrays.asList(
-                ChatColor.GRAY + "Volver al menu de categorias"
-        ));
-        backButton.setItemMeta(backMeta);
-        gui.setItem(BACK_BUTTON_SLOT, backButton);
-
-        if (page < totalPages - 1) {
-            ItemStack nextButton = new ItemStack(Material.ARROW);
-            ItemMeta nextMeta = nextButton.getItemMeta();
-            nextMeta.setDisplayName(ChatColor.YELLOW + "Pagina Siguiente \u2192");
-            nextMeta.setLore(Arrays.asList(
-                    ChatColor.GRAY + "Ir para a pagina " + (page + 2)
-            ));
-            nextButton.setItemMeta(nextMeta);
-            gui.setItem(NEXT_BUTTON_SLOT, nextButton);
-        }
-
-        player.openInventory(gui);
+            @Override
+            public Map<Integer, Button> getHeaderItems(Player p) {
+                Map<Integer, Button> headers = super.getHeaderItems(p);
+                headers.put(40, new Button() {
+                    @Override public Material getMaterial(Player p) { return Material.BARRIER; }
+                    @Override public List<String> getDescription(Player p) { return List.of("&7Volver al menu de categorias"); }
+                    @Override public String getDisplayName(Player p) { return "&c\u2190 Volver"; }
+                    @Override public int getData(Player p) { return 0; }
+                    @Override public void onClick(Player p, int slot, ClickType type) { openMainMenu(p); }
+                });
+                return headers;
+            }
+        }.updateMenu();
     }
 
-    private ItemStack createTagItem(Tag tag, Player player) {
-        ItemStack item = new ItemStack(tag.getMaterial());
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(tag.getDisplayName());
+    private void handleTagClick(Player player, Tag tag, String tagId, String category) {
+        var tagManager = plugin.getTagManager();
 
-        List<String> lore = new ArrayList<>(tag.getLore());
-        lore.add("");
-        if (plugin.getTagManager().hasTagEquipped(player, tag.getId())) {
-            lore.add(ChatColor.GREEN + "\u2713 Equipada");
-            lore.add(ChatColor.GRAY + "Click para remover");
-        } else {
-            lore.add(ChatColor.YELLOW + "\u25B8 Click para equipar");
+        if (!tag.getPermission().isEmpty() && !player.hasPermission(tag.getPermission())) {
+            player.sendMessage(plugin.getConfigManager().getMessageComponent("tag.gui.no-permission"));
+            return;
         }
 
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
+        String display = tag.getDisplayName();
+        if (tagManager.hasTagEquipped(player, tagId)) {
+            tagManager.setPlayerTag(player, null);
+            player.sendMessage(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().translateAndReplace(
+                            plugin.getConfigManager().getMessage("tag.gui.removed", "&cTag removed"),
+                            "{tag}", display)));
+        } else {
+            tagManager.setPlayerTag(player, tagId);
+            player.sendMessage(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().translateAndReplace(
+                            plugin.getConfigManager().getMessage("tag.gui.equipped", "&aTag equipped"),
+                            "{tag}", display)));
+        }
+
+        plugin.getRankManager().updatePlayerRankVisuals(player);
+        openCategoryGUI(player, category, 0);
     }
 
     private String getCategoryDisplayName(String category) {
@@ -193,13 +228,5 @@ public class TagMenu {
 
     private String legacyMsg(String path, String placeholder, String value) {
         return plugin.getConfigManager().toLegacyMessage(path, placeholder, value);
-    }
-
-    public int getPlayerPage(Player player) {
-        return playerPages.getOrDefault(player.getUniqueId(), 0);
-    }
-
-    public String getPlayerCategory(Player player) {
-        return playerCategory.getOrDefault(player.getUniqueId(), "emojis");
     }
 }
