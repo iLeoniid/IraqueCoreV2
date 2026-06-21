@@ -79,13 +79,12 @@ ranks:
 scoreboard:
   enabled: true
 
+  # ── FADE (tu animación actual) ──
   title:
     text: "&6&lIRAQUE"
     animated: true
     ticks: 5
-    # ── Fade animation ──
-    # Smooth color wave across the text (cleaner than manual frame lists).
-    # Overrides 'animation' list below when enabled.
+    type: fade
     fade: true
     fade-colors:
       - "&e"
@@ -96,29 +95,75 @@ scoreboard:
       - "&3"
       - "&b"
       - "&a"
-    # ── Manual frames (only used if fade: false) ──
-    animation: []
+
+  # ── WAVE ──
+  # title:
+  #   text: "&6&lIRAQUE"
+  #   animated: true
+  #   ticks: 3
+  #   type: wave
+  #   wave-colors:
+  #     - "&c"
+  #     - "&6"
+  #     - "&e"
+  #     - "&a"
+  #     - "&b"
+  #     - "&9"
+  #     - "&d"
+
+  # ── BLINK ──
+  # title:
+  #   text: "&lIRAQUE"
+  #   animated: true
+  #   ticks: 10
+  #   type: blink
+  #   blink-bold: true
+  #   blink-colors:
+  #     - "&4"
+  #     - "&c"
+  #     - "&6"
+
+  # ── GLITCH ──
+  # title:
+  #   text: "IRAQUE"
+  #   animated: true
+  #   ticks: 2
+  #   type: glitch
+  #   glitch-normal: "&f"
+  #   glitch-color: "&c"
+
+  # ── TYPING ──
+  # title:
+  #   text: "&6&lIRAQUE"
+  #   animated: true
+  #   ticks: 3
+  #   type: typing
+  #   typing-color: "&6"
+  #   typing-cursor-color: "&7"
+  #   typing-cursor: "▌"
+
+  # ── BOUNCE ──
+  # title:
+  #   text: "&lIRAQUE"
+  #   animated: true
+  #   ticks: 4
+  #   type: bounce
+  #   bounce-colors:
+  #     - "&6"
+  #     - "&e"
+
+  # ── SCROLL ──
+  # title:
+  #   text: "&6&lBienvenido a Iraque Network - El mejor servidor de PvP"
+  #   animated: true
+  #   ticks: 2
+  #   type: scroll
+  #   scroll-width: 16
+  #   scroll-color: "&6"
 
   update:
     amount: 2
     unit: "seconds"
-
-  #  Available placeholders
-  # {player}        → player name
-  # {displayname}   → player display name
-  # {online}        → connected players
-  # {max}           → max server slots
-  # {world}         → mundo actual
-  # {ping}          → ping en ms
-  # {blocks_broken} → blocks broken (yours)
-  # {blocks_placed} → blocks placed (yours)
-  # {deaths}        → muertes (tuyas)
-  # {players}       → list of online players (comma separated)
-  #
-  # Supported colors:
-  #   & codes     → &6, &l, &r, etc.
-  #   Hex legacy  → &#RRGGBBText
-  #   MiniMessage → <gold><bold>Text</bold></gold>  |  <#RRGGBB>Text</#RRGGBB>
 
   lines:
     - " "
@@ -172,8 +217,16 @@ playtime:
 #   GRAVES
 #   When a player dies, a chest spawns with their items
 
-graves:
-  enabled: true
+grave:
+  allow-others-open: false      # Solo el dueño puede abrir
+  drop-on-expire: true          # Dropear items al expirar
+  protect-explosions: true      # Proteger de TNT/Creepers
+  expire-time: 600              # Minutos antes de expirar (0 = nunca)
+  material: "CHEST"             # Material del bloque
+  hologram:
+    enabled: true
+    format: "&6⚰ Cadaver de &e{player} &7(&f{time}&7)"
+  broadcast: "&6{player} &emurió. Items en tumba: &6{x}, {y}, {z} &7- &f{world}"
 
 #   DURABILITY WARNING
 #   Warn players when their tool is about to break

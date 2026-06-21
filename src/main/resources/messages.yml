@@ -6,6 +6,14 @@
 
 prefix: "&8[&6IraqueCore&8] &7"
 
+# ─── General ───
+general:
+  no-permission: "&cYou don't have permission to use this command."
+  player-only: "&cOnly players can use this command."
+  console-only: "&cOnly console can use this command."
+  invalid-usage: "&cUsage: {usage}"
+  player-not-found: "&cPlayer not found."
+
 # ─── Reload Command ───
 reload:
   success: "&aAll configurations reloaded successfully."
@@ -20,7 +28,7 @@ spawn:
 
 # ─── Rank Command ───
 rank:
-  given: "&2 You have been granted the rank {rank}"
+  given: "&2You have been granted the rank {rank}"
   set: "&aYou set {player}'s rank to {rank}"
   removed: "&aRank {rank} removed."
   not-found: "&cRank not found!"
@@ -35,12 +43,11 @@ rank:
   info-header: "&aRank: {name} | Prefix: {prefix} | Weight: {weight}"
   not-found-info: "&cRank not found."
   create-hint: "&eUse config.yml to create custom ranks."
-general:
-  no-permission: "&cYou don't have permission to use this command."
-  player-only: "&cOnly players can use this command."
-  console-only: "&cOnly console can use this command."
-  invalid-usage: "&cUsage: {usage}"
-  player-not-found: "&cPlayer not found."
+  help-header: "&6─── Rank Commands ───"
+  help-list: "&e/rank list"
+  help-info: "&e/rank info [player]"
+  help-set: "&e/rank set <player> <rank>"
+  help-create: "&e/rank create <name> <prefix> [weight]"
 
 # ─── Gamemode Command ───
 gamemode:
@@ -104,14 +111,6 @@ motd:
   no-permission: "&cNo permission."
   usage: "&cUsage: /motd reload"
   reloaded: "&aMOTD reloaded."
-
-# ─── Rank Help ───
-rank:
-  help-header: "&6\u2500\u2500\u2500 Rank Commands \u2500\u2500\u2500"
-  help-list: "&e/rank list"
-  help-info: "&e/rank info [player]"
-  help-set: "&e/rank set <player> <rank>"
-  help-create: "&e/rank create <name> <prefix> [weight]"
 
 # ─── Leaderboard Command ───
 leaderboard:
@@ -184,6 +183,7 @@ playtime:
 grave:
   created: "&6{player} &edied. Items are in a grave at &6{x}, {y}, {z}"
   hologram: "&6Cadaver de &e{player}"
+  no-permission: "&cNo puedes abrir la tumba de otro jugador."
 
 # ─── Durability Warning ───
 durability:
@@ -193,10 +193,10 @@ durability:
 permission:
   no-permission: "&cYou don't have permission to manage permissions."
   player-not-found: "&cPlayer not found."
-  usage-add: "&cUsage: /perm add <player> <permission>"
-  usage-remove: "&cUsage: /perm remove <player> <permission>"
-  usage-list: "&cUsage: /perm list <player>"
-  usage-clear: "&cUsage: /perm clear <player>"
+  usage-add: "&cUsage: /perm add <player/rank> <name> <permission>"
+  usage-remove: "&cUsage: /perm remove <player/rank> <name> <permission>"
+  usage-list: "&cUsage: /perm list <player/rank> <name>"
+  usage-clear: "&cUsage: /perm clear <player/rank> <name>"
   usage-check: "&cUsage: /perm check <player> <permission>"
   added: "&aAdded permission &e{permission} &ato &e{player}"
   removed: "&cRemoved permission &e{permission} &cfrom &e{player}"
@@ -207,11 +207,14 @@ permission:
   check-true: "&a{player} &ahas permission &e{permission}"
   check-false: "&c{player} &cdoes NOT have permission &e{permission}"
   help-header: "&6─── Permission Commands ───"
-  help-add: "&e/perm add <player> <permission> &7- Add a permission"
-  help-remove: "&e/perm remove <player> <permission> &7- Remove a permission"
-  help-list: "&e/perm list <player> &7- List player permissions"
-  help-clear: "&e/perm clear <player> &7- Clear all player permissions"
+  help-add: "&e/perm add <player/rank> <name> <permission> &7- Add a permission"
+  help-remove: "&e/perm remove <player/rank> <name> <permission> &7- Remove a permission"
+  help-list: "&e/perm list <player/rank> <name> &7- List permissions"
+  help-clear: "&e/perm clear <player/rank> <name> &7- Clear all permissions"
   help-check: "&e/perm check <player> <permission> &7- Check if player has permission"
+  rank-added: "&aAdded permission &e{permission} &ato rank &e{rank}"
+  rank-removed: "&cRemoved permission &e{permission} &cfrom rank &e{rank}"
+  rank-cleared: "&eAll custom permissions cleared for rank &e{rank}"
 
 # ─── ChatColor ───
 chatcolor:
@@ -234,6 +237,10 @@ grant:
   no-grants: "&e{player} has no grants."
   no-active-grants: "&e{player} has no active grants to revoke."
   invalid-duration: "&cInvalid duration. Use format like 1h, 1d, 7d, 30d, 1y, or permanent."
+
+# ─── Discord ───
+discord:
+  advancement: "&6[Discord] &b{player} &7earned advancement &f{title}"
 
 # ─── Stats ───
 stats:
