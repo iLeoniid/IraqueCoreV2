@@ -138,7 +138,8 @@ public class TagManager {
     }
 
     public boolean hasTagEquipped(Player player, String tagId) {
-        return tagId.equals(playerTags.get(player.getUniqueId()));
+        String equipped = playerTags.get(player.getUniqueId());
+        return equipped != null && equipped.equalsIgnoreCase(tagId);
     }
 
     public Tag getTag(String id) {
