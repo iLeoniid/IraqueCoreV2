@@ -110,6 +110,7 @@ public final class IraqueCore extends JavaPlugin {
         grantManager.startTask();
 
         this.grantListener = new GrantListener(this);
+        getServer().getPluginManager().registerEvents(grantListener, this);
 
         this.chatColorManager = new ChatColorManager(this);
         chatColorManager.load();
