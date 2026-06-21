@@ -61,6 +61,18 @@ commands:
     description: Manage player permissions
     aliases: [permission, perms]
     permission: iraquecore.permission
+  grant:
+    description: Grant a rank to a player
+    aliases: [g]
+    permission: iraquecore.grant
+  grants:
+    description: View grants of a player
+    aliases: [grantlist, mygrants]
+    permission: iraquecore.grants
+  revoke:
+    description: Revoke active grants from a player
+    aliases: [un grant]
+    permission: iraquecore.grant.revoke
   iraquecore:
     description: Plugin info
     aliases: [ic, core]
@@ -86,6 +98,9 @@ permissions:
       iraquecore.permission.list: true
       iraquecore.permission.clear: true
       iraquecore.permission.check: true
+      iraquecore.grant: true
+      iraquecore.grants: true
+      iraquecore.grant.revoke: true
   iraquecore.admin:
     description: Access to admin commands
     default: op
@@ -177,4 +192,13 @@ permissions:
     default: op
   iraquecore.permission.check:
     description: Check if a player has a permission
+    default: op
+  iraquecore.grant:
+    description: Grant ranks to players
+    default: op
+  iraquecore.grants:
+    description: View player grants
+    default: op
+  iraquecore.grant.revoke:
+    description: Revoke grants from players
     default: op

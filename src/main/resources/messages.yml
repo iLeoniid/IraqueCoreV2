@@ -213,6 +213,20 @@ permission:
   help-clear: "&e/perm clear <player> &7- Clear all player permissions"
   help-check: "&e/perm check <player> <permission> &7- Check if player has permission"
 
+# ─── Grant System ───
+grant:
+  no-permission: "&cYou don't have permission to grant ranks."
+  no-permission-revoke: "&cYou don't have permission to revoke grants."
+  usage: "&cUsage: /grant <player> [rank] [duration] [reason]"
+  usage-revoke: "&cUsage: /revoke <player> <reason>"
+  success: "&aGranted {rank} to {player} for: {reason}"
+  received: "&aYou have been granted the rank {rank}"
+  revoked: "&cRevoked grants from {player}. Reason: {reason}"
+  revoked-target: "&cYour rank grants have been revoked. Reason: {reason}"
+  no-grants: "&e{player} has no grants."
+  no-active-grants: "&e{player} has no active grants to revoke."
+  invalid-duration: "&cInvalid duration. Use format like 1h, 1d, 7d, 30d, 1y, or permanent."
+
 # ─── Stats ───
 stats:
   saved: "&aStats have been saved successfully."

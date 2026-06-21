@@ -29,6 +29,11 @@ public class ChatListener implements Listener {
         Player player  = event.getPlayer();
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
 
+        if (plugin.getGrantListener() != null && plugin.getGrantListener().handleChatInput(player, message)) {
+            event.setCancelled(true);
+            return;
+        }
+
         String format    = plugin.getConfigManager().getChatFormat();
         String prefix    = "";
         String suffix    = "";
@@ -85,6 +90,10 @@ public class ChatListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         plugin.getRankManager().loadPlayer(player.getUniqueId());
+
+        // Apply active grants on join
+        plugin.getGrantManager().applyGrant(player.getUniqueId());
+
         plugin.getRankManager().applyPermissions(player);
 
         org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
