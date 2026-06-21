@@ -41,6 +41,7 @@ import gg.leo.IraqueCore.sleep.SleepManager;
 import gg.leo.IraqueCore.tag.TagCommand;
 import gg.leo.IraqueCore.tag.TagManager;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -82,28 +83,36 @@ public final class IraqueCore extends JavaPlugin {
         //  Managers 
         this.configManager = new ConfigManager(this);
         configManager.load();
+        logSuccess("CONFIG");
 
         this.afkManager = new AfkManager(this);
         afkManager.load();
         afkManager.startTask();
+        logSuccess("AFK");
 
         this.sleepManager = new SleepManager(this);
         sleepManager.load();
+        logSuccess("SLEEP");
 
         this.playtimeManager = new PlaytimeManager(this);
         playtimeManager.load();
         playtimeManager.startTask();
+        logSuccess("PLAYTIME");
 
         this.rankManager = new RankManager(this);
         rankManager.loadRanks();
+        logSuccess("RANK");
 
         this.tagManager = new TagManager(this);
         tagManager.load();
+        logSuccess("TAG");
 
         this.msgManager = new MsgManager();
+        logSuccess("MSG");
 
         this.permissionManager = new PermissionManager(this);
         permissionManager.load();
+        logSuccess("PERMISSION");
 
         this.grantManager = new GrantManager(this);
         grantManager.load();
@@ -111,14 +120,17 @@ public final class IraqueCore extends JavaPlugin {
 
         this.grantListener = new GrantListener(this);
         getServer().getPluginManager().registerEvents(grantListener, this);
+        logSuccess("GRANT");
 
         this.chatColorManager = new ChatColorManager(this);
         chatColorManager.load();
+        logSuccess("CHATCOLOR");
 
         //  Scoreboard 
         this.scoreboardManager = new ScoreboardManager(this);
         scoreboardManager.load();
         scoreboardManager.startTasks();
+        logSuccess("SCOREBOARD");
 
         //  Events ─
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
@@ -132,8 +144,10 @@ public final class IraqueCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AdvancementListener(this), this);
         getServer().getPluginManager().registerEvents(new DurabilityListener(this), this);
         getServer().getPluginManager().registerEvents(new MenuListener(), this);
+        logSuccess("EVENTS");
 
         this.statsCommand = new StatsCommand(this);
+        logSuccess("STATS");
 
         getServer().getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -146,21 +160,30 @@ public final class IraqueCore extends JavaPlugin {
         }, this);
 
         this.leaderboardManager = new LeaderboardManager(this);
+        logSuccess("LEADERBOARD");
 
         this.motdManager = new MotdManager(this);
         motdManager.load();
+        logSuccess("MOTD");
 
         this.imageMotdManager = new ImageMotdManager(this);
         imageMotdManager.load();
         getServer().getPluginManager().registerEvents(imageMotdManager, this);
+        logSuccess("IMAGE MOTD");
 
         //  Commands 
         registerCommands();
+        logSuccess("COMMANDS");
 
         //  Discord (async — doesn't block startup) ─
         if (configManager.isDiscordEnabled()) {
-            this.discordManager = new DiscordManager(this);
-            discordManager.start();
+            try {
+                this.discordManager = new DiscordManager(this);
+                discordManager.start();
+                logSuccess("DISCORD");
+            } catch (Exception e) {
+                logWarning("DISCORD", e.getMessage());
+            }
         }
 
         componentLogger.info("IraqueCore v{} enabled!", getPluginMeta().getVersion());
@@ -343,4 +366,22 @@ public final class IraqueCore extends JavaPlugin {
      * Use it instead of raw SLF4J for colored console messages.
      */
     public ComponentLogger getPluginLogger()          { return componentLogger; }
+
+    //  Console startup logging 
+
+    private void logSuccess(String feature) {
+        Bukkit.getConsoleSender().sendMessage(
+                configManager.deserialize(
+                        "<#383737>[<#b60606>" + feature + "</#b60606><#383737>] <#ff4d07>Successfully initialized!</#ff4d07>"
+                )
+        );
+    }
+
+    private void logWarning(String feature, String message) {
+        Bukkit.getConsoleSender().sendMessage(
+                configManager.deserialize(
+                        "\u26A0\uFE0F <#383737>[<#b60606>" + feature + "</#b60606><#383737>] <#383737>(<#ff4d07>WARNING</#ff4d07><#383737>) <#ffd900>" + message + "</#ffd900>"
+                )
+        );
+    }
 }
