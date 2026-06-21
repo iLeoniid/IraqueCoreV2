@@ -3,6 +3,7 @@ package gg.leo.IraqueCore.utils.menu;
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.utils.menu.buttons.PlaceholderButton;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -44,7 +45,7 @@ public abstract class Menu {
             MenuController.paginatedMenus.remove(player.getUniqueId());
             MenuController.menus.put(player.getUniqueId(), this);
 
-            Inventory inv = Bukkit.createInventory(null, finalSize, getTitle(player));
+            Inventory inv = Bukkit.createInventory(null, finalSize, ChatColor.translateAlternateColorCodes('&', getTitle(player)));
 
             if (placeholder && staticSize != null) {
                 PlaceholderButton bg = new PlaceholderButton(
