@@ -38,19 +38,15 @@ public abstract class Menu {
     }
 
     public void openMenu() {
-        Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
-            Map<Integer, Button> buttons = getButtons(player);
-            int finalSize = staticSize != null ? staticSize : size(buttons);
+        MenuController.paginatedMenus.remove(player.getUniqueId());
+        MenuController.menus.put(player.getUniqueId(), this);
 
-            if (player.getOpenInventory().getTopInventory() != null) {
-                player.closeInventory();
-            }
+        Map<Integer, Button> buttons = getButtons(player);
+        int finalSize = staticSize != null ? staticSize : size(buttons);
 
-            MenuController.paginatedMenus.remove(player.getUniqueId());
-            MenuController.menus.put(player.getUniqueId(), this);
-
-            Inventory inv = Bukkit.createInventory(null, finalSize, ChatColor.translateAlternateColorCodes('&', getTitle(player)));
-
+        Inventory inv = player.getOpenInventory().getTopInventory();
+        if (inv != null && inv.getHolder() == null && inv.getSize() == finalSize) {
+            inv.clear();
             if (placeholder && staticSize != null) {
                 PlaceholderButton bg = new PlaceholderButton(
                         Material.GRAY_STAINED_GLASS_PANE, List.of(), " ", 0);
@@ -60,13 +56,31 @@ public abstract class Menu {
                     }
                 }
             }
-
             for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
                 inv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
             }
-
-            player.openInventory(inv);
             player.updateInventory();
-        });
+        } else {
+            Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
+                if (player.getOpenInventory().getTopInventory() != null) {
+                    player.closeInventory();
+                }
+                Inventory newInv = Bukkit.createInventory(null, finalSize, ChatColor.translateAlternateColorCodes('&', getTitle(player)));
+                if (placeholder && staticSize != null) {
+                    PlaceholderButton bg = new PlaceholderButton(
+                            Material.GRAY_STAINED_GLASS_PANE, List.of(), " ", 0);
+                    for (int i = 0; i < staticSize; i++) {
+                        if (!buttons.containsKey(i)) {
+                            newInv.setItem(i, bg.constructItemStack(player));
+                        }
+                    }
+                }
+                for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
+                    newInv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
+                }
+                player.openInventory(newInv);
+                player.updateInventory();
+            });
+        }
     }
 }

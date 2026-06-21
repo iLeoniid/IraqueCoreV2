@@ -157,25 +157,30 @@ public abstract class PaginatedMenu {
     }
 
     public void updateMenu() {
-        player.closeInventory();
-
-        Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
-            Map<Integer, Button> buttons = getButtonsInRange(player);
-
-            int size = displaySize + 9;
-            String title = "(" + currentPage + "/" + (maxPages == 0 ? 1 : maxPages) + ") " + getTitle(player);
-
-            Inventory inv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&', title));
-
-            MenuController.menus.remove(player.getUniqueId());
+        Inventory inv = player.getOpenInventory().getTopInventory();
+        if (inv != null && inv.getHolder() == null) {
+            inv.clear();
             MenuController.paginatedMenus.put(player.getUniqueId(), this);
-
+            Map<Integer, Button> buttons = getButtonsInRange(player);
             for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
                 inv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
             }
-
-            player.openInventory(inv);
             player.updateInventory();
-        });
+        } else {
+            player.closeInventory();
+            Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
+                Map<Integer, Button> buttons = getButtonsInRange(player);
+                int size = displaySize + 9;
+                String title = "(" + currentPage + "/" + (maxPages == 0 ? 1 : maxPages) + ") " + getTitle(player);
+                Inventory newInv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&', title));
+                MenuController.menus.remove(player.getUniqueId());
+                MenuController.paginatedMenus.put(player.getUniqueId(), this);
+                for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
+                    newInv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
+                }
+                player.openInventory(newInv);
+                player.updateInventory();
+            });
+        }
     }
 }
