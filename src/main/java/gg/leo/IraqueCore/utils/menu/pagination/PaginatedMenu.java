@@ -16,7 +16,7 @@ public abstract class PaginatedMenu {
 
     protected final int displaySize;
     protected final Player player;
-    protected int currentPage = 1;
+    public int currentPage = 1;
     protected int maxPages = 1;
 
     public PaginatedMenu(int displaySize, Player player) {
@@ -157,30 +157,29 @@ public abstract class PaginatedMenu {
     }
 
     public void updateMenu() {
-        Inventory inv = player.getOpenInventory().getTopInventory();
-        if (inv != null && inv.getHolder() == null) {
-            inv.clear();
-            MenuController.paginatedMenus.put(player.getUniqueId(), this);
+        // Cerrar el inventario actual (esto dispara InventoryCloseEvent)
+        player.closeInventory();
+
+        // Esperar 1 tick para que el cliente procese el cierre
+        Bukkit.getScheduler().runTaskLater(IraqueCore.getInstance(), () -> {
+            if (!player.isOnline()) return;
+
             Map<Integer, Button> buttons = getButtonsInRange(player);
+            int size = displaySize + 9;
+            String title = "(" + currentPage + "/" + (maxPages == 0 ? 1 : maxPages) + ") " + getTitle(player);
+
+            Inventory inv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&', title));
+
+            // Limpiar registros antiguos y registrar este menú
+            MenuController.menus.remove(player.getUniqueId());
+            MenuController.paginatedMenus.put(player.getUniqueId(), this);
+
             for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
                 inv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
             }
+
+            player.openInventory(inv);
             player.updateInventory();
-        } else {
-            player.closeInventory();
-            Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
-                Map<Integer, Button> buttons = getButtonsInRange(player);
-                int size = displaySize + 9;
-                String title = "(" + currentPage + "/" + (maxPages == 0 ? 1 : maxPages) + ") " + getTitle(player);
-                Inventory newInv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&', title));
-                MenuController.menus.remove(player.getUniqueId());
-                MenuController.paginatedMenus.put(player.getUniqueId(), this);
-                for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
-                    newInv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
-                }
-                player.openInventory(newInv);
-                player.updateInventory();
-            });
-        }
+        }, 1L);
     }
 }

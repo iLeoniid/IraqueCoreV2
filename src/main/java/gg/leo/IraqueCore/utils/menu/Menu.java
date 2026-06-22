@@ -38,49 +38,44 @@ public abstract class Menu {
     }
 
     public void openMenu() {
-        MenuController.paginatedMenus.remove(player.getUniqueId());
-        MenuController.menus.put(player.getUniqueId(), this);
+        Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
+            if (!player.isOnline()) return;
 
-        Map<Integer, Button> buttons = getButtons(player);
-        int finalSize = staticSize != null ? staticSize : size(buttons);
+            // Cerrar primero si hay un inventario abierto
+            if (player.getOpenInventory().getTopInventory() != null) {
+                player.closeInventory();
+            }
 
-        Inventory inv = player.getOpenInventory().getTopInventory();
-        if (inv != null && inv.getHolder() == null && inv.getSize() == finalSize) {
-            inv.clear();
-            if (placeholder && staticSize != null) {
-                PlaceholderButton bg = new PlaceholderButton(
-                        Material.GRAY_STAINED_GLASS_PANE, List.of(), " ", 0);
-                for (int i = 0; i < staticSize; i++) {
-                    if (!buttons.containsKey(i)) {
-                        inv.setItem(i, bg.constructItemStack(player));
-                    }
-                }
-            }
-            for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
-                inv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
-            }
-            player.updateInventory();
-        } else {
-            Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
-                if (player.getOpenInventory().getTopInventory() != null) {
-                    player.closeInventory();
-                }
-                Inventory newInv = Bukkit.createInventory(null, finalSize, ChatColor.translateAlternateColorCodes('&', getTitle(player)));
+            // Esperar 1 tick para evitar conflictos con el cierre
+            Bukkit.getScheduler().runTaskLater(IraqueCore.getInstance(), () -> {
+                if (!player.isOnline()) return;
+
+                // Limpiar menús previos y registrar este
+                MenuController.paginatedMenus.remove(player.getUniqueId());
+                MenuController.menus.put(player.getUniqueId(), this);
+
+                Map<Integer, Button> buttons = getButtons(player);
+                int finalSize = staticSize != null ? staticSize : size(buttons);
+
+                Inventory inv = Bukkit.createInventory(null, finalSize, ChatColor.translateAlternateColorCodes('&', getTitle(player)));
+
                 if (placeholder && staticSize != null) {
                     PlaceholderButton bg = new PlaceholderButton(
                             Material.GRAY_STAINED_GLASS_PANE, List.of(), " ", 0);
                     for (int i = 0; i < staticSize; i++) {
                         if (!buttons.containsKey(i)) {
-                            newInv.setItem(i, bg.constructItemStack(player));
+                            inv.setItem(i, bg.constructItemStack(player));
                         }
                     }
                 }
+
                 for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
-                    newInv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
+                    inv.setItem(entry.getKey(), entry.getValue().constructItemStack(player));
                 }
-                player.openInventory(newInv);
+
+                player.openInventory(inv);
                 player.updateInventory();
-            });
-        }
+            }, 1L);
+        });
     }
 }

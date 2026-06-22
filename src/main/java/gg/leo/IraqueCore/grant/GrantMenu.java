@@ -38,43 +38,58 @@ public class GrantMenu {
                 .sorted(Comparator.comparingInt(Rank::weight).reversed())
                 .collect(Collectors.toList());
 
-        new BorderedPaginatedMenu(granter) {
-            @Override
-            public Map<Integer, Button> getPagesButtons(Player p) {
-                Map<Integer, Button> buttons = new LinkedHashMap<>();
-                int index = 0;
-                for (Rank rank : ranks) {
-                    String fRankName = rank.name();
-                    buttons.put(index, rankButton(rank, () -> {
-                        session.selectedRank = fRankName;
-                        openDurationSelect(granter);
-                    }));
-                    index++;
+        // Crear el menú y guardar referencia
+        RankSelectMenu menu = new RankSelectMenu(granter, session, ranks);
+        menu.updateMenu();
+    }
+
+    private class RankSelectMenu extends BorderedPaginatedMenu {
+        private final Player granter;
+        private final GrantSession session;
+        private final List<Rank> ranks;
+
+        RankSelectMenu(Player granter, GrantSession session, List<Rank> ranks) {
+            super(granter);
+            this.granter = granter;
+            this.session = session;
+            this.ranks = ranks;
+        }
+
+        @Override
+        public Map<Integer, Button> getPagesButtons(Player p) {
+            Map<Integer, Button> buttons = new LinkedHashMap<>();
+            int index = 0;
+            for (Rank rank : ranks) {
+                String fRankName = rank.name();
+                buttons.put(index, rankButton(rank, () -> {
+                    session.selectedRank = fRankName;
+                    openDurationSelect(granter);
+                }));
+                index++;
+            }
+            return buttons;
+        }
+
+        @Override
+        public String getTitle(Player p) {
+            return "Select Rank - " + session.targetName;
+        }
+
+        @Override
+        public Map<Integer, Button> getHeaderItems(Player p) {
+            Map<Integer, Button> headers = super.getHeaderItems(p);
+            headers.put(40, new Button() {
+                @Override public Material getMaterial(Player p) { return Material.BARRIER; }
+                @Override public List<String> getDescription(Player p) { return List.of("&7Cancelar el grant"); }
+                @Override public String getDisplayName(Player p) { return "&c\u2716 Cancel"; }
+                @Override public int getData(Player p) { return 0; }
+                @Override public void onClick(Player p, int slot, ClickType type) {
+                    sessions.remove(granter.getUniqueId());
+                    p.closeInventory();
                 }
-                return buttons;
-            }
-
-            @Override
-            public String getTitle(Player p) {
-                return "Select Rank - " + session.targetName;
-            }
-
-            @Override
-            public Map<Integer, Button> getHeaderItems(Player p) {
-                Map<Integer, Button> headers = super.getHeaderItems(p);
-                headers.put(40, new Button() {
-                    @Override public Material getMaterial(Player p) { return Material.BARRIER; }
-                    @Override public List<String> getDescription(Player p) { return List.of("&7Cancelar el grant"); }
-                    @Override public String getDisplayName(Player p) { return "&c\u2716 Cancel"; }
-                    @Override public int getData(Player p) { return 0; }
-                    @Override public void onClick(Player p, int slot, ClickType type) {
-                        sessions.remove(granter.getUniqueId());
-                        p.closeInventory();
-                    }
-                });
-                return headers;
-            }
-        }.updateMenu();
+            });
+            return headers;
+        }
     }
 
     public void openDurationSelect(Player granter) {

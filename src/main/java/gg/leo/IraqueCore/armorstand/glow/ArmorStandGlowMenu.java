@@ -130,7 +130,8 @@ public class ArmorStandGlowMenu extends Menu {
             @Override
             public void onClick(Player p, int slot, ClickType type) {
                 setGlow(null);
-                new ArmorStandGlowMenu(plugin, p, stand, editor).openMenu();
+                // Refrescar el menú actual, no crear uno nuevo
+                openMenu();
             }
         };
     }
@@ -231,7 +232,8 @@ public class ArmorStandGlowMenu extends Menu {
             } else {
                 setGlow(color);
             }
-            new ArmorStandGlowMenu(plugin, p, stand, editor).openMenu();
+            // Refrescar el menú actual, no crear uno nuevo
+            openMenu();
         }
     }
 }

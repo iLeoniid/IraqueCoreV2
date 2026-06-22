@@ -104,77 +104,94 @@ public class LeaderboardMenu {
 
         boolean fIsPlaytime = isPlaytime;
 
-        new BorderedPaginatedMenu(player) {
-            { currentPage = Math.max(1, Math.min(page + 1, Math.max(1, (int) Math.ceil((double) sorted.size() / getButtonsPerPage())))); }
+        // Crear el menú y guardar referencia para refrescar
+        LeaderboardPaginatedMenu menu = new LeaderboardPaginatedMenu(player, sorted, title, fIsPlaytime, category);
+        menu.updateMenu();
+    }
 
-            @Override
-            public Map<Integer, Button> getPagesButtons(Player p) {
-                Map<Integer, Button> buttons = new LinkedHashMap<>();
-                int index = 0;
-                for (Map.Entry<UUID, ? extends Number> entry : sorted) {
-                    int position = index + 1;
-                    String playerName = getPlayerName(entry.getKey());
-                    String valueStr = fIsPlaytime
-                            ? PlaytimeManager.formatTime(entry.getValue().longValue())
-                            : String.valueOf(entry.getValue().intValue());
+    private class LeaderboardPaginatedMenu extends BorderedPaginatedMenu {
+        private final List<Map.Entry<UUID, ? extends Number>> sorted;
+        private final String menuTitle;
+        private final boolean isPlaytime;
+        private final String category;
 
-                    String prefix = switch (position) {
-                        case 1 -> "&6";
-                        case 2 -> "&7";
-                        case 3 -> "&6";
-                        default -> "&e";
-                    };
-                    String trophy = switch (position) {
-                        case 1 -> "\uD83E\uDD47 ";
-                        case 2 -> "\uD83E\uDD48 ";
-                        case 3 -> "\uD83E\uDD49 ";
-                        default -> "";
-                    };
-                    String displayName = prefix + trophy + "#" + position + " &f" + playerName;
-                    String fValueStr = valueStr;
-                    buttons.put(index, new Button() {
-                        @Override public Material getMaterial(Player p) { return Material.PLAYER_HEAD; }
-                        @Override public List<String> getDescription(Player p) { return List.of("&7Valor: &f" + fValueStr); }
-                        @Override public String getDisplayName(Player p) { return displayName; }
-                        @Override public int getData(Player p) { return 0; }
-                        @Override public void onClick(Player p, int slot, ClickType type) {}
-                        @Override
-                        public ItemStack getButtonItem(Player p) {
-                            ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-                            SkullMeta meta = (SkullMeta) head.getItemMeta();
-                            meta.setDisplayName(org.bukkit.ChatColor.translateAlternateColorCodes('&', displayName));
-                            OfflinePlayer off = Bukkit.getOfflinePlayer(entry.getKey());
-                            meta.setOwningPlayer(off);
-                            meta.setLore(List.of(org.bukkit.ChatColor.GRAY + "Valor: " + org.bukkit.ChatColor.WHITE + fValueStr));
-                            head.setItemMeta(meta);
-                            return head;
-                        }
-                    });
-                    index++;
-                }
-                return buttons;
-            }
+        LeaderboardPaginatedMenu(Player player, List<Map.Entry<UUID, ? extends Number>> sorted,
+                                 String title, boolean isPlaytime, String category) {
+            super(player);
+            this.sorted = sorted;
+            this.menuTitle = title;
+            this.isPlaytime = isPlaytime;
+            this.category = category;
+            this.currentPage = 1;
+        }
 
-            @Override
-            public String getTitle(Player p) {
-                return title;
-            }
+        @Override
+        public Map<Integer, Button> getPagesButtons(Player p) {
+            Map<Integer, Button> buttons = new LinkedHashMap<>();
+            int index = 0;
+            for (Map.Entry<UUID, ? extends Number> entry : sorted) {
+                int position = index + 1;
+                String playerName = getPlayerName(entry.getKey());
+                String valueStr = isPlaytime
+                        ? PlaytimeManager.formatTime(entry.getValue().longValue())
+                        : String.valueOf(entry.getValue().intValue());
 
-            @Override
-            public Map<Integer, Button> getHeaderItems(Player p) {
-                Map<Integer, Button> headers = super.getHeaderItems(p);
-                headers.put(40, new Button() {
-                    @Override public Material getMaterial(Player p) { return Material.BARRIER; }
-                    @Override public List<String> getDescription(Player p) { return List.of("&7Volver al menú principal"); }
-                    @Override public String getDisplayName(Player p) { return "&c\u2190 Volver al Menú"; }
+                String prefix = switch (position) {
+                    case 1 -> "&6";
+                    case 2 -> "&7";
+                    case 3 -> "&6";
+                    default -> "&e";
+                };
+                String trophy = switch (position) {
+                    case 1 -> "\uD83E\uDD47 ";
+                    case 2 -> "\uD83E\uDD48 ";
+                    case 3 -> "\uD83E\uDD49 ";
+                    default -> "";
+                };
+                String displayName = prefix + trophy + "#" + position + " &f" + playerName;
+                String fValueStr = valueStr;
+                buttons.put(index, new Button() {
+                    @Override public Material getMaterial(Player p) { return Material.PLAYER_HEAD; }
+                    @Override public List<String> getDescription(Player p) { return List.of("&7Valor: &f" + fValueStr); }
+                    @Override public String getDisplayName(Player p) { return displayName; }
                     @Override public int getData(Player p) { return 0; }
-                    @Override public void onClick(Player p, int slot, ClickType type) {
-                        openMain(p);
+                    @Override public void onClick(Player p, int slot, ClickType type) {}
+                    @Override
+                    public ItemStack getButtonItem(Player p) {
+                        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+                        SkullMeta meta = (SkullMeta) head.getItemMeta();
+                        meta.setDisplayName(org.bukkit.ChatColor.translateAlternateColorCodes('&', displayName));
+                        OfflinePlayer off = Bukkit.getOfflinePlayer(entry.getKey());
+                        meta.setOwningPlayer(off);
+                        meta.setLore(List.of(org.bukkit.ChatColor.GRAY + "Valor: " + org.bukkit.ChatColor.WHITE + fValueStr));
+                        head.setItemMeta(meta);
+                        return head;
                     }
                 });
-                return headers;
+                index++;
             }
-        }.updateMenu();
+            return buttons;
+        }
+
+        @Override
+        public String getTitle(Player p) {
+            return menuTitle;
+        }
+
+        @Override
+        public Map<Integer, Button> getHeaderItems(Player p) {
+            Map<Integer, Button> headers = super.getHeaderItems(p);
+            headers.put(40, new Button() {
+                @Override public Material getMaterial(Player p) { return Material.BARRIER; }
+                @Override public List<String> getDescription(Player p) { return List.of("&7Volver al menú principal"); }
+                @Override public String getDisplayName(Player p) { return "&c\u2190 Volver al Menú"; }
+                @Override public int getData(Player p) { return 0; }
+                @Override public void onClick(Player p, int slot, ClickType type) {
+                    openMain(p);
+                }
+            });
+            return headers;
+        }
     }
 
     @SuppressWarnings("deprecation")

@@ -14,12 +14,16 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class MenuListener implements Listener {
 
     private final Map<UUID, Long> timestamps = new HashMap<>();
+    // Jugadores que están en medio de un update de menú (no borrar su registro en onClose)
+    private final Set<UUID> updating = new HashSet<>();
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMenuClick(InventoryClickEvent event) {
@@ -30,6 +34,7 @@ public class MenuListener implements Listener {
 
         if (menu == null && paginated == null) return;
 
+        // CANCELAR INMEDIATAMENTE
         event.setCancelled(true);
 
         if (event.getClickedInventory() == null) return;
@@ -51,19 +56,19 @@ public class MenuListener implements Listener {
             return;
         }
 
+        // Anti-spam (300ms)
         long now = System.currentTimeMillis();
         Long last = timestamps.get(player.getUniqueId());
         if (last != null && now - last < 300L) return;
         timestamps.put(player.getUniqueId(), now);
 
+        // Marcar que estamos en medio de un update
+        updating.add(player.getUniqueId());
+
         Button btn = null;
         if (paginated != null) {
             btn = paginated.getButtonsInRange(player).get(event.getSlot());
         } else if (menu != null) {
-            if (menu.isStealable() && event.getClickedInventory().getType() == InventoryType.PLAYER) {
-                event.setCancelled(false);
-                return;
-            }
             btn = menu.getButtons(player).get(event.getSlot());
         }
 
@@ -71,8 +76,19 @@ public class MenuListener implements Listener {
             final Button fbtn = btn;
             org.bukkit.Bukkit.getScheduler().runTask(
                 gg.leo.IraqueCore.IraqueCore.getInstance(),
-                () -> fbtn.onClick(player, event.getSlot(), event.getClick())
+                () -> {
+                    fbtn.onClick(player, event.getSlot(), event.getClick());
+                    // Después de ejecutar el click, remover el flag de update
+                    // (el updateMenu() ya debería haber terminado)
+                    org.bukkit.Bukkit.getScheduler().runTaskLater(
+                        gg.leo.IraqueCore.IraqueCore.getInstance(),
+                        () -> updating.remove(player.getUniqueId()),
+                        2L
+                    );
+                }
             );
+        } else {
+            updating.remove(player.getUniqueId());
         }
     }
 
@@ -88,7 +104,15 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        MenuController.menus.remove(event.getPlayer().getUniqueId());
-        MenuController.paginatedMenus.remove(event.getPlayer().getUniqueId());
+        UUID uuid = event.getPlayer().getUniqueId();
+        
+        // Si el jugador está en medio de un update de menú, NO borrar el registro
+        // porque el nuevo menú se va a abrir inmediatamente después
+        if (updating.contains(uuid)) {
+            return;
+        }
+
+        MenuController.menus.remove(uuid);
+        MenuController.paginatedMenus.remove(uuid);
     }
 }

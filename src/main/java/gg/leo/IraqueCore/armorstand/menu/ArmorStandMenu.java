@@ -114,7 +114,7 @@ public class ArmorStandMenu extends Menu {
         // Cierre
         buttons.put(49, actionButton(Material.EMERALD, "armorstand.close", "&aClose", () -> {
             editor.cleanup(player);
-            Bukkit.getScheduler().runTask(plugin, (Runnable) player::closeInventory);
+            player.closeInventory();
         }, false));
 
         return buttons;
@@ -157,7 +157,8 @@ public class ArmorStandMenu extends Menu {
             @Override
             public void onClick(Player p, int slot, ClickType type) {
                 action.run();
-                new ArmorStandMenu(plugin, p, stand, editor).openMenu();
+                // Refrescar el menú actual, no crear uno nuevo
+                openMenu();
             }
         };
     }
@@ -193,7 +194,8 @@ public class ArmorStandMenu extends Menu {
             public void onClick(Player p, int slot, ClickType type) {
                 action.run();
                 if (refresh) {
-                    new ArmorStandMenu(plugin, p, stand, editor).openMenu();
+                    // Refrescar el menú actual, no crear uno nuevo
+                    openMenu();
                 }
             }
         };

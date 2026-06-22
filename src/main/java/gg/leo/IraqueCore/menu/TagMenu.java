@@ -9,8 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -101,6 +99,7 @@ public class TagMenu {
                             tagManager.setPlayerTag(p, null);
                             plugin.getRankManager().updatePlayerRankVisuals(p);
                             p.sendMessage(plugin.getConfigManager().getMessageComponent("tag.gui.remove-success"));
+                            // Refrescar el menú actual, no crear uno nuevo
                             openMainMenu(p);
                         } else {
                             p.sendMessage(plugin.getConfigManager().getMessageComponent("tag.gui.no-tag-equipped-action"));
@@ -130,63 +129,80 @@ public class TagMenu {
         String categoryName = getCategoryDisplayName(category);
         String title = ChatColor.BLUE + categoryName;
 
-        new BorderedPaginatedMenu(player) {
-            { currentPage = Math.max(1, Math.min(page + 1, Math.max(1, (int) Math.ceil((double) categoryTags.size() / getButtonsPerPage())))); }
-
-            @Override
-            public Map<Integer, Button> getPagesButtons(Player p) {
-                Map<Integer, Button> buttons = new LinkedHashMap<>();
-                int index = 0;
-                for (Tag tag : categoryTags) {
-                    List<String> lore = new ArrayList<>(tag.getLore().stream()
-                            .map(l -> ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', l)))
-                            .map(l -> "&7" + l)
-                            .toList());
-                    lore.add("");
-                    boolean equipped = tagManager.hasTagEquipped(p, tag.getId());
-                    if (equipped) {
-                        lore.add("&a\u2713 Equipada");
-                        lore.add("&7Click para remover");
-                    } else {
-                        lore.add("&e\u25B8 Click para equipar");
-                    }
-                    List<String> fLore = lore;
-                    String tagId = tag.getId();
-                    buttons.put(index, new Button() {
-                        @Override public Material getMaterial(Player p) { return tag.getMaterial(); }
-                        @Override public List<String> getDescription(Player p) { return fLore; }
-                        @Override public String getDisplayName(Player p) { return tag.getDisplayName(); }
-                        @Override public int getData(Player p) { return 0; }
-                        @Override public void onClick(Player p, int slot, ClickType type) {
-                            handleTagClick(p, tag, tagId, category);
-                        }
-                    });
-                    index++;
-                }
-                return buttons;
-            }
-
-            @Override
-            public String getTitle(Player p) {
-                return title;
-            }
-
-            @Override
-            public Map<Integer, Button> getHeaderItems(Player p) {
-                Map<Integer, Button> headers = super.getHeaderItems(p);
-                headers.put(40, new Button() {
-                    @Override public Material getMaterial(Player p) { return Material.BARRIER; }
-                    @Override public List<String> getDescription(Player p) { return List.of("&7Volver al menu de categorias"); }
-                    @Override public String getDisplayName(Player p) { return "&c\u2190 Volver"; }
-                    @Override public int getData(Player p) { return 0; }
-                    @Override public void onClick(Player p, int slot, ClickType type) { openMainMenu(p); }
-                });
-                return headers;
-            }
-        }.updateMenu();
+        // Crear el menú y guardar referencia para refrescar
+        TagPaginatedMenu menu = new TagPaginatedMenu(player, categoryTags, title, category, tagManager);
+        menu.currentPage = Math.max(1, Math.min(page + 1, Math.max(1, (int) Math.ceil((double) categoryTags.size() / menu.getButtonsPerPage()))));
+        menu.updateMenu();
     }
 
-    private void handleTagClick(Player player, Tag tag, String tagId, String category) {
+    private class TagPaginatedMenu extends BorderedPaginatedMenu {
+        private final List<Tag> categoryTags;
+        private final String menuTitle;
+        private final String category;
+        private final gg.leo.IraqueCore.tag.TagManager tagManager;
+
+        TagPaginatedMenu(Player player, List<Tag> categoryTags, String title, String category,
+                         gg.leo.IraqueCore.tag.TagManager tagManager) {
+            super(player);
+            this.categoryTags = categoryTags;
+            this.menuTitle = title;
+            this.category = category;
+            this.tagManager = tagManager;
+        }
+
+        @Override
+        public Map<Integer, Button> getPagesButtons(Player p) {
+            Map<Integer, Button> buttons = new LinkedHashMap<>();
+            int index = 0;
+            for (Tag tag : categoryTags) {
+                List<String> lore = new ArrayList<>(tag.getLore().stream()
+                        .map(l -> ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', l)))
+                        .map(l -> "&7" + l)
+                        .toList());
+                lore.add("");
+                boolean equipped = tagManager.hasTagEquipped(p, tag.getId());
+                if (equipped) {
+                    lore.add("&a\u2713 Equipada");
+                    lore.add("&7Click para remover");
+                } else {
+                    lore.add("&e\u25B8 Click para equipar");
+                }
+                List<String> fLore = lore;
+                String tagId = tag.getId();
+                buttons.put(index, new Button() {
+                    @Override public Material getMaterial(Player p) { return tag.getMaterial(); }
+                    @Override public List<String> getDescription(Player p) { return fLore; }
+                    @Override public String getDisplayName(Player p) { return tag.getDisplayName(); }
+                    @Override public int getData(Player p) { return 0; }
+                    @Override public void onClick(Player p, int slot, ClickType type) {
+                        handleTagClick(p, tag, tagId, category, currentPage - 1);
+                    }
+                });
+                index++;
+            }
+            return buttons;
+        }
+
+        @Override
+        public String getTitle(Player p) {
+            return menuTitle;
+        }
+
+        @Override
+        public Map<Integer, Button> getHeaderItems(Player p) {
+            Map<Integer, Button> headers = super.getHeaderItems(p);
+            headers.put(40, new Button() {
+                @Override public Material getMaterial(Player p) { return Material.BARRIER; }
+                @Override public List<String> getDescription(Player p) { return List.of("&7Volver al menu de categorias"); }
+                @Override public String getDisplayName(Player p) { return "&c\u2190 Volver"; }
+                @Override public int getData(Player p) { return 0; }
+                @Override public void onClick(Player p, int slot, ClickType type) { openMainMenu(p); }
+            });
+            return headers;
+        }
+    }
+
+    private void handleTagClick(Player player, Tag tag, String tagId, String category, int currentPageIndex) {
         var tagManager = plugin.getTagManager();
 
         if (!tag.getPermission().isEmpty() && !player.hasPermission(tag.getPermission())) {
@@ -210,7 +226,8 @@ public class TagMenu {
         }
 
         plugin.getRankManager().updatePlayerRankVisuals(player);
-        openCategoryGUI(player, category, 0);
+        // Mantener la página actual
+        openCategoryGUI(player, category, currentPageIndex);
     }
 
     private String getCategoryDisplayName(String category) {
