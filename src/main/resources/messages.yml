@@ -8,129 +8,129 @@ prefix: "&8[&6IraqueCore&8] &7"
 
 # ─── General ───
 general:
-  no-permission: "&cYou don't have permission to use this command."
-  player-only: "&cOnly players can use this command."
-  console-only: "&cOnly console can use this command."
-  invalid-usage: "&cUsage: {usage}"
-  player-not-found: "&cPlayer not found."
+  no-permission: "&cVocê não tem permissão para usar este comando."
+  player-only: "&cApenas jogadores podem usar este comando."
+  console-only: "&cApenas o console pode usar este comando."
+  invalid-usage: "&cUso: {usage}"
+  player-not-found: "&cJogador não encontrado."
 
 # ─── Reload Command ───
 reload:
-  success: "&aAll configurations reloaded successfully."
-  failed: "&cAn error occurred while reloading configurations."
+  success: "&aTodas as configurações foram recarregadas com sucesso."
+  failed: "&cOcorreu um erro ao recarregar as configurações."
 
 # ─── Spawn Commands ───
 spawn:
-  set: "&aSpawn location has been set."
-  teleport: "&aTeleported to spawn."
-  not-set: "&cSpawn has not been set yet."
-  cooldown: "&cYou must wait {time} seconds before using /spawn again."
+  set: "&aLocalização do spawn definida."
+  teleport: "&aTeletransportado para o spawn."
+  not-set: "&cO spawn ainda não foi definido."
+  cooldown: "&cAguarde {time} segundos antes de usar /spawn novamente."
 
 # ─── Rank Command ───
 rank:
-  given: "&2You have been granted the rank {rank}"
-  set: "&aYou set {player}'s rank to {rank}"
-  removed: "&aRank {rank} removed."
-  not-found: "&cRank not found!"
-  player-not-found: "&cPlayer not found!"
-  no-permission: "&cYou don't have permission to manage ranks."
-  no-permission-set: "&cYou don't have permission to set ranks."
-  usage-set: "&cUsage: /rank set <player> <rank>"
-  usage-remove: "&cUsage: /rank remove <name>"
-  list-header: "&6─── Ranks ───"
-  list-entry: "&7  {name} &8(Weight: {weight})"
-  your-rank: "&aYour rank: {rank}"
-  info-header: "&aRank: {name} | Prefix: {prefix} | Weight: {weight}"
-  not-found-info: "&cRank not found."
-  create-hint: "&eUse config.yml to create custom ranks."
-  help-header: "&6─── Rank Commands ───"
+  given: "&2Você recebeu o cargo {rank}"
+  set: "&aVocê definiu o cargo de {player} para {rank}"
+  removed: "&aCargo {rank} removido."
+  not-found: "&cCargo não encontrado!"
+  player-not-found: "&cJogador não encontrado!"
+  no-permission: "&cVocê não tem permissão para gerenciar cargos."
+  no-permission-set: "&cVocê não tem permissão para definir cargos."
+  usage-set: "&cUso: /rank set <jogador> <cargo>"
+  usage-remove: "&cUso: /rank remove <nome>"
+  list-header: "&6─── Cargos ───"
+  list-entry: "&7  {name} &8(Peso: {weight})"
+  your-rank: "&aSeu cargo: {rank}"
+  info-header: "&aCargo: {name} | Prefixo: {prefix} | Peso: {weight}"
+  not-found-info: "&cCargo não encontrado."
+  create-hint: "&eUse config.yml para criar cargos personalizados."
+  help-header: "&6─── Comandos de Cargo ───"
   help-list: "&e/rank list"
-  help-info: "&e/rank info [player]"
-  help-set: "&e/rank set <player> <rank>"
-  help-create: "&e/rank create <name> <prefix> [weight]"
+  help-info: "&e/rank info [jogador]"
+  help-set: "&e/rank set <jogador> <cargo>"
+  help-create: "&e/rank create <nome> <prefixo> [peso]"
 
 # ─── Gamemode Command ───
 gamemode:
-  no-permission: "&cNo permission."
-  usage: "&cUsage: /{label} <mode> [player]"
-  invalid: "&cInvalid gamemode. Use: 0/1/2/3 or survival/creative/adventure/spectator."
-  no-permission-other: "&cNo permission to change other players' gamemode."
-  player-not-found: "&cPlayer not found."
-  player-only: "&cOnly players can use this command."
-  set: "&aYour gamemode has been set to {mode}"
-  set-other: "&aSet {player}'s gamemode to {mode}"
+  no-permission: "&cSem permissão."
+  usage: "&cUso: /{label} <modo> [jogador]"
+  invalid: "&cModo inválido. Use: 0/1/2/3 ou survival/creative/adventure/spectator."
+  no-permission-other: "&cSem permissão para alterar o modo de outros jogadores."
+  player-not-found: "&cJogador não encontrado."
+  player-only: "&cApenas jogadores podem usar este comando."
+  set: "&aSeu modo de jogo foi alterado para {mode}"
+  set-other: "&aModo de jogo de {player} alterado para {mode}"
 
 # ─── Tag Command ───
 tag:
-  reloaded: "&aTags reloaded."
-  player-only: "&cOnly players can use this command."
-  no-permission: "&cNo permission."
+  reloaded: "&aTags recarregadas."
+  player-only: "&cApenas jogadores podem usar este comando."
+  no-permission: "&cSem permissão."
   set:
-    usage: "&cUsage: /tag set <player> <tagId>"
-    player-not-found: "&cPlayer not found."
-    tag-not-found: "&cTag not found. Available IDs: {ids}"
-    success: "&aSet {player}'s tag to {tag}"
-    notify: "&aYour tag has been set to {tag} by an admin."
+    usage: "&cUso: /tag set <jogador> <tagId>"
+    player-not-found: "&cJogador não encontrado."
+    tag-not-found: "&cTag não encontrada. IDs disponíveis: {ids}"
+    success: "&aTag de {player} definida para {tag}"
+    notify: "&aSua tag foi definida para {tag} por um admin."
   gui:
-    category-empty: "&cThis category has no tags available!"
-    remove-success: "&aTag removed successfully!"
-    remove-title: "Remove Tag"
-    no-tag-equipped: "&7You don't have any tag equipped"
-    no-tag-equipped-action: "&cYou don't have any tag equipped!"
-    current-tag: "&7Current tag: {tag}"
-    click-remove: "&e\u25b8 Click to remove"
-    no-permission: "&cYou don't have permission to use this tag!"
-    removed: "&aTag {tag} removed!"
-    equipped: "&aTag equipped: {tag}"
+    category-empty: "&cEsta categoria não possui tags disponíveis!"
+    remove-success: "&aTag removida com sucesso!"
+    remove-title: "Remover Tag"
+    no-tag-equipped: "&7Você não possui nenhuma tag equipada"
+    no-tag-equipped-action: "&cVocê não possui nenhuma tag equipada!"
+    current-tag: "&7Tag atual: {tag}"
+    click-remove: "&e\u25b8 Clique para remover"
+    no-permission: "&cVocê não tem permissão para usar esta tag!"
+    removed: "&aTag {tag} removida!"
+    equipped: "&aTag equipada: {tag}"
 
 # ─── Join / Quit Messages ───
 join:
-  first: "&6Welcome {player} &ato the server for the first time!"
-  normal: "&8[&a+&8] &7{player} &ejoined"
+  first: "&6Bem-vindo {player} &aao servidor pela primeira vez!"
+  normal: "&8[&a+&8] &7{player} &eentrou"
 
 quit:
-  normal: "&8[&c-&8] &7{player} &eleft"
+  normal: "&8[&c-&8] &7{player} &esaiu"
 
 # ─── Msg / Reply ───
 msg:
-  player-only: "&cOnly players can use this command."
-  usage: "&cUsage: /msg <player> <message>"
-  player-not-found: "&cPlayer not found."
-  cannot-self: "&cYou cannot message yourself."
-  format-to: "&7[&aMe &7-> &a{target}&7] {message}"
-  format-from: "&7[&a{sender} &7-> &aMe&7] {message}"
+  player-only: "&cApenas jogadores podem usar este comando."
+  usage: "&cUso: /msg <jogador> <mensagem>"
+  player-not-found: "&cJogador não encontrado."
+  cannot-self: "&cVocê não pode enviar mensagem para si mesmo."
+  format-to: "&7[&aEu &7-> &a{target}&7] {message}"
+  format-from: "&7[&a{sender} &7-> &aEu&7] {message}"
 
 reply:
-  player-only: "&cOnly players can use this command."
-  usage: "&cUsage: /r <message>"
-  nobody: "&cNobody has messaged you recently."
-  not-online: "&cThat player is no longer online."
+  player-only: "&cApenas jogadores podem usar este comando."
+  usage: "&cUso: /r <mensagem>"
+  nobody: "&cNinguém te enviou mensagem recentemente."
+  not-online: "&cEsse jogador não está mais online."
 
 # ─── MOTD Command ───
 motd:
-  no-permission: "&cNo permission."
-  usage: "&cUsage: /motd reload"
-  reloaded: "&aMOTD reloaded."
+  no-permission: "&cSem permissão."
+  usage: "&cUso: /motd reload"
+  reloaded: "&aMOTD recarregado."
 
 # ─── Leaderboard Command ───
 leaderboard:
-  player-only: "&cOnly players can use this command."
+  player-only: "&cApenas jogadores podem usar este comando."
 
 # ─── Whitelist Command ───
 whitelist:
-  usage: "&cUsage: /whitelist <on|off|add|remove|list|status>"
-  usage-add: "&cUsage: /whitelist add <player>"
-  usage-remove: "&cUsage: /whitelist remove <player>"
-  enabled: "&aWhitelist enabled."
-  disabled: "&cWhitelist disabled."
-  added: "&a{player} has been added to the whitelist."
-  already: "&e{player} is already whitelisted."
-  removed: "&c{player} has been removed from the whitelist."
-  not-whitelisted: "&e{player} is not whitelisted."
-  list-header: "&6─── Whitelisted players ({count}) ───"
-  list-empty: "&eNo players are whitelisted."
-  status-on: "&aWhitelist is currently enabled."
-  status-off: "&cWhitelist is currently disabled."
+  usage: "&cUso: /whitelist <on|off|add|remove|list|status>"
+  usage-add: "&cUso: /whitelist add <jogador>"
+  usage-remove: "&cUso: /whitelist remove <jogador>"
+  enabled: "&aWhitelist ativada."
+  disabled: "&cWhitelist desativada."
+  added: "&a{player} foi adicionado à whitelist."
+  already: "&e{player} já está na whitelist."
+  removed: "&c{player} foi removido da whitelist."
+  not-whitelisted: "&e{player} não está na whitelist."
+  list-header: "&6─── Jogadores na Whitelist ({count}) ───"
+  list-empty: "&eNenhum jogador na whitelist."
+  status-on: "&aWhitelist está ativada."
+  status-off: "&cWhitelist está desativada."
 
 # ─── Scoreboard Command ───
 scoreboard:
@@ -144,10 +144,10 @@ scoreboard:
 
 # ─── AFK ───
 afk:
-  now-afk: "&7You are now AFK"
-  no-longer-afk: "&7You are no longer AFK"
-  broadcast-afk: "&7{player} &eis now AFK"
-  broadcast-return: "&7{player} &eis no longer AFK"
+  now-afk: "&7Você está AFK"
+  no-longer-afk: "&7Você não está mais AFK"
+  broadcast-afk: "&7{player} &eestá AFK"
+  broadcast-return: "&7{player} &enão está mais AFK"
 
 # ─── Armor Stand Editor ───
 armorstand:
@@ -178,125 +178,125 @@ armorstand:
 
 # ─── Sleep ───
 sleep:
-  skipped: "&6{player} &eslept and the night was skipped!"
-  vote: "&e{count}/{needed} players are sleeping"
+  skipped: "&6{player} &edormiu e a noite foi pulada!"
+  vote: "&e{count}/{needed} jogadores estão dormindo"
 
 # ─── Playtime ───
 playtime:
-  your: "&aYour playtime: &e{time}"
-  other: "&a{player}'s playtime: &e{time}"
+  your: "&aSeu tempo de jogo: &e{time}"
+  other: "&aTempo de jogo de {player}: &e{time}"
 
 # ─── Durability Warning ───
 durability:
-  warning: "&cYour {item} is about to break! (&7{remaining}/{max}&c)"
+  warning: "&cSeu {item} está prestes a quebrar! (&7{remaining}/{max}&c)"
 
 # ─── Permission Command ───
 permission:
-  no-permission: "&cYou don't have permission to manage permissions."
-  player-not-found: "&cPlayer not found."
-  usage-add: "&cUsage: /perm add <player/rank> <name> <permission>"
-  usage-remove: "&cUsage: /perm remove <player/rank> <name> <permission>"
-  usage-list: "&cUsage: /perm list <player/rank> <name>"
-  usage-clear: "&cUsage: /perm clear <player/rank> <name>"
-  usage-check: "&cUsage: /perm check <player> <permission>"
-  added: "&aAdded permission &e{permission} &ato &e{player}"
-  removed: "&cRemoved permission &e{permission} &cfrom &e{player}"
-  cleared: "&eAll player-specific permissions cleared for &e{player}"
-  list-header: "&6─── Permissions for {player} ({count}) ───"
+  no-permission: "&cVocê não tem permissão para gerenciar permissões."
+  player-not-found: "&cJogador não encontrado."
+  usage-add: "&cUso: /perm add <jogador/cargo> <nome> <permissão>"
+  usage-remove: "&cUso: /perm remove <jogador/cargo> <nome> <permissão>"
+  usage-list: "&cUso: /perm list <jogador/cargo> <nome>"
+  usage-clear: "&cUso: /perm clear <jogador/cargo> <nome>"
+  usage-check: "&cUso: /perm check <jogador> <permissão>"
+  added: "&aPermissão &e{permission} &aadicionada para &e{player}"
+  removed: "&cPermissão &e{permission} &cremovida de &e{player}"
+  cleared: "&eTodas as permissões pessoais de &e{player} foram limpas."
+  list-header: "&6─── Permissões de {player} ({count}) ───"
   list-entry: "&7  - &e{permission}"
-  list-empty: "&7No player-specific permissions."
-  check-true: "&a{player} &ahas permission &e{permission}"
-  check-false: "&c{player} &cdoes NOT have permission &e{permission}"
-  help-header: "&6─── Permission Commands ───"
-  help-add: "&e/perm add <player/rank> <name> <permission> &7- Add a permission"
-  help-remove: "&e/perm remove <player/rank> <name> <permission> &7- Remove a permission"
-  help-list: "&e/perm list <player/rank> <name> &7- List permissions"
-  help-clear: "&e/perm clear <player/rank> <name> &7- Clear all permissions"
-  help-check: "&e/perm check <player> <permission> &7- Check if player has permission"
-  rank-added: "&aAdded permission &e{permission} &ato rank &e{rank}"
-  rank-removed: "&cRemoved permission &e{permission} &cfrom rank &e{rank}"
-  rank-cleared: "&eAll custom permissions cleared for rank &e{rank}"
+  list-empty: "&7Nenhuma permissão pessoal."
+  check-true: "&a{player} &atem permissão &e{permission}"
+  check-false: "&c{player} &cNÃO tem permissão &e{permission}"
+  help-header: "&6─── Comandos de Permissão ───"
+  help-add: "&e/perm add <jogador/cargo> <nome> <permissão> &7- Adicionar permissão"
+  help-remove: "&e/perm remove <jogador/cargo> <nome> <permissão> &7- Remover permissão"
+  help-list: "&e/perm list <jogador/cargo> <nome> &7- Listar permissões"
+  help-clear: "&e/perm clear <jogador/cargo> <nome> &7- Limpar permissões"
+  help-check: "&e/perm check <jogador> <permissão> &7- Verificar permissão"
+  rank-added: "&aPermissão &e{permission} &aadicionada ao cargo &e{rank}"
+  rank-removed: "&cPermissão &e{permission} &cremovida do cargo &e{rank}"
+  rank-cleared: "&eTodas as permissões personalizadas do cargo &e{rank} foram limpas."
 
 # ─── ChatColor ───
 chatcolor:
-  player-only: "&cOnly players can use this command."
-  no-permission: "&cYou don't have permission to use chat colors."
-  reset: "&aYou have reset your chat color to normal."
-  updated: "&aUpdated your chat color to {color}&a!"
-  no-own: "&cYou do not own this color."
+  player-only: "&cApenas jogadores podem usar este comando."
+  no-permission: "&cVocê não tem permissão para usar cores de chat."
+  reset: "&aVocê resetou sua cor de chat para normal."
+  updated: "&aSua cor de chat foi atualizada para {color}&a!"
+  no-own: "&cVocê não possui esta cor."
 
 # ─── Grant System ───
 grant:
-  no-permission: "&cYou don't have permission to grant ranks."
-  no-permission-revoke: "&cYou don't have permission to revoke grants."
-  usage: "&cUsage: /grant <player> [rank] [duration] [reason]"
-  usage-revoke: "&cUsage: /revoke <player> <reason>"
-  success: "&aGranted {rank} to {player} for: {reason}"
-  received: "&aYou have been granted the rank {rank}"
-  revoked: "&cRevoked grants from {player}. Reason: {reason}"
-  revoked-target: "&cYour rank grants have been revoked. Reason: {reason}"
-  no-grants: "&e{player} has no grants."
-  no-active-grants: "&e{player} has no active grants to revoke."
-  invalid-duration: "&cInvalid duration. Use format like 1h, 1d, 7d, 30d, 1y, or permanent."
+  no-permission: "&cVocê não tem permissão para conceder cargos."
+  no-permission-revoke: "&cVocê não tem permissão para revogar concessões."
+  usage: "&cUso: /grant <jogador> [cargo] [duração] [motivo]"
+  usage-revoke: "&cUso: /revoke <jogador> <motivo>"
+  success: "&aCargo {rank} concedido para {player}. Motivo: {reason}"
+  received: "&aVocê recebeu o cargo {rank}"
+  revoked: "&cConcessões de {player} revogadas. Motivo: {reason}"
+  revoked-target: "&cSuas concessões de cargo foram revogadas. Motivo: {reason}"
+  no-grants: "&e{player} não possui concessões."
+  no-active-grants: "&e{player} não possui concessões ativas para revogar."
+  invalid-duration: "&cDuração inválida. Use formatos como 1h, 1d, 7d, 30d, 1y, ou permanent."
 
 # ─── Discord ───
 discord:
-  advancement: "&6[Discord] &b{player} &7earned advancement &f{title}"
+  advancement: "&6[Discord] &b{player} &7obteve a conquista &f{title}"
 
 # ─── Totem ───
 totem:
-  broadcast: "&c&lTOTEM! &7{player} used a totem of undying!"
+  broadcast: "&c&lTOTEM! &7{player} usou um totem da imortalidade!"
 
 # ─── TPA ───
 tpa:
-  usage: "&cUsage: /tpa <player> | accept | deny"
-  request-sent: "&aTeleport request sent to &e{player}&a."
-  request-received: "&e{player} &awants to teleport to you. &e/tpa accept &7or &e/tpa deny"
-  accepted: "&aTeleport request accepted. Teleporting to &e{player}&a."
-  target-accepted: "&aYou accepted &e{player}&a's teleport request."
-  denied: "&cTeleport request denied."
-  target-denied: "&e{player} &crejected your teleport request."
-  no-pending: "&cYou have no pending teleport requests."
-  sender-left: "&cThat player is no longer online."
-  expired: "&cYour teleport request has expired."
-  cannot-self: "&cYou cannot teleport to yourself."
-  no-outgoing: "&cYou have no outgoing teleport requests to cancel."
+  usage: "&cUso: /tpa <jogador> | accept | deny"
+  request-sent: "&aPedido de teleporte enviado para &e{player}&a."
+  request-received: "&e{player} &aquer se teleportar para você. &7Para aceitar use &e/tpa accept &7ou clique em &a&l<click:run_command:/tpa accept>[Aceitar aqui]</click>"
+  accepted: "&aPedido de teleporte aceito. Teleportando para &e{player}&a."
+  target-accepted: "&aVocê aceitou o pedido de teleporte de &e{player}&a."
+  denied: "&cPedido de teleporte negado."
+  target-denied: "&e{player} &cnegou seu pedido de teleporte."
+  no-pending: "&cVocê não tem pedidos de teleporte pendentes."
+  sender-left: "&cEsse jogador não está mais online."
+  expired: "&cSeu pedido de teleporte expirou."
+  cannot-self: "&cVocê não pode se teleportar para si mesmo."
+  no-outgoing: "&cVocê não tem pedidos de teleporte para cancelar."
 
 # ─── Home ───
 home:
-  set: "&aHome set successfully!"
-  teleport: "&aTeleported to your home!"
-  not-set: "&cYou don't have a home set. Use &e/sethome &cto set one."
-  invalid: "&cYour home location is invalid. Use &e/sethome &cto set a new one."
-  deleted: "&cHome deleted."
+  set: "&aHome definida com sucesso!"
+  teleport: "&aTeletransportado para sua home!"
+  not-set: "&cVocê não tem uma home definida. Use &e/sethome &cpara definir uma."
+  invalid: "&cSua home está inválida. Use &e/sethome &cpara definir uma nova."
+  deleted: "&cHome deletada."
 
 # ─── Punishment ───
 punishment:
-  default-reason: "No reason specified"
+  default-reason: "Nenhum motivo especificado"
   ban:
-    usage: "&cUsage: /ban [-s] <player> [time] [reason...]"
-    broadcast: "&c{player} &7was banned by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
-    silent-broadcast: "&7[Silent] &c{player} &7was banned by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
-    screen: "&cYou have been banned.\n&7Reason: &f{reason}\n&7By: &f{source}"
+    usage: "&cUso: /ban [-s] <jogador> [tempo] [motivo...]"
+    broadcast: "&c{player} &7foi banido por &c{source} &7| Motivo: &f{reason} &7| Duração: &f{duration}"
+    silent-broadcast: "&7[Silencioso] &c{player} &7foi banido por &c{source} &7| Motivo: &f{reason} &7| Duração: &f{duration}"
+    screen: "&cVocê foi banido.\n&7Motivo: &f{reason}\n&7Por: &f{source}"
   unban:
-    usage: "&cUsage: /unban <player>"
-    success: "&a{player} &ahas been unbanned."
-    not-banned: "&cThat player is not banned."
+    usage: "&cUso: /unban <jogador>"
+    success: "&a{player} &afoi desbanido."
+    not-banned: "&cEsse jogador não está banido."
   mute:
-    usage: "&cUsage: /mute [-s] <player> [time] [reason...]"
-    broadcast: "&c{player} &7was muted by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
-    silent-broadcast: "&7[Silent] &c{player} &7was muted by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
-    notification: "&cYou are muted. Reason: &f{reason}&c. By: &f{source}{remaining}"
+    usage: "&cUso: /mute [-s] <jogador> [tempo] [motivo...]"
+    broadcast: "&c{player} &7foi mutado por &c{source} &7| Motivo: &f{reason} &7| Duração: &f{duration}"
+    silent-broadcast: "&7[Silencioso] &c{player} &7foi mutado por &c{source} &7| Motivo: &f{reason} &7| Duração: &f{duration}"
+    notification: "&cVocê está mutado. Motivo: &f{reason}&c. Por: &f{source}{remaining}"
   unmute:
-    usage: "&cUsage: /unmute <player>"
-    success: "&a{player} &ahas been unmuted."
-    not-muted: "&cThat player is not muted."
+    usage: "&cUso: /unmute <jogador>"
+    success: "&a{player} &afoi desmutado."
+    not-muted: "&cEsse jogador não está mutado."
   kick:
-    usage: "&cUsage: /kick [-s] <player> [reason...]"
-    broadcast: "&c{player} &7was kicked by &c{source} &7| Reason: &f{reason}"
-    silent-broadcast: "&7[Silent] &c{player} &7was kicked by &c{source} &7| Reason: &f{reason}"
-    screen: "&cYou have been kicked.\n&7Reason: &f{reason}\n&7By: &f{source}"
+    usage: "&cUso: /kick [-s] <jogador> [motivo...]"
+    broadcast: "&c{player} &7foi expulso por &c{source} &7| Motivo: &f{reason}"
+    silent-broadcast: "&7[Silencioso] &c{player} &7foi expulso por &c{source} &7| Motivo: &f{reason}"
+    screen: "&cVocê foi expulso.\n&7Motivo: &f{reason}\n&7Por: &f{source}"
 
 # ─── Stats ───
 stats:
-  saved: "&aStats have been saved successfully."
+  saved: "&aAs estatísticas foram salvas com sucesso."
