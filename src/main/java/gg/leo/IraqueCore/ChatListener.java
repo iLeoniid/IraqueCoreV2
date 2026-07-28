@@ -6,6 +6,7 @@ import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,7 +15,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChatListener implements Listener {
 
@@ -83,6 +87,8 @@ public class ChatListener implements Listener {
                 .replace("{tag}",         tagStr)
                 .replace("{world}",       player.getWorld().getName())
                 .replace("{message}",     chatColor + message);
+
+        formatted = setPlaceholders(player, formatted);
 
         Component rendered = plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().translate(formatted));
@@ -187,6 +193,18 @@ public class ChatListener implements Listener {
         text = text.replaceAll("&#[0-9a-fA-F]{6}", "");
         text = text.replaceAll("&x(&[0-9a-fA-F]){6}", "");
         text = text.replaceAll("&[0-9a-fk-orA-FK-OR]", "");
+        return text;
+    }
+
+    private String setPlaceholders(Player player, String text) {
+        if (text == null || text.isEmpty()) return text;
+        try {
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                Class<?> papi = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+                Method method = papi.getMethod("setPlaceholders", Player.class, String.class);
+                text = (String) method.invoke(null, player, text);
+            }
+        } catch (Exception ignored) {}
         return text;
     }
 

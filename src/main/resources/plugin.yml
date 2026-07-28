@@ -2,6 +2,7 @@ name: IraqueCore
 version: 1.0.0
 main: gg.leo.IraqueCore.IraqueCore
 api-version: '26.2'
+softdepend: [PlaceholderAPI]
 
 commands:
   rank:

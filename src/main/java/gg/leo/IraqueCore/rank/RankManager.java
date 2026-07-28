@@ -14,6 +14,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class RankManager {
@@ -187,11 +188,12 @@ public class RankManager {
                 displayPrefix = rank.prefix();
             }
 
-            String listNameRaw = displayPrefix + " " + tagStr + rank.color() + player.getName();
+            String listNameRaw = setPlaceholders(player, displayPrefix + " " + tagStr + rank.color() + player.getName());
             player.playerListName(plugin.getConfigManager().deserialize(
                     plugin.getConfigManager().translate(listNameRaw)));
 
-            String prefix = buildPrefixFrom(displayPrefix, tagStr);
+            String rawPrefix = buildPrefixFrom(displayPrefix, tagStr);
+            String prefix = setPlaceholders(player, rawPrefix);
             for (Player viewer : Bukkit.getOnlinePlayers()) {
                 applyTeamForViewer(viewer, player, rank, prefix);
             }
@@ -212,7 +214,8 @@ public class RankManager {
                     displayPrefix = rank.prefix();
                 }
 
-                String prefix = buildPrefixFrom(displayPrefix, tagStr);
+                String rawPrefix = buildPrefixFrom(displayPrefix, tagStr);
+                String prefix = setPlaceholders(other, rawPrefix);
                 applyTeamForViewer(joining, other, rank, prefix);
             });
         }
@@ -228,7 +231,8 @@ public class RankManager {
         Scoreboard board = viewer.getScoreboard();
         if (board == null) board = Bukkit.getScoreboardManager().getMainScoreboard();
 
-        String teamName = "irq" + String.format("%03d", rank.weight());
+        String uniqueName = "irq_" + target.getName();
+        String teamName = uniqueName.length() > 64 ? uniqueName.substring(0, 64) : uniqueName;
 
         Team team = board.getTeam(teamName);
         if (team == null) {
@@ -313,6 +317,18 @@ public class RankManager {
         text = text.replaceAll("&#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})",
                 "\u00A7x\u00A7$1\u00A7$2\u00A7$3");
         text = text.replaceAll("&([0-9a-fk-orA-FK-OR])", "\u00A7$1");
+        return text;
+    }
+
+    private String setPlaceholders(Player player, String text) {
+        if (text == null || text.isEmpty()) return text;
+        try {
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                Class<?> papi = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+                Method method = papi.getMethod("setPlaceholders", Player.class, String.class);
+                text = (String) method.invoke(null, player, text);
+            }
+        } catch (Exception ignored) {}
         return text;
     }
 }
