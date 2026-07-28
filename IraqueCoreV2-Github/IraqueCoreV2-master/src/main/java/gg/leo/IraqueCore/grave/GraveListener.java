@@ -44,21 +44,27 @@ public class GraveListener implements Listener {
     private final NamespacedKey graveOwnerKey;
 
     // Config cache
-    private final boolean allowOthersOpen;
-    private final boolean dropOnExpire;
-    private final boolean protectExplosions;
-    private final boolean hologramEnabled;
-    private final long expireTicks;
-    private final String hologramFormat;
-    private final String broadcastFormat;
-    private final Material graveMaterial;
+    private boolean enabled;
+    private boolean allowOthersOpen;
+    private boolean dropOnExpire;
+    private boolean protectExplosions;
+    private boolean hologramEnabled;
+    private long expireTicks;
+    private String hologramFormat;
+    private String broadcastFormat;
+    private Material graveMaterial;
+    private BukkitRunnable expirationTask;
 
     public GraveListener(IraqueCore plugin) {
         this.plugin = plugin;
         this.graveKey = new NamespacedKey(plugin, "grave");
         this.graveOwnerKey = new NamespacedKey(plugin, "grave_owner");
+        reload();
+    }
 
+    public void reload() {
         var cfg = plugin.getConfig();
+        this.enabled = cfg.getBoolean("grave.enabled", true);
         this.allowOthersOpen = cfg.getBoolean("grave.allow-others-open", false);
         this.dropOnExpire = cfg.getBoolean("grave.drop-on-expire", true);
         this.protectExplosions = cfg.getBoolean("grave.protect-explosions", true);
@@ -69,11 +75,19 @@ public class GraveListener implements Listener {
         String mat = cfg.getString("grave.material", "CHEST").toUpperCase();
         this.graveMaterial = Material.getMaterial(mat) != null ? Material.getMaterial(mat) : Material.CHEST;
 
-        startExpirationTask();
+        if (expirationTask != null) {
+            expirationTask.cancel();
+            expirationTask = null;
+        }
+        if (enabled) {
+            startExpirationTask();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent event) {
+        if (!enabled) return;
+
         Player player = event.getEntity(); // 1.26.2: getEntity() en vez de getPlayer()
 
         if (Boolean.TRUE.equals(player.getWorld().getGameRuleValue(org.bukkit.GameRule.KEEP_INVENTORY))) {
@@ -99,66 +113,70 @@ public class GraveListener implements Listener {
         Block block = loc.getBlock();
         block.setType(graveMaterial, false);
 
-        // Orientar cofre hacia el jugador
+        org.bukkit.block.BlockFace facing = getFacing(player.getLocation().getYaw());
         if (block.getBlockData() instanceof Directional dir) {
-            dir.setFacing(getFacing(player.getLocation().getYaw()));
+            dir.setFacing(facing);
             block.setBlockData(dir, false);
         }
 
-        // Doble cofre si >27 items
-        boolean isDouble = items.size() > 27;
+        // Doble cofre si hay más de 27 stacks
         Location secondLoc = null;
+        boolean isDouble = items.size() > 27
+                && block.getBlockData() instanceof org.bukkit.block.data.type.Chest;
 
-        if (isDouble && block.getBlockData() instanceof Directional dir) {
-            secondLoc = loc.clone().add(getRight(dir.getFacing()));
+        if (isDouble) {
+            secondLoc = loc.clone().add(getRight(facing));
             if (secondLoc.getBlock().getType().isAir()) {
-                secondLoc.getBlock().setType(graveMaterial, false);
+                Block second = secondLoc.getBlock();
+                second.setType(graveMaterial, false);
+
                 org.bukkit.block.data.type.Chest c1 = (org.bukkit.block.data.type.Chest) block.getBlockData();
-                org.bukkit.block.data.type.Chest c2 = (org.bukkit.block.data.type.Chest) secondLoc.getBlock().getBlockData();
+                org.bukkit.block.data.type.Chest c2 = (org.bukkit.block.data.type.Chest) second.getBlockData();
+                c1.setFacing(facing);
+                c2.setFacing(facing);
                 c1.setType(Type.LEFT);
                 c2.setType(Type.RIGHT);
-                block.setBlockData(c1, false);
-                secondLoc.getBlock().setBlockData(c2, false);
+                block.setBlockData(c1, true);
+                second.setBlockData(c2, true);
             } else {
+                secondLoc = null;
                 isDouble = false;
             }
         }
 
-        // Guardar items
-        Inventory inv;
-        if (!(block.getState() instanceof Chest chest)) {
-            items.forEach(i -> block.getWorld().dropItemNaturally(block.getLocation(), i));
+        if (!(block.getState() instanceof Chest)) {
+            items.forEach(i -> {
+                if (i != null) block.getWorld().dropItemNaturally(block.getLocation(), i);
+            });
             return;
         }
 
-        inv = isDouble && secondLoc != null
-            ? ((DoubleChest) chest.getInventory().getHolder()).getInventory()
-            : chest.getInventory();
+        // Marcar PDC antes de llenar: chest.update() no debe pisar los items
+        Chest primaryState = (Chest) block.getState();
+        markGrave(primaryState, player.getUniqueId());
 
-        int slot = 0;
-        for (ItemStack item : items) {
-            if (item != null && item.getType() != Material.AIR && slot < inv.getSize()) {
-                inv.setItem(slot++, item);
-            }
+        Chest secondaryState = null;
+        if (isDouble && secondLoc != null && secondLoc.getBlock().getState() instanceof Chest) {
+            secondaryState = (Chest) secondLoc.getBlock().getState();
+            markGrave(secondaryState, player.getUniqueId());
         }
 
-        // Marcar con PDC
-        markGrave(chest, player.getUniqueId());
-        if (isDouble && secondLoc != null && secondLoc.getBlock().getState() instanceof Chest c2) {
-            markGrave(c2, player.getUniqueId());
-        }
+        // Re-obtener estados frescos tras update()
+        Chest chest = (Chest) block.getState();
+        Chest secondChest = (isDouble && secondLoc != null && secondLoc.getBlock().getState() instanceof Chest c2)
+                ? c2 : null;
 
-        // Holograma
+        fillGraveInventories(chest, secondChest, items);
+
         ArmorStand holo = hologramEnabled
             ? createHologram(loc.clone().add(0.5, 1.3, 0.5), player.getName())
             : null;
 
-        // Guardar datos
-        GraveData data = new GraveData(player.getUniqueId(), player.getName(), loc, secondLoc, System.currentTimeMillis(), holo);
+        GraveData data = new GraveData(player.getUniqueId(), player.getName(), loc,
+                isDouble ? secondLoc : null, System.currentTimeMillis(), holo);
         graves.put(loc, data);
-        if (secondLoc != null) graves.put(secondLoc, data);
+        if (isDouble && secondLoc != null) graves.put(secondLoc, data);
 
-        // Broadcast
         if (!broadcastFormat.isEmpty()) {
             Bukkit.broadcastMessage(ItemBuilder.color(broadcastFormat
                 .replace("{player}", player.getName())
@@ -169,10 +187,51 @@ public class GraveListener implements Listener {
         }
     }
 
+    /** Llena el/los cofres sin castear a DoubleChest (rompe en Paper 1.21+/26.x). */
+    private void fillGraveInventories(Chest primary, Chest secondary, List<ItemStack> items) {
+        Inventory combined = resolveGraveInventory(primary);
+        int slot = 0;
+        for (ItemStack item : items) {
+            if (item == null || item.getType() == Material.AIR) continue;
+            if (slot < combined.getSize()) {
+                combined.setItem(slot++, item);
+                continue;
+            }
+            // Fallback: si no se formó double chest, usar el segundo cofre suelto
+            if (secondary != null) {
+                Inventory secondInv = secondary.getBlockInventory();
+                HashMap<Integer, ItemStack> leftover = secondInv.addItem(item);
+                leftover.values().forEach(left ->
+                        primary.getWorld().dropItemNaturally(primary.getLocation(), left));
+            } else {
+                primary.getWorld().dropItemNaturally(primary.getLocation(), item);
+            }
+        }
+    }
+
+    private Inventory resolveGraveInventory(Chest chest) {
+        var holder = chest.getInventory().getHolder();
+        if (holder instanceof DoubleChest doubleChest) {
+            return doubleChest.getInventory();
+        }
+        return chest.getBlockInventory();
+    }
+
+    private void dropGraveContents(Chest chest, Location dropAt) {
+        Inventory inv = resolveGraveInventory(chest);
+        for (ItemStack item : inv.getContents()) {
+            if (item != null && item.getType() != Material.AIR) {
+                dropAt.getWorld().dropItemNaturally(dropAt, item);
+            }
+        }
+        inv.clear();
+    }
+
     private void markGrave(Chest chest, UUID owner) {
         PersistentDataContainer pdc = chest.getPersistentDataContainer();
         pdc.set(graveKey, PersistentDataType.BYTE, (byte) 1);
         pdc.set(graveOwnerKey, PersistentDataType.STRING, owner.toString());
+        chest.update();
     }
 
     private ArmorStand createHologram(Location loc, String name) {
@@ -247,14 +306,7 @@ public class GraveListener implements Listener {
 
         // Dropear SOLO los items restantes, NO el cofre
         if (block.getState() instanceof Chest chest) {
-            Inventory inv = data.secondLoc != null
-                ? ((DoubleChest) chest.getInventory().getHolder()).getInventory()
-                : chest.getInventory();
-            for (ItemStack item : inv.getContents()) {
-                if (item != null && item.getType() != Material.AIR) {
-                    block.getWorld().dropItemNaturally(block.getLocation(), item);
-                }
-            }
+            dropGraveContents(chest, block.getLocation());
         }
 
         event.setDropItems(false);
@@ -364,7 +416,7 @@ public class GraveListener implements Listener {
 
     private void startExpirationTask() {
         if (expireTicks <= 0) return;
-        new BukkitRunnable() {
+        expirationTask = new BukkitRunnable() {
             @Override
             public void run() {
                 long now = System.currentTimeMillis();
@@ -388,20 +440,14 @@ public class GraveListener implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 20L, 20L);
+        };
+        expirationTask.runTaskTimer(plugin, 20L, 20L);
     }
 
     private void dropItems(GraveData data) {
         Block block = data.mainLoc.getBlock();
         if (!(block.getState() instanceof Chest chest)) return;
-        Inventory inv = data.secondLoc != null
-            ? ((DoubleChest) chest.getInventory().getHolder()).getInventory()
-            : chest.getInventory();
-        for (ItemStack item : inv.getContents()) {
-            if (item != null && item.getType() != Material.AIR) {
-                block.getWorld().dropItemNaturally(block.getLocation(), item);
-            }
-        }
+        dropGraveContents(chest, block.getLocation());
     }
 
     public void shutdown() {
