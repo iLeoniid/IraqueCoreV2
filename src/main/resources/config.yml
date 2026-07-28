@@ -236,6 +236,12 @@ durability-warning:
   threshold: 0.1
 
 
+#   TOTEM NOTIFICATION
+#   Broadcast when a player uses a totem of undying
+
+totem-notification:
+  enabled: true
+
 #   IMAGE MOTD
 #   Show an image as text art in the server list
 #   Place the image file in plugins/IraqueCore/ folder

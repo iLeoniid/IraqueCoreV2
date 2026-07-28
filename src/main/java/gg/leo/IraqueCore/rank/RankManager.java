@@ -41,8 +41,8 @@ public class RankManager {
 
             Rank rank = new Rank(
                     name,
-                    translateColors(section.getString("prefix", "")),
-                    translateColors(section.getString("suffix", "")),
+                    section.getString("prefix", ""),
+                    section.getString("suffix", ""),
                     section.getInt("weight", 50),
                     translateColors(section.getString("color", "&7")),
                     section.getStringList("permissions")
@@ -224,7 +224,7 @@ public class RankManager {
 
     private String buildPrefixFrom(String prefix, String tagStr) {
         String full = prefix + " " + tagStr;
-        return full.length() > 64 ? full.substring(0, 64) : full;
+        return full.length() > 256 ? full.substring(0, 256) : full;
     }
 
     private void applyTeamForViewer(Player viewer, Player target, Rank rank, String prefix) {
@@ -232,7 +232,7 @@ public class RankManager {
         if (board == null) board = Bukkit.getScoreboardManager().getMainScoreboard();
 
         String uniqueName = "irq_" + target.getName();
-        String teamName = uniqueName.length() > 64 ? uniqueName.substring(0, 64) : uniqueName;
+        String teamName = uniqueName.length() > 256 ? uniqueName.substring(0, 256) : uniqueName;
 
         Team team = board.getTeam(teamName);
         if (team == null) {

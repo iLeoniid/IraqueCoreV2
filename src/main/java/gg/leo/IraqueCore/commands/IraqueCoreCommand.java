@@ -22,6 +22,10 @@ public class IraqueCoreCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String[] args) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
+            return handleReload(sender);
+        }
+
         sender.sendMessage(Component.empty());
         sender.sendMessage(Component.text("  ╔═══════════════════════════════╗")
                 .color(NamedTextColor.DARK_GRAY));
@@ -57,9 +61,32 @@ public class IraqueCoreCommand implements TabExecutor {
         return true;
     }
 
+    private boolean handleReload(CommandSender sender) {
+        if (!sender.hasPermission("iraquecore.reload")) {
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().translate(
+                            plugin.getConfigManager().getMessage("general.no-permission", "&cYou don't have permission."))));
+            return true;
+        }
+
+        try {
+            plugin.reload();
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().getPrefixedMessage("reload.success")));
+        } catch (Exception e) {
+            sender.sendMessage(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().getPrefixedMessage("reload.failed")));
+            plugin.getPluginLogger().error("Error reloading plugin", e);
+        }
+        return true;
+    }
+
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
                                       @NotNull String label, @NotNull String[] args) {
+        if (args.length == 1 && sender.hasPermission("iraquecore.reload")) {
+            return List.of("reload");
+        }
         return List.of();
     }
 }

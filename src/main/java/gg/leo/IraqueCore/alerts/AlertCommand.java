@@ -1,8 +1,6 @@
 package gg.leo.IraqueCore.alerts;
 
 import gg.leo.IraqueCore.IraqueCore;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -70,10 +68,8 @@ public class AlertCommand implements TabExecutor {
 
         msg(sender, "&6─── Available Alerts (" + alertManager.getAlerts().size() + ") ───");
         for (Alert alert : alertManager.getAlerts().values()) {
-            String type = alert.sendType().name();
             String sound = alert.sound() != null && alert.sound().enabled() ? alert.sound().id() : "none";
-            String offline = alert.saveForOffline() ? "&asave-offline" : "&conline-only";
-            msg(sender, "&7  &e" + alert.id() + " &8- &7type: " + type + " &8| &7sound: " + sound + " &8| " + offline);
+            msg(sender, "&7  &e" + alert.id() + " &8- &7sound: " + sound);
         }
     }
 
@@ -131,7 +127,7 @@ public class AlertCommand implements TabExecutor {
                     .filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
-        if (args.length == 2 && (args[0].equalsIgnoreCase("test") || args[0].equalsIgnoreCase("send"))) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("test")) {
             return alertManager.getAlerts().keySet().stream()
                     .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());

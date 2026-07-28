@@ -249,6 +249,10 @@ grant:
 discord:
   advancement: "&6[Discord] &b{player} &7earned advancement &f{title}"
 
+# ─── Totem ───
+totem:
+  broadcast: "&c&lTOTEM! &7{player} used a totem of undying!"
+
 # ─── Stats ───
 stats:
   saved: "&aStats have been saved successfully."

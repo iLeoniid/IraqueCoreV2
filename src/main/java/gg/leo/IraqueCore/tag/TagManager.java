@@ -53,8 +53,7 @@ public class TagManager {
             String path = "tags." + key;
             String displayName = ItemBuilder.color(
                     tagsConfig.getString(path + ".display-name", key));
-            String tagText = ItemBuilder.color(
-                    tagsConfig.getString(path + ".tag", ""));
+            String tagText = tagsConfig.getString(path + ".tag", "");
             String permission = tagsConfig.getString(path + ".permission", "");
             String category = tagsConfig.getString(path + ".category", "emojis");
             String materialName = tagsConfig.getString(path + ".material", "NAME_TAG");
