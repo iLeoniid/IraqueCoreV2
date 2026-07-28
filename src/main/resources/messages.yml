@@ -270,6 +270,33 @@ home:
   invalid: "&cYour home location is invalid. Use &e/sethome &cto set a new one."
   deleted: "&cHome deleted."
 
+# ─── Punishment ───
+punishment:
+  default-reason: "No reason specified"
+  ban:
+    usage: "&cUsage: /ban [-s] <player> [time] [reason...]"
+    broadcast: "&c{player} &7was banned by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
+    silent-broadcast: "&7[Silent] &c{player} &7was banned by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
+    screen: "&cYou have been banned.\n&7Reason: &f{reason}\n&7By: &f{source}"
+  unban:
+    usage: "&cUsage: /unban <player>"
+    success: "&a{player} &ahas been unbanned."
+    not-banned: "&cThat player is not banned."
+  mute:
+    usage: "&cUsage: /mute [-s] <player> [time] [reason...]"
+    broadcast: "&c{player} &7was muted by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
+    silent-broadcast: "&7[Silent] &c{player} &7was muted by &c{source} &7| Reason: &f{reason} &7| Duration: &f{duration}"
+    notification: "&cYou are muted. Reason: &f{reason}&c. By: &f{source}{remaining}"
+  unmute:
+    usage: "&cUsage: /unmute <player>"
+    success: "&a{player} &ahas been unmuted."
+    not-muted: "&cThat player is not muted."
+  kick:
+    usage: "&cUsage: /kick [-s] <player> [reason...]"
+    broadcast: "&c{player} &7was kicked by &c{source} &7| Reason: &f{reason}"
+    silent-broadcast: "&7[Silent] &c{player} &7was kicked by &c{source} &7| Reason: &f{reason}"
+    screen: "&cYou have been kicked.\n&7Reason: &f{reason}\n&7By: &f{source}"
+
 # ─── Stats ───
 stats:
   saved: "&aStats have been saved successfully."

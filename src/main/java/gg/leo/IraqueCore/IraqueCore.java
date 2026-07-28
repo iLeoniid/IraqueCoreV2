@@ -37,6 +37,8 @@ import gg.leo.IraqueCore.msg.MsgManager;
 import gg.leo.IraqueCore.msg.ReplyCommand;
 import gg.leo.IraqueCore.playtime.PlaytimeCommand;
 import gg.leo.IraqueCore.playtime.PlaytimeManager;
+import gg.leo.IraqueCore.punishment.PunishmentCommand;
+import gg.leo.IraqueCore.punishment.PunishmentManager;
 import gg.leo.IraqueCore.rank.RankCommand;
 import gg.leo.IraqueCore.rank.RankManager;
 import gg.leo.IraqueCore.scoreboard.ScoreboardCommand;
@@ -80,6 +82,7 @@ public final class IraqueCore extends JavaPlugin {
     private StatsCommand       statsCommand;
     private TPAManager         tpaManager;
     private HomeManager        homeManager;
+    private PunishmentManager  punishmentManager;
 
     // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
     private ComponentLogger componentLogger;
@@ -194,6 +197,11 @@ public final class IraqueCore extends JavaPlugin {
         homeManager.load();
         logSuccess("HOME");
 
+        this.punishmentManager = new PunishmentManager(this);
+        punishmentManager.load();
+        getServer().getPluginManager().registerEvents(punishmentManager, this);
+        logSuccess("PUNISHMENT");
+
         //  Commands 
         registerCommands();
         logSuccess("COMMANDS");
@@ -239,6 +247,9 @@ public final class IraqueCore extends JavaPlugin {
         }
         if (playtimeManager != null) {
             playtimeManager.savePlaytime();
+        }
+        if (punishmentManager != null) {
+            punishmentManager.saveMutes();
         }
         componentLogger.info("IraqueCore disabled.");
         instance = null;
@@ -369,6 +380,13 @@ public final class IraqueCore extends JavaPlugin {
         register("home", homeCommand, homeCommand);
         register("sethome", homeCommand, homeCommand);
         register("delhome", homeCommand, homeCommand);
+
+        var punishmentCommand = new PunishmentCommand(this, punishmentManager);
+        register("ban", punishmentCommand, punishmentCommand);
+        register("unban", punishmentCommand, punishmentCommand);
+        register("mute", punishmentCommand, punishmentCommand);
+        register("unmute", punishmentCommand, punishmentCommand);
+        register("kick", punishmentCommand, punishmentCommand);
     }
 
     /**
@@ -408,6 +426,7 @@ public final class IraqueCore extends JavaPlugin {
     public AlertManager       getAlertManager()          { return alertManager; }
     public TPAManager         getTpaManager()            { return tpaManager; }
     public HomeManager        getHomeManager()           { return homeManager; }
+    public PunishmentManager  getPunishmentManager()     { return punishmentManager; }
 
     /**
      * Native Paper logger with Adventure Components support.

@@ -22,6 +22,13 @@ Este plugin está hecho para servidores **semi-vanilla** donde lo importante es 
 | `/gm` | Cambiá tu modo de juego |
 | `/iraquecore` | Información del plugin |
 | `/whitelist` | Administración de la whitelist |
+| `/home` / `/sethome` / `/delhome` | Teletransportate a tu casa |
+| `/tpa` | Pedile teletransporte a otro jugador |
+| `/ban` [-s] | Baneá un jugador (con tiempo y razón) |
+| `/unban` | Perdoná un ban |
+| `/mute` [-s] | Silenciá un jugador (con tiempo y razón) |
+| `/unmute` | Quitá el mute |
+| `/kick` [-s] | Echá un jugador del server |
 
 ### Cosas automáticas
 
@@ -29,7 +36,6 @@ Este plugin está hecho para servidores **semi-vanilla** donde lo importante es 
 - **Chat formateado** — mostrá rango, tag y colores en cada mensaje.
 - **AFK** — después de unos minutos sin moverte, te marca como ausente.
 - **Dormir** — si suficiente gente duerme, se salta la noche al toque.
-- **Tumbas** — cuando morís, tus cosas quedan en un cofre en el lugar.
 - **Advertencia de durabilidad** — te avisa cuando tu herramienta está por romperse.
 - **Colores en yunques** — usá `&` y `&#RRGGBB` en los renombres.
 - **Editor de armor stands** — agachate + click derecho y editalos desde un menú.
@@ -64,6 +70,14 @@ Este plugin está hecho para servidores **semi-vanilla** donde lo importante es 
 | `iraquecore.stats` | ✅ | Ver stats |
 | `iraquecore.anvilcolors` | ✅ | Colores en yunques |
 | `iraquecore.armorstand` | ✅ | Editor de armor stands |
+| `iraquecore.home` | ✅ | Homes |
+| `iraquecore.tpa` | ✅ | TPA |
+| `iraquecore.ban` | 🔒 | Banear jugadores |
+| `iraquecore.unban` | 🔒 | Perdonar bans |
+| `iraquecore.mute` | 🔒 | Silenciar jugadores |
+| `iraquecore.unmute` | 🔒 | Quitar mute |
+| `iraquecore.kick` | 🔒 | Kickear jugadores |
+| `iraquecore.punishment.silent` | 🔒 | Ver castigos silenciosos |
 | `iraquecore.*` | 🔒 | Todo (solo admins) |
 
 ✅ = todos lo tienen · 🔒 = solo admins
@@ -72,7 +86,7 @@ Este plugin está hecho para servidores **semi-vanilla** donde lo importante es 
 
 ## Para qué servidores está pensado
 
-Servidores **chill** de **supervivencia semi-vanilla** entre amigos. Sin TPA, sin homes, sin warps. Con lo justo y necesario para que la experiencia sea más cómoda sin dejar de ser Minecraft vainilla.
+Servidores **chill** de **supervivencia semi-vanilla** entre amigos. Con lo justo y necesario para que la experiencia sea más cómoda sin dejar de ser Minecraft vainilla.
 
 ---
 

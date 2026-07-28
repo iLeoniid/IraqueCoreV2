@@ -100,6 +100,22 @@ commands:
     description: Delete your home
     aliases: [deletehome]
     permission: iraquecore.home
+  ban:
+    description: Ban a player
+    permission: iraquecore.ban
+  unban:
+    description: Unban a player
+    aliases: [pardon]
+    permission: iraquecore.unban
+  mute:
+    description: Mute a player
+    permission: iraquecore.mute
+  unmute:
+    description: Unmute a player
+    permission: iraquecore.unmute
+  kick:
+    description: Kick a player
+    permission: iraquecore.kick
 
 permissions:
   iraquecore.*:
@@ -127,6 +143,12 @@ permissions:
       iraquecore.chatcolor: true
       iraquecore.home: true
       iraquecore.tpa: true
+      iraquecore.ban: true
+      iraquecore.unban: true
+      iraquecore.mute: true
+      iraquecore.unmute: true
+      iraquecore.kick: true
+      iraquecore.punishment.silent: true
       alert.use: true
       alert.list: true
       alert.reload: true
@@ -254,4 +276,23 @@ permissions:
     default: op
   alert.test:
     description: Test an alert
+    default: op
+
+  iraquecore.ban:
+    description: Ban players
+    default: op
+  iraquecore.unban:
+    description: Unban players
+    default: op
+  iraquecore.mute:
+    description: Mute players
+    default: op
+  iraquecore.unmute:
+    description: Unmute players
+    default: op
+  iraquecore.kick:
+    description: Kick players
+    default: op
+  iraquecore.punishment.silent:
+    description: See silent punishments
     default: op
