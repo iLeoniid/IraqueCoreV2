@@ -21,8 +21,11 @@ import gg.leo.IraqueCore.grant.GrantListener;
 import gg.leo.IraqueCore.grant.GrantManager;
 import gg.leo.IraqueCore.grant.GrantsCommand;
 import gg.leo.IraqueCore.grant.RevokeCommand;
-import gg.leo.IraqueCore.grave.GraveListener;
+import gg.leo.IraqueCore.home.HomeCommand;
+import gg.leo.IraqueCore.home.HomeManager;
 import gg.leo.IraqueCore.stats.StatsCommand;
+import gg.leo.IraqueCore.tpa.TPACommand;
+import gg.leo.IraqueCore.tpa.TPAManager;
 import gg.leo.IraqueCore.leaderboard.LeaderboardCommand;
 import gg.leo.IraqueCore.leaderboard.LeaderboardManager;
 import gg.leo.IraqueCore.permission.PermissionManager;
@@ -43,6 +46,8 @@ import gg.leo.IraqueCore.sleep.SleepManager;
 import gg.leo.IraqueCore.tag.TagCommand;
 import gg.leo.IraqueCore.tag.TagManager;
 import gg.leo.IraqueCore.totem.TotemListener;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -73,6 +78,8 @@ public final class IraqueCore extends JavaPlugin {
     private ChatColorManager   chatColorManager;
     private AlertManager       alertManager;
     private StatsCommand       statsCommand;
+    private TPAManager         tpaManager;
+    private HomeManager        homeManager;
 
     // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
     private ComponentLogger componentLogger;
@@ -149,7 +156,6 @@ public final class IraqueCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AnvilColorListener(this), this);
         getServer().getPluginManager().registerEvents(sleepManager, this);
         getServer().getPluginManager().registerEvents(playtimeManager, this);
-        getServer().getPluginManager().registerEvents(new GraveListener(this), this);
         getServer().getPluginManager().registerEvents(new AdvancementListener(this), this);
         getServer().getPluginManager().registerEvents(new DurabilityListener(this), this);
         getServer().getPluginManager().registerEvents(new TotemListener(this), this);
@@ -180,6 +186,13 @@ public final class IraqueCore extends JavaPlugin {
         imageMotdManager.load();
         getServer().getPluginManager().registerEvents(imageMotdManager, this);
         logSuccess("IMAGE MOTD");
+
+        this.tpaManager = new TPAManager(this);
+        logSuccess("TPA");
+
+        this.homeManager = new HomeManager(this);
+        homeManager.load();
+        logSuccess("HOME");
 
         //  Commands 
         registerCommands();
@@ -222,6 +235,7 @@ public final class IraqueCore extends JavaPlugin {
         }
         if (scoreboardManager != null) {
             scoreboardManager.saveStats();
+            scoreboardManager.stopTasks();
         }
         if (playtimeManager != null) {
             playtimeManager.savePlaytime();
@@ -230,64 +244,70 @@ public final class IraqueCore extends JavaPlugin {
         instance = null;
     }
 
-    /**
-     * Reloads all plugin configuration.
-     * Also restarts Discord if the token/channel changed.
-     */
-    public void reload() {
+    public String reload() {
+        if (playtimeManager != null) {
+            playtimeManager.savePlaytime();
+        }
+        if (scoreboardManager != null) {
+            scoreboardManager.saveStats();
+        }
         reloadConfig();
         configManager.load();
         configManager.reloadDiscordFile();
-        rankManager.loadRanks();
-        rankManager.updateAllVisuals();
-        tagManager.reload();
-
-        if (scoreboardManager != null) {
-            scoreboardManager.loadConfig();
+        configManager.reloadMessages();
+        ArrayList<String> files = new ArrayList<>();
+        files.add("config.yml");
+        if (tagManager != null) {
+            tagManager.reload();
+            files.add("tags.yml");
         }
-
-        if (afkManager != null) {
-            afkManager.load();
+        if (motdManager != null) {
+            motdManager.reload();
+            files.add("motd.yml");
         }
-
-        if (sleepManager != null) {
-            sleepManager.load();
+        if (homeManager != null) {
+            homeManager.load();
+            files.add("homes.yml");
         }
-
-        if (playtimeManager != null) {
-            playtimeManager.load();
+        if (chatColorManager != null) {
+            chatColorManager.load();
         }
-
         if (permissionManager != null) {
             permissionManager.load();
         }
         if (grantManager != null) {
             grantManager.load();
         }
-        if (chatColorManager != null) {
-            chatColorManager.load();
+        rankManager.loadRanks();
+        rankManager.updateAllVisuals();
+        if (scoreboardManager != null) {
+            scoreboardManager.reload();
         }
-
-        if (alertManager != null) {
-            alertManager.reload();
+        if (afkManager != null) {
+            afkManager.load();
         }
-
-        if (motdManager != null) {
-            motdManager.reload();
+        if (sleepManager != null) {
+            sleepManager.load();
+        }
+        if (playtimeManager != null) {
+            playtimeManager.load();
         }
         if (imageMotdManager != null) {
             imageMotdManager.reload();
         }
-
-        // Discord: always restart to apply possible token/channel changes
+        if (alertManager != null) {
+            alertManager.reload();
+        }
         if (discordManager != null) {
             discordManager.shutdown();
             discordManager = null;
         }
         if (configManager.isDiscordEnabled()) {
-            this.discordManager = new DiscordManager(this);
+            discordManager = new DiscordManager(this);
             discordManager.start();
         }
+        LinkedHashSet<String> unique = new LinkedHashSet<>(files);
+        return String.join(", ", unique);
     }
 
     //  Command registration 
@@ -341,6 +361,14 @@ public final class IraqueCore extends JavaPlugin {
 
         var infoCommand = new IraqueCoreCommand(this);
         register("iraquecore", infoCommand, null);
+
+        var tpaCommand = new TPACommand(this, tpaManager);
+        register("tpa", tpaCommand, tpaCommand);
+
+        var homeCommand = new HomeCommand(this, homeManager);
+        register("home", homeCommand, homeCommand);
+        register("sethome", homeCommand, homeCommand);
+        register("delhome", homeCommand, homeCommand);
     }
 
     /**
@@ -378,6 +406,8 @@ public final class IraqueCore extends JavaPlugin {
     public GrantListener      getGrantListener()        { return grantListener; }
     public ChatColorManager   getChatColorManager()     { return chatColorManager; }
     public AlertManager       getAlertManager()          { return alertManager; }
+    public TPAManager         getTpaManager()            { return tpaManager; }
+    public HomeManager        getHomeManager()           { return homeManager; }
 
     /**
      * Native Paper logger with Adventure Components support.

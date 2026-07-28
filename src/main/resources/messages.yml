@@ -186,12 +186,6 @@ playtime:
   your: "&aYour playtime: &e{time}"
   other: "&a{player}'s playtime: &e{time}"
 
-# ─── Grave ───
-grave:
-  created: "&6{player} &edied. Items are in a grave at &6{x}, {y}, {z}"
-  hologram: "&6Cadaver de &e{player}"
-  no-permission: "&cNo puedes abrir la tumba de otro jugador."
-
 # ─── Durability Warning ───
 durability:
   warning: "&cYour {item} is about to break! (&7{remaining}/{max}&c)"
@@ -252,6 +246,29 @@ discord:
 # ─── Totem ───
 totem:
   broadcast: "&c&lTOTEM! &7{player} used a totem of undying!"
+
+# ─── TPA ───
+tpa:
+  usage: "&cUsage: /tpa <player> | accept | deny"
+  request-sent: "&aTeleport request sent to &e{player}&a."
+  request-received: "&e{player} &awants to teleport to you. &e/tpa accept &7or &e/tpa deny"
+  accepted: "&aTeleport request accepted. Teleporting to &e{player}&a."
+  target-accepted: "&aYou accepted &e{player}&a's teleport request."
+  denied: "&cTeleport request denied."
+  target-denied: "&e{player} &crejected your teleport request."
+  no-pending: "&cYou have no pending teleport requests."
+  sender-left: "&cThat player is no longer online."
+  expired: "&cYour teleport request has expired."
+  cannot-self: "&cYou cannot teleport to yourself."
+  no-outgoing: "&cYou have no outgoing teleport requests to cancel."
+
+# ─── Home ───
+home:
+  set: "&aHome set successfully!"
+  teleport: "&aTeleported to your home!"
+  not-set: "&cYou don't have a home set. Use &e/sethome &cto set one."
+  invalid: "&cYour home location is invalid. Use &e/sethome &cto set a new one."
+  deleted: "&cHome deleted."
 
 # ─── Stats ───
 stats:

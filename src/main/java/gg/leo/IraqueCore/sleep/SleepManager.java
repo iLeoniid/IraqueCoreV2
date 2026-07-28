@@ -1,7 +1,6 @@
 package gg.leo.IraqueCore.sleep;
 
 import gg.leo.IraqueCore.IraqueCore;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -37,19 +36,19 @@ public class SleepManager implements Listener {
         if (event.getBedEnterResult() != PlayerBedEnterEvent.BedEnterResult.OK) return;
 
         Player player = event.getPlayer();
+        if (sleeping.contains(player.getUniqueId())) return;
+
         World world = player.getWorld();
         if (world.isDayTime() || !world.isClearWeather()) return;
 
         event.setCancelled(true);
 
         Location bedLoc = event.getBed().getLocation();
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!player.isOnline() || !player.getWorld().equals(world)) return;
-            if (player.sleep(bedLoc, true)) {
-                sleeping.add(player.getUniqueId());
-                checkSleep(world, player);
-            }
-        });
+        if (!player.isOnline() || !player.getWorld().equals(world)) return;
+        sleeping.add(player.getUniqueId());
+        if (player.sleep(bedLoc, true)) {
+            checkSleep(world, player);
+        }
     }
 
     @EventHandler

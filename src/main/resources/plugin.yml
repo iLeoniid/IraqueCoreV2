@@ -86,6 +86,20 @@ commands:
     description: Plugin info
     aliases: [ic, core]
     permission: iraquecore.info
+  tpa:
+    description: Teleport request system
+    aliases: [tpahere]
+    permission: iraquecore.tpa
+  home:
+    description: Teleport to your home
+    permission: iraquecore.home
+  sethome:
+    description: Set your home location
+    permission: iraquecore.home
+  delhome:
+    description: Delete your home
+    aliases: [deletehome]
+    permission: iraquecore.home
 
 permissions:
   iraquecore.*:
@@ -111,6 +125,8 @@ permissions:
       iraquecore.grants: true
       iraquecore.grant.revoke: true
       iraquecore.chatcolor: true
+      iraquecore.home: true
+      iraquecore.tpa: true
       alert.use: true
       alert.list: true
       alert.reload: true
@@ -218,6 +234,13 @@ permissions:
     default: op
   iraquecore.chatcolor:
     description: Use chat color commands
+    default: true
+
+  iraquecore.home:
+    description: Use home commands
+    default: true
+  iraquecore.tpa:
+    description: Use teleport request commands
     default: true
 
   alert.use:

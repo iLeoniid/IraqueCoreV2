@@ -3,8 +3,19 @@ package gg.leo.IraqueCore.scoreboard;
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.animation.TextAnimation;
 import gg.leo.IraqueCore.utils.ItemBuilder;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,390 +27,400 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
-import io.papermc.paper.scoreboard.numbers.NumberFormat;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-public class ScoreboardManager implements Listener {
-
+public class ScoreboardManager
+implements Listener {
     private final IraqueCore plugin;
-
     private final Map<UUID, Boolean> playerEnabled = new HashMap<>();
-
     private final Map<UUID, Integer> blocksBroken = new HashMap<>();
     private final Map<UUID, Integer> blocksPlaced = new HashMap<>();
-    private final Map<UUID, Integer> deaths       = new HashMap<>();
-
-    private long          updateInterval;
+    private final Map<UUID, Integer> deaths = new HashMap<>();
+    private long updateInterval;
     private TextAnimation titleAnimation;
-    private List<String>  lines;
-    private boolean       globalEnabled;
-
-    private File              statsFile;
+    private List<String> lines;
+    private boolean globalEnabled;
+    private File statsFile;
     private FileConfiguration statsConfig;
-
     private final Set<UUID> dirtyPlayers = new HashSet<>();
-
     private final Map<UUID, Objective> playerObjectives = new HashMap<>();
     private final Map<UUID, String> lastTitles = new HashMap<>();
     private final Map<UUID, List<String>> lastLines = new HashMap<>();
+    private final List<BukkitRunnable> runningTasks = new ArrayList<>();
 
     public ScoreboardManager(IraqueCore plugin) {
         this.plugin = plugin;
     }
 
     private void queueUpdate(Player player) {
-        if (dirtyPlayers.add(player.getUniqueId())) {
-            Bukkit.getScheduler().runTask(plugin, this::flushDirty);
+        if (this.dirtyPlayers.add(player.getUniqueId())) {
+            Bukkit.getScheduler().runTask(this.plugin, this::flushDirty);
         }
     }
 
     private void flushDirty() {
-        for (UUID id : dirtyPlayers) {
+        for (UUID id : this.dirtyPlayers) {
             Player player = Bukkit.getPlayer(id);
-            if (player != null && isPlayerEnabled(player)) {
-                updateScoreboard(player);
-            }
+            if (player == null || !this.isPlayerEnabled(player)) continue;
+            this.updateScoreboard(player);
         }
-        dirtyPlayers.clear();
+        this.dirtyPlayers.clear();
     }
 
     public void load() {
-        statsFile = new File(plugin.getDataFolder(), "stats.yml");
-        if (!statsFile.exists()) {
+        this.statsFile = new File(this.plugin.getDataFolder(), "stats.yml");
+        if (!this.statsFile.exists()) {
             try {
-                statsFile.getParentFile().mkdirs();
-                statsFile.createNewFile();
-            } catch (IOException e) {
-                plugin.getPluginLogger().error("Could not create stats.yml", e);
+                this.statsFile.getParentFile().mkdirs();
+                this.statsFile.createNewFile();
+            }
+            catch (IOException e) {
+                this.plugin.getPluginLogger().error("Could not create stats.yml", e);
             }
         }
-        statsConfig = YamlConfiguration.loadConfiguration(statsFile);
-        loadStats();
-        loadConfig();
+        this.statsConfig = YamlConfiguration.loadConfiguration(this.statsFile);
+        this.loadStats();
+        this.loadConfig();
     }
 
     public void loadConfig() {
-        var cfg = plugin.getConfig();
-        globalEnabled = cfg.getBoolean("scoreboard.enabled", true);
-
-        titleAnimation = new TextAnimation(plugin, cfg, "scoreboard.title");
-
-        int    time = cfg.getInt("scoreboard.update.amount", 2);
+        FileConfiguration cfg = this.plugin.getConfig();
+        this.globalEnabled = cfg.getBoolean("scoreboard.enabled", true);
+        this.titleAnimation = new TextAnimation(this.plugin, cfg, "scoreboard.title");
+        int time = cfg.getInt("scoreboard.update.amount", 2);
         String unit = cfg.getString("scoreboard.update.unit", "seconds").toLowerCase();
-        updateInterval = convertToTicks(time, unit);
+        this.updateInterval = this.convertToTicks(time, unit);
+        this.lines = cfg.getStringList("scoreboard.lines");
+    }
 
-        lines = cfg.getStringList("scoreboard.lines");
+    public void reload() {
+        this.loadConfig();
+        this.startTasks();
+        this.updateAll();
     }
 
     public void startTasks() {
-        if (titleAnimation != null && titleAnimation.isAnimated()) {
-            long animInterval = Math.max(titleAnimation.getTicks(), 5L);
-            new BukkitRunnable() {
-                @Override public void run() {
-                    if (!globalEnabled || Bukkit.getOnlinePlayers().isEmpty()) return;
-                    updateTitlesOnly();
+        this.stopTasks();
+        if (this.titleAnimation != null && this.titleAnimation.isAnimated()) {
+            long animInterval = Math.max(this.titleAnimation.getTicks(), 5L);
+            ScoreboardManager self = this;
+            BukkitRunnable animTask = new BukkitRunnable() {
+                public void run() {
+                    if (!self.globalEnabled || Bukkit.getOnlinePlayers().isEmpty()) {
+                        return;
+                    }
+                    self.updateTitlesOnly();
                 }
-            }.runTaskTimer(plugin, 20L, animInterval);
+            };
+            animTask.runTaskTimer(this.plugin, 20L, animInterval);
+            this.runningTasks.add(animTask);
         }
-
-        new BukkitRunnable() {
-            @Override public void run() {
-                if (!globalEnabled || Bukkit.getOnlinePlayers().isEmpty()) return;
-                updateAllLines();
+        ScoreboardManager self = this;
+        BukkitRunnable updateTask = new BukkitRunnable() {
+            public void run() {
+                if (!self.globalEnabled || Bukkit.getOnlinePlayers().isEmpty()) {
+                    return;
+                }
+                self.updateAllLines();
             }
-        }.runTaskTimer(plugin, 20L, updateInterval);
-
-        new BukkitRunnable() {
-            @Override public void run() {
-                if (statsConfig != null) saveStats();
+        };
+        updateTask.runTaskTimer(this.plugin, 20L, this.updateInterval);
+        this.runningTasks.add(updateTask);
+        BukkitRunnable saveTask = new BukkitRunnable() {
+            public void run() {
+                if (self.statsConfig != null) {
+                    self.saveStats();
+                }
             }
-        }.runTaskTimer(plugin, 6000L, 6000L);
+        };
+        saveTask.runTaskTimer(this.plugin, 6000L, 6000L);
+        this.runningTasks.add(saveTask);
+    }
+
+    public void stopTasks() {
+        for (BukkitRunnable task : this.runningTasks) {
+            try {
+                task.cancel();
+            }
+            catch (Exception exception) {}
+        }
+        this.runningTasks.clear();
     }
 
     public Component parse(String text) {
-        if (text == null || text.isEmpty()) return Component.empty();
-        return plugin.getConfigManager().deserialize(
-                plugin.getConfigManager().translate(text));
+        if (text == null || text.isEmpty()) {
+            return Component.empty();
+        }
+        return this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(text));
     }
 
     public void setPlayerEnabled(Player player, boolean enabled) {
-        playerEnabled.put(player.getUniqueId(), enabled);
+        this.playerEnabled.put(player.getUniqueId(), enabled);
         if (enabled) {
-            updateScoreboard(player);
+            this.updateScoreboard(player);
         } else {
-            clearScoreboard(player);
+            this.clearScoreboard(player);
         }
     }
 
     public boolean isPlayerEnabled(Player player) {
-        return playerEnabled.getOrDefault(player.getUniqueId(), globalEnabled);
+        return this.playerEnabled.getOrDefault(player.getUniqueId(), this.globalEnabled);
     }
 
     private void clearScoreboard(Player player) {
         Scoreboard board = player.getScoreboard();
-        if (board == null) return;
+        if (board == null) {
+            return;
+        }
         Objective old = board.getObjective("iraqueboard");
-        if (old != null) old.unregister();
-        playerObjectives.remove(player.getUniqueId());
-        lastTitles.remove(player.getUniqueId());
-        lastLines.remove(player.getUniqueId());
+        if (old != null) {
+            old.unregister();
+        }
+        this.playerObjectives.remove(player.getUniqueId());
+        this.lastTitles.remove(player.getUniqueId());
+        this.lastLines.remove(player.getUniqueId());
     }
 
     public void updateAll() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (isPlayerEnabled(player)) updateScoreboard(player);
+            if (!this.isPlayerEnabled(player)) continue;
+            this.updateScoreboard(player);
         }
     }
 
     private void updateTitlesOnly() {
-        String currentTitle = titleAnimation.nextFrame();
-        Component titleComponent = parse(currentTitle);
-
+        String currentTitle = this.titleAnimation.nextFrame();
+        Component titleComponent = this.parse(currentTitle);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!isPlayerEnabled(player)) continue;
-
+            if (!this.isPlayerEnabled(player)) continue;
             UUID id = player.getUniqueId();
-            Objective obj = playerObjectives.get(id);
-
+            Objective obj = this.playerObjectives.get(id);
             if (obj == null) {
-                updateScoreboard(player);
+                this.updateScoreboard(player);
                 continue;
             }
-
-            String lastTitle = lastTitles.get(id);
+            String lastTitle = this.lastTitles.get(id);
             if (lastTitle != null && lastTitle.equals(currentTitle)) continue;
-
             obj.displayName(titleComponent);
-            lastTitles.put(id, currentTitle);
+            this.lastTitles.put(id, currentTitle);
         }
     }
 
     private void updateAllLines() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (isPlayerEnabled(player)) updateScoreboardLines(player);
+            if (!this.isPlayerEnabled(player)) continue;
+            this.updateScoreboardLines(player);
         }
     }
 
     public void updateScoreboard(Player player) {
-        if (!globalEnabled || !isPlayerEnabled(player) || lines.isEmpty()) {
-            clearScoreboard(player);
+        Objective obj;
+        if (!this.globalEnabled || !this.isPlayerEnabled(player) || this.lines.isEmpty()) {
+            this.clearScoreboard(player);
             return;
         }
-
         UUID id = player.getUniqueId();
-
         Scoreboard board = player.getScoreboard();
+        boolean newBoard = false;
         if (board == null || board == Bukkit.getScoreboardManager().getMainScoreboard()) {
             board = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(board);
+            newBoard = true;
         }
-
-        Objective obj = board.getObjective("iraqueboard");
-        if (obj == null) {
-            Component titleComponent = parse(titleAnimation.getCurrentText());
+        if ((obj = board.getObjective("iraqueboard")) == null) {
+            Component titleComponent = this.parse(this.titleAnimation.getCurrentText());
             obj = board.registerNewObjective("iraqueboard", "dummy", titleComponent);
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.numberFormat(NumberFormat.blank());
-            lastTitles.put(id, titleAnimation.getCurrentText());
+            this.lastTitles.put(id, this.titleAnimation.getCurrentText());
         }
-        playerObjectives.put(id, obj);
-
-        updateScoreboardLines(player);
+        this.playerObjectives.put(id, obj);
+        this.updateScoreboardLines(player);
+        if (newBoard && this.plugin.getRankManager() != null) {
+            this.plugin.getRankManager().initVisuals(player);
+        }
     }
 
     private void updateScoreboardLines(Player player) {
         UUID id = player.getUniqueId();
         Scoreboard board = player.getScoreboard();
         Objective obj = board.getObjective("iraqueboard");
-
         if (obj == null) {
-            updateScoreboard(player);
+            this.updateScoreboard(player);
             return;
         }
-
-        // clear old entries from the previous update to avoid stale duplicates
         for (String entry : new HashSet<>(board.getEntries())) {
             board.resetScores(entry);
         }
-
         int online = Bukkit.getOnlinePlayers().size();
-        int max    = Bukkit.getMaxPlayers();
-        int score  = lines.size();
-        List<String> currentLines = new ArrayList<>();
-
-        for (String raw : lines) {
-            String line = ItemBuilder.color(applyPlaceholders(raw, player, online, max));
+        int max = Bukkit.getMaxPlayers();
+        int score = this.lines.size();
+        ArrayList<String> currentLines = new ArrayList<>();
+        String[] colorCodes = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "k", "l", "m", "n", "o", "r"};
+        for (int i = 0; i < this.lines.size(); ++i) {
+            String raw = this.lines.get(i);
+            String line = ItemBuilder.color(this.applyPlaceholders(raw, player, online, max));
             currentLines.add(line);
-            obj.getScore(line + "§" + score).setScore(score--);
+            String colorPrefix = "\u00a7" + colorCodes[i % colorCodes.length];
+            String key = line.trim().isEmpty() ? colorPrefix + " \u00a7r" : colorPrefix + line + "\u00a7r";
+            obj.getScore(key).setScore(score--);
         }
-
-        lastLines.put(id, currentLines);
+        this.lastLines.put(id, currentLines);
     }
 
     private String applyPlaceholders(String raw, Player player, int online, int max) {
-        return raw
-                .replace("{online}",       String.valueOf(online))
-                .replace("{max}",          String.valueOf(max))
-                .replace("{player}",       player.getName())
-                .replace("{displayname}",  player.getDisplayName())
-                .replace("{world}",        player.getWorld().getName())
-                .replace("{ping}",         String.valueOf(player.getPing()))
-                .replace("{blocks_broken}", String.valueOf(blocksBroken.getOrDefault(player.getUniqueId(), 0)))
-                .replace("{blocks_placed}", String.valueOf(blocksPlaced.getOrDefault(player.getUniqueId(), 0)))
-                .replace("{deaths}",       String.valueOf(deaths.getOrDefault(player.getUniqueId(), 0)))
-                .replace("{players}",      Bukkit.getOnlinePlayers().stream()
-                        .map(Player::getName).collect(Collectors.joining(", ")));
+        return raw.replace("{online}", String.valueOf(online)).replace("{max}", String.valueOf(max)).replace("{player}", player.getName()).replace("{displayname}", player.getDisplayName()).replace("{world}", player.getWorld().getName()).replace("{ping}", String.valueOf(player.getPing())).replace("{blocks_broken}", String.valueOf(this.blocksBroken.getOrDefault(player.getUniqueId(), 0))).replace("{blocks_placed}", String.valueOf(this.blocksPlaced.getOrDefault(player.getUniqueId(), 0))).replace("{deaths}", String.valueOf(this.deaths.getOrDefault(player.getUniqueId(), 0))).replace("{players}", Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.joining(", ")));
     }
 
     private void loadStats() {
-        if (statsConfig == null || !statsConfig.contains("players")) return;
-
-        for (String uuidStr : statsConfig.getConfigurationSection("players").getKeys(false)) {
+        if (this.statsConfig == null || !this.statsConfig.contains("players")) {
+            return;
+        }
+        for (String uuidStr : this.statsConfig.getConfigurationSection("players").getKeys(false)) {
             try {
-                UUID   uuid = UUID.fromString(uuidStr);
+                UUID uuid = UUID.fromString(uuidStr);
                 String path = "players." + uuidStr + ".";
-                blocksBroken.put(uuid, statsConfig.getInt(path + "blocks_broken", 0));
-                blocksPlaced.put(uuid, statsConfig.getInt(path + "blocks_placed", 0));
-                deaths.put(uuid,       statsConfig.getInt(path + "deaths", 0));
-            } catch (IllegalArgumentException ignored) {}
+                this.blocksBroken.put(uuid, this.statsConfig.getInt(path + "blocks_broken", 0));
+                this.blocksPlaced.put(uuid, this.statsConfig.getInt(path + "blocks_placed", 0));
+                this.deaths.put(uuid, this.statsConfig.getInt(path + "deaths", 0));
+            }
+            catch (IllegalArgumentException illegalArgumentException) {}
         }
     }
 
     public void saveStats() {
-        if (statsConfig == null) return;
-        statsConfig.set("players", null);
-
-        for (UUID uuid : blocksBroken.keySet()) {
-            String path = "players." + uuid + ".";
-            statsConfig.set(path + "name",          getPlayerName(uuid));
-            statsConfig.set(path + "blocks_broken", blocksBroken.get(uuid));
-            statsConfig.set(path + "blocks_placed", blocksPlaced.getOrDefault(uuid, 0));
-            statsConfig.set(path + "deaths",        deaths.getOrDefault(uuid, 0));
+        if (this.statsConfig == null) {
+            return;
         }
-
+        this.statsConfig.set("players", null);
+        for (UUID uuid : this.blocksBroken.keySet()) {
+            String path = "players." + uuid + ".";
+            this.statsConfig.set(path + "name", this.getPlayerName(uuid));
+            this.statsConfig.set(path + "blocks_broken", this.blocksBroken.get(uuid));
+            this.statsConfig.set(path + "blocks_placed", this.blocksPlaced.getOrDefault(uuid, 0));
+            this.statsConfig.set(path + "deaths", this.deaths.getOrDefault(uuid, 0));
+        }
         try {
-            statsConfig.save(statsFile);
-            plugin.getPluginLogger().info("Stats saved successfully.");
-        } catch (IOException e) {
-            plugin.getPluginLogger().error("Failed to save stats.yml", e);
+            this.statsConfig.save(this.statsFile);
+            this.plugin.getPluginLogger().info("Stats saved successfully.");
+        }
+        catch (IOException e) {
+            this.plugin.getPluginLogger().error("Failed to save stats.yml", e);
         }
     }
 
     private String getPlayerName(UUID uuid) {
         Player online = Bukkit.getPlayer(uuid);
-        if (online != null) return online.getName();
-        if (statsConfig != null && statsConfig.contains("players." + uuid + ".name")) {
-            return statsConfig.getString("players." + uuid + ".name");
+        if (online != null) {
+            return online.getName();
+        }
+        if (this.statsConfig != null && this.statsConfig.contains("players." + uuid + ".name")) {
+            return this.statsConfig.getString("players." + uuid + ".name");
         }
         String name = Bukkit.getOfflinePlayer(uuid).getName();
         return name != null ? name : "Unknown";
     }
 
-    public Map<UUID, Integer> getBlocksBroken() { return Collections.unmodifiableMap(blocksBroken); }
-    public Map<UUID, Integer> getBlocksPlaced() { return Collections.unmodifiableMap(blocksPlaced); }
-    public Map<UUID, Integer> getDeaths() { return Collections.unmodifiableMap(deaths); }
+    public Map<UUID, Integer> getBlocksBroken() {
+        return Collections.unmodifiableMap(this.blocksBroken);
+    }
+
+    public Map<UUID, Integer> getBlocksPlaced() {
+        return Collections.unmodifiableMap(this.blocksPlaced);
+    }
+
+    public Map<UUID, Integer> getDeaths() {
+        return Collections.unmodifiableMap(this.deaths);
+    }
 
     public List<String> getTopBlocksBroken(int limit) {
-        return blocksBroken.entrySet().stream()
-            .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
-            .limit(limit)
-            .map(e -> getPlayerName(e.getKey()) + ": <yellow>" + e.getValue())
-            .toList();
+        return this.blocksBroken.entrySet().stream().sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed()).limit(limit).map(e -> this.getPlayerName(e.getKey()) + ": <yellow>" + e.getValue()).toList();
     }
 
     public List<String> getTopBlocksPlaced(int limit) {
-        return blocksPlaced.entrySet().stream()
-            .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
-            .limit(limit)
-            .map(e -> getPlayerName(e.getKey()) + ": <yellow>" + e.getValue())
-            .toList();
+        return this.blocksPlaced.entrySet().stream().sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed()).limit(limit).map(e -> this.getPlayerName(e.getKey()) + ": <yellow>" + e.getValue()).toList();
     }
 
     public List<String> getTopDeaths(int limit) {
-        return deaths.entrySet().stream()
-            .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
-            .limit(limit)
-            .map(e -> getPlayerName(e.getKey()) + ": <red>" + e.getValue())
-            .toList();
+        return this.deaths.entrySet().stream().sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed()).limit(limit).map(e -> this.getPlayerName(e.getKey()) + ": <red>" + e.getValue()).toList();
     }
 
     private long convertToTicks(int time, String unit) {
         return switch (unit) {
-            case "seconds" -> time * 20L;
-            case "minutes" -> time * 20L * 60L;
-            case "hours"   -> time * 20L * 60L * 60L;
-            default        -> 10 * 20L;
+            case "seconds" -> (long)time * 20L;
+            case "minutes" -> (long)time * 20L * 60L;
+            case "hours" -> (long)time * 20L * 60L * 60L;
+            default -> 200L;
         };
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        UUID   id     = player.getUniqueId();
-        blocksBroken.put(id, blocksBroken.getOrDefault(id, 0) + 1);
-        if (isPlayerEnabled(player)) queueUpdate(player);
+        UUID id = player.getUniqueId();
+        this.blocksBroken.put(id, this.blocksBroken.getOrDefault(id, 0) + 1);
+        if (this.isPlayerEnabled(player)) {
+            this.queueUpdate(player);
+        }
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        UUID   id     = player.getUniqueId();
-        blocksPlaced.put(id, blocksPlaced.getOrDefault(id, 0) + 1);
-        if (isPlayerEnabled(player)) queueUpdate(player);
+        UUID id = player.getUniqueId();
+        this.blocksPlaced.put(id, this.blocksPlaced.getOrDefault(id, 0) + 1);
+        if (this.isPlayerEnabled(player)) {
+            this.queueUpdate(player);
+        }
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        UUID   id     = player.getUniqueId();
-        deaths.put(id, deaths.getOrDefault(id, 0) + 1);
-        if (isPlayerEnabled(player)) queueUpdate(player);
+        UUID id = player.getUniqueId();
+        this.deaths.put(id, this.deaths.getOrDefault(id, 0) + 1);
+        if (this.isPlayerEnabled(player)) {
+            this.queueUpdate(player);
+        }
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        UUID   id     = player.getUniqueId();
-
-        blocksBroken.putIfAbsent(id, 0);
-        blocksPlaced.putIfAbsent(id, 0);
-        deaths.putIfAbsent(id, 0);
-
-        if (statsConfig != null) {
-            statsConfig.set("players." + id + ".name", player.getName());
+        UUID id = player.getUniqueId();
+        this.blocksBroken.putIfAbsent(id, 0);
+        this.blocksPlaced.putIfAbsent(id, 0);
+        this.deaths.putIfAbsent(id, 0);
+        if (this.statsConfig != null) {
+            this.statsConfig.set("players." + id + ".name", player.getName());
         }
-
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (isPlayerEnabled(player)) updateScoreboard(player);
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            if (this.isPlayerEnabled(player)) {
+                this.updateScoreboard(player);
+            }
         }, 10L);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         UUID id = event.getPlayer().getUniqueId();
-        playerObjectives.remove(id);
-        lastTitles.remove(id);
-        lastLines.remove(id);
-
-        if (statsConfig != null) {
+        this.playerObjectives.remove(id);
+        this.lastTitles.remove(id);
+        this.lastLines.remove(id);
+        if (this.statsConfig != null) {
             String path = "players." + id + ".";
-            statsConfig.set(path + "name",          event.getPlayer().getName());
-            statsConfig.set(path + "blocks_broken", blocksBroken.getOrDefault(id, 0));
-            statsConfig.set(path + "blocks_placed", blocksPlaced.getOrDefault(id, 0));
-            statsConfig.set(path + "deaths",        deaths.getOrDefault(id, 0));
+            this.statsConfig.set(path + "name", event.getPlayer().getName());
+            this.statsConfig.set(path + "blocks_broken", this.blocksBroken.getOrDefault(id, 0));
+            this.statsConfig.set(path + "blocks_placed", this.blocksPlaced.getOrDefault(id, 0));
+            this.statsConfig.set(path + "deaths", this.deaths.getOrDefault(id, 0));
             try {
-                statsConfig.save(statsFile);
-            } catch (IOException e) {
-                plugin.getPluginLogger().error("Failed to save stats.yml on quit", e);
+                this.statsConfig.save(this.statsFile);
+            }
+            catch (IOException e) {
+                this.plugin.getPluginLogger().error("Failed to save stats.yml on quit", e);
             }
         }
     }

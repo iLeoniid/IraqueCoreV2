@@ -71,7 +71,9 @@ ranks:
       suffix: ""
       weight: 50
       color: "&7"
-      permissions: []
+      permissions:
+        - "iraquecore.home"
+        - "iraquecore.tpa"
 
 
 #   SCOREBOARD — IraqueSurvival
@@ -213,20 +215,6 @@ sleep:
 playtime:
   enabled: true
 
-
-#   GRAVES
-#   When a player dies, a chest spawns with their items
-
-grave:
-  allow-others-open: false      # Solo el dueño puede abrir
-  drop-on-expire: true          # Dropear items al expirar
-  protect-explosions: true      # Proteger de TNT/Creepers
-  expire-time: 600              # Minutos antes de expirar (0 = nunca)
-  material: "CHEST"             # Material del bloque
-  hologram:
-    enabled: true
-    format: "&6⚰ Cadaver de &e{player} &7(&f{time}&7)"
-  broadcast: "&6{player} &emurió. Items en tumba: &6{x}, {y}, {z} &7- &f{world}"
 
 #   DURABILITY WARNING
 #   Warn players when their tool is about to break
