@@ -1,0 +1,65 @@
+# ─────────────────────────────────────────────
+#   IraqueCore - Alert System Configuration
+#   Define your alerts here
+# ─────────────────────────────────────────────
+
+alertas:
+  # Alerta de mantenimiento
+  mantenimiento:
+    title: "&c&lMANTENIMIENTO PROGRAMADO"
+    description: "&7El servidor se reiniciará en &e10 minutos&7. Guarda tu progreso."
+    message: "&6[Alerta] &fEl servidor se reiniciará en 10 minutos."
+    sound:
+      id: "oraxen:alerta_mantenimiento"
+      category: "PLAYERS"
+      volume: 1.0
+      pitch: 1.0
+      enabled: true
+    send-type: "TITLE"
+    save-for-offline: true
+    remove-after-send: true
+    join-delay: 10
+
+  # Alerta de evento
+  evento:
+    title: "&a&l\u00a1EVENTO ESPECIAL!"
+    description: "&7Se está celebrando un evento en el lobby. \u00a1Únete!"
+    message: "&6[Evento] &a\u00a1Únete al evento en el lobby!"
+    sound:
+      id: "ENTITY_PLAYER_LEVELUP"
+      category: "PLAYERS"
+      volume: 1.0
+      pitch: 1.5
+      enabled: true
+    send-type: "ACTION_BAR"
+    save-for-offline: false
+    remove-after-send: true
+    join-delay: 5
+
+  # Alerta simple (solo mensaje)
+  simple:
+    title: ""
+    description: ""
+    message: "&eRecordatorio: &fRevisa tu correo en el juego."
+    sound:
+      id: "BLOCK_NOTE_BLOCK_PLING"
+      category: "PLAYERS"
+      volume: 0.5
+      pitch: 2.0
+      enabled: true
+    send-type: "CHAT"
+    save-for-offline: true
+    remove-after-send: true
+    join-delay: 0
+
+  # Alerta sin sonido
+  silenciosa:
+    title: "&7&lAVISO"
+    description: "&7Este es un aviso sin sonido."
+    message: "&7[Silencioso] &fEste mensaje no tiene sonido."
+    sound:
+      enabled: false
+    send-type: "CHAT"
+    save-for-offline: true
+    remove-after-send: true
+    join-delay: 0

@@ -78,6 +78,10 @@ commands:
     description: Open the chat color selector GUI
     aliases: [chatcolors, cc, colors]
     permission: iraquecore.chatcolor
+  alert:
+    description: Send alerts to players
+    aliases: [alerta]
+    permission: alert.use
   iraquecore:
     description: Plugin info
     aliases: [ic, core]
@@ -107,6 +111,10 @@ permissions:
       iraquecore.grants: true
       iraquecore.grant.revoke: true
       iraquecore.chatcolor: true
+      alert.use: true
+      alert.list: true
+      alert.reload: true
+      alert.test: true
   iraquecore.admin:
     description: Access to admin commands
     default: op
@@ -211,3 +219,16 @@ permissions:
   iraquecore.chatcolor:
     description: Use chat color commands
     default: true
+
+  alert.use:
+    description: Send alerts
+    default: op
+  alert.list:
+    description: List available alerts
+    default: op
+  alert.reload:
+    description: Reload alert configuration
+    default: op
+  alert.test:
+    description: Test an alert
+    default: op

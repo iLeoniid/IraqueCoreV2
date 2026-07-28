@@ -1,6 +1,8 @@
 package gg.leo.IraqueCore;
 
 import gg.leo.IraqueCore.afk.AfkManager;
+import gg.leo.IraqueCore.alerts.AlertCommand;
+import gg.leo.IraqueCore.alerts.AlertManager;
 import gg.leo.IraqueCore.anvil.AnvilColorListener;
 import gg.leo.IraqueCore.armorstand.ArmorStandEditor;
 import gg.leo.IraqueCore.commands.GameModeCommand;
@@ -68,6 +70,7 @@ public final class IraqueCore extends JavaPlugin {
     private GrantManager       grantManager;
     private GrantListener      grantListener;
     private ChatColorManager   chatColorManager;
+    private AlertManager       alertManager;
     private StatsCommand       statsCommand;
 
     // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
@@ -106,6 +109,11 @@ public final class IraqueCore extends JavaPlugin {
         this.tagManager = new TagManager(this);
         tagManager.load();
         logSuccess("TAG");
+
+        this.alertManager = new AlertManager(this);
+        alertManager.load();
+        getServer().getPluginManager().registerEvents(alertManager, this);
+        logSuccess("ALERTS");
 
         this.msgManager = new MsgManager();
         logSuccess("MSG");
@@ -258,6 +266,10 @@ public final class IraqueCore extends JavaPlugin {
             chatColorManager.load();
         }
 
+        if (alertManager != null) {
+            alertManager.reload();
+        }
+
         if (motdManager != null) {
             motdManager.reload();
         }
@@ -322,6 +334,9 @@ public final class IraqueCore extends JavaPlugin {
         var chatColorCommand = new ChatColorCommand(chatColorManager);
         register("chatcolor", chatColorCommand, null);
 
+        var alertCommand = new AlertCommand(this, alertManager);
+        register("alert", alertCommand, alertCommand);
+
         var infoCommand = new IraqueCoreCommand(this);
         register("iraquecore", infoCommand, null);
     }
@@ -360,6 +375,7 @@ public final class IraqueCore extends JavaPlugin {
     public GrantManager       getGrantManager()         { return grantManager; }
     public GrantListener      getGrantListener()        { return grantListener; }
     public ChatColorManager   getChatColorManager()     { return chatColorManager; }
+    public AlertManager       getAlertManager()          { return alertManager; }
 
     /**
      * Native Paper logger with Adventure Components support.
