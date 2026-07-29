@@ -175,6 +175,8 @@ public class RankManager {
 
     public void updatePlayerRankVisuals(Player player) {
         getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
+            String format = plugin.getConfigManager().getChatFormat();
+
             String tag    = plugin.getTagManager().getPlayerTagDisplay(player);
             String tagStr = tag.isEmpty() ? "" : tag + " ";
 
@@ -185,14 +187,26 @@ public class RankManager {
                 displayPrefix = rank.prefix();
             }
 
-            String listNameRaw = setPlaceholders(player, displayPrefix + " " + tagStr + rank.color() + player.getName());
-            player.playerListName(plugin.getConfigManager().deserialize(
-                    plugin.getConfigManager().translate(listNameRaw)));
+            String nameColor = rank.color();
+            String playerColored = nameColor + player.getName();
 
-            String rawPrefix = buildPrefixFrom(displayPrefix, tagStr);
-            String prefix = setPlaceholders(player, rawPrefix);
+            String resolved = format
+                    .replace("{prefix}", displayPrefix)
+                    .replace("{suffix}", rank.suffix())
+                    .replace("{player}", playerColored)
+                    .replace("{displayname}", playerColored)
+                    .replace("{tag}", tagStr)
+                    .replace("{world}", player.getWorld().getName())
+                    .replace("{message}", "");
+            resolved = setPlaceholders(player, resolved);
+
+            player.playerListName(plugin.getConfigManager().deserialize(
+                    plugin.getConfigManager().translate(resolved)));
+
+            String teamPrefix = resolveTeamPart(format, displayPrefix, rank.suffix(), tagStr, player, true);
+            String teamSuffix = resolveTeamPart(format, displayPrefix, rank.suffix(), tagStr, player, false);
             for (Player viewer : Bukkit.getOnlinePlayers()) {
-                applyTeamForViewer(viewer, player, rank, prefix);
+                applyTeamForViewer(viewer, player, rank, teamPrefix, teamSuffix);
             }
         });
     }
@@ -201,6 +215,8 @@ public class RankManager {
         for (Player other : Bukkit.getOnlinePlayers()) {
             if (other.equals(joining)) continue;
             getPlayerRank(other.getUniqueId()).ifPresent(rank -> {
+                String format = plugin.getConfigManager().getChatFormat();
+
                 String tag    = plugin.getTagManager().getPlayerTagDisplay(other);
                 String tagStr = tag.isEmpty() ? "" : tag + " ";
 
@@ -211,20 +227,46 @@ public class RankManager {
                     displayPrefix = rank.prefix();
                 }
 
-                String rawPrefix = buildPrefixFrom(displayPrefix, tagStr);
-                String prefix = setPlaceholders(other, rawPrefix);
-                applyTeamForViewer(joining, other, rank, prefix);
+                String teamPrefix = resolveTeamPart(format, displayPrefix, rank.suffix(), tagStr, other, true);
+                String teamSuffix = resolveTeamPart(format, displayPrefix, rank.suffix(), tagStr, other, false);
+                applyTeamForViewer(joining, other, rank, teamPrefix, teamSuffix);
             });
         }
         updatePlayerRankVisuals(joining);
     }
 
-    private String buildPrefixFrom(String prefix, String tagStr) {
-        String full = prefix + " " + tagStr;
-        return full.length() > 256 ? full.substring(0, 256) : full;
+    private String resolveTeamPart(String format, String prefix, String suffix, String tagStr, Player player, boolean beforePlayer) {
+        int playerIdx = format.indexOf("{player}");
+        int dispIdx = format.indexOf("{displayname}");
+        int splitIdx = -1;
+        String marker = null;
+        if (playerIdx >= 0 && (dispIdx < 0 || playerIdx < dispIdx)) {
+            splitIdx = playerIdx;
+            marker = "{player}";
+        } else if (dispIdx >= 0) {
+            splitIdx = dispIdx;
+            marker = "{displayname}";
+        }
+        String part;
+        if (splitIdx < 0) {
+            part = beforePlayer ? format : "";
+        } else {
+            part = beforePlayer ? format.substring(0, splitIdx) : format.substring(splitIdx + marker.length());
+        }
+        part = part
+                .replace("{prefix}", beforePlayer ? prefix : "")
+                .replace("{suffix}", beforePlayer ? "" : suffix)
+                .replace("{player}", "")
+                .replace("{displayname}", "")
+                .replace("{tag}", beforePlayer ? tagStr : "")
+                .replace("{world}", player.getWorld().getName())
+                .replace("{message}", "");
+        part = setPlaceholders(player, part);
+        if (beforePlayer && part.length() > 256) part = part.substring(0, 256);
+        return part;
     }
 
-    private void applyTeamForViewer(Player viewer, Player target, Rank rank, String prefix) {
+    private void applyTeamForViewer(Player viewer, Player target, Rank rank, String prefix, String suffix) {
         Scoreboard board = viewer.getScoreboard();
         if (board == null) board = Bukkit.getScoreboardManager().getMainScoreboard();
 
@@ -245,9 +287,9 @@ public class RankManager {
 
         team.prefix(plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().translate(prefix)));
-        if (!rank.suffix().isEmpty()) {
+        if (!suffix.isEmpty()) {
             team.suffix(plugin.getConfigManager().deserialize(
-                    plugin.getConfigManager().translate(rank.suffix())));
+                    plugin.getConfigManager().translate(suffix)));
         }
 
         String colorStr = rank.color();
