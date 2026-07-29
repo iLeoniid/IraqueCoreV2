@@ -298,5 +298,16 @@ punishment:
     screen: "&cVocê foi expulso.\n&7Motivo: &f{reason}\n&7Por: &f{source}"
 
 # ─── Stats ───
+heal:
+  target: "&aVocê foi curado!"
+  other: "&aVocê curou {player}."
+
+feed:
+  target: "&aVocê foi alimentado!"
+  other: "&aVocê alimentou {player}."
+
+trash:
+  title: "&cLixeira"
+
 stats:
   saved: "&aAs estatísticas foram salvas com sucesso."

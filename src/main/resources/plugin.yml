@@ -116,6 +116,18 @@ commands:
   kick:
     description: Kick a player
     permission: iraquecore.kick
+  heal:
+    description: Heal yourself or another player
+    aliases: [curar]
+    permission: iraquecore.heal
+  feed:
+    description: Feed yourself or another player
+    aliases: [alimentar]
+    permission: iraquecore.feed
+  trash:
+    description: Open a trash inventory
+    aliases: [lixeira, dispose]
+    permission: iraquecore.trash
 
 permissions:
   iraquecore.*:
@@ -148,6 +160,11 @@ permissions:
       iraquecore.mute: true
       iraquecore.unmute: true
       iraquecore.kick: true
+      iraquecore.heal: true
+      iraquecore.heal.other: true
+      iraquecore.feed: true
+      iraquecore.feed.other: true
+      iraquecore.trash: true
       iraquecore.punishment.silent: true
       alert.use: true
       alert.list: true
@@ -296,3 +313,19 @@ permissions:
   iraquecore.punishment.silent:
     description: See silent punishments
     default: op
+
+  iraquecore.heal:
+    description: Heal yourself
+    default: op
+  iraquecore.heal.other:
+    description: Heal other players
+    default: op
+  iraquecore.feed:
+    description: Feed yourself
+    default: op
+  iraquecore.feed.other:
+    description: Feed other players
+    default: op
+  iraquecore.trash:
+    description: Open the trash inventory
+    default: true

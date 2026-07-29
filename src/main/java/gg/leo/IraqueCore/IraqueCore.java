@@ -387,6 +387,14 @@ public final class IraqueCore extends JavaPlugin {
         register("mute", punishmentCommand, punishmentCommand);
         register("unmute", punishmentCommand, punishmentCommand);
         register("kick", punishmentCommand, punishmentCommand);
+
+        var healCommand = new gg.leo.IraqueCore.commands.HealCommand(this);
+        register("heal", healCommand, healCommand);
+        var feedCommand = new gg.leo.IraqueCore.commands.FeedCommand(this);
+        register("feed", feedCommand, feedCommand);
+        var trashCommand = new gg.leo.IraqueCore.commands.TrashCommand(this);
+        register("trash", trashCommand, null);
+        getServer().getPluginManager().registerEvents(trashCommand, this);
     }
 
     /**
