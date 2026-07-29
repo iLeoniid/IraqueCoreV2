@@ -43,6 +43,7 @@ import gg.leo.IraqueCore.rank.RankCommand;
 import gg.leo.IraqueCore.rank.RankManager;
 import gg.leo.IraqueCore.scoreboard.ScoreboardCommand;
 import gg.leo.IraqueCore.scoreboard.ScoreboardManager;
+import gg.leo.IraqueCore.utils.PluginLogger;
 import gg.leo.IraqueCore.utils.menu.listener.MenuListener;
 import gg.leo.IraqueCore.sleep.SleepManager;
 import gg.leo.IraqueCore.tag.TagCommand;
@@ -50,7 +51,6 @@ import gg.leo.IraqueCore.tag.TagManager;
 import gg.leo.IraqueCore.totem.TotemListener;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -83,55 +83,57 @@ public final class IraqueCore extends JavaPlugin {
     private TPAManager         tpaManager;
     private HomeManager        homeManager;
     private PunishmentManager  punishmentManager;
-
-    // Paper 1.20.6+ provides native ComponentLogger — much better than raw SLF4J
-    private ComponentLogger componentLogger;
+    private PluginLogger       pluginLogger;
 
     @Override
     public void onEnable() {
-        instance            = this;
-        this.componentLogger = getComponentLogger();
+        instance          = this;
+        this.pluginLogger = new PluginLogger(getName(), getComponentLogger());
 
+        pluginLogger.startFeature("Core");
         saveDefaultConfig();
 
         //  Managers 
+        pluginLogger.startFeature("Config");
         this.configManager = new ConfigManager(this);
         configManager.load();
-        logSuccess("CONFIG");
+        pluginLogger.success("Config", "Configuration loaded");
 
+        pluginLogger.startFeature("AFK");
         this.afkManager = new AfkManager(this);
         afkManager.load();
         afkManager.startTask();
-        logSuccess("AFK");
+        pluginLogger.success("AFK", "AFK manager started");
 
+        pluginLogger.startFeature("Sleep");
         this.sleepManager = new SleepManager(this);
         sleepManager.load();
-        logSuccess("SLEEP");
+        pluginLogger.success("Sleep", "Sleep voting loaded");
 
         this.playtimeManager = new PlaytimeManager(this);
         playtimeManager.load();
         playtimeManager.startTask();
-        logSuccess("PLAYTIME");
+        pluginLogger.success("Playtime", "Playtime tracker started");
 
         this.rankManager = new RankManager(this);
         rankManager.loadRanks();
-        logSuccess("RANK");
+        pluginLogger.success("Rank", "Rank system loaded");
 
         this.tagManager = new TagManager(this);
         tagManager.load();
-        logSuccess("TAG");
+        pluginLogger.success("Tag", "Tag system loaded");
 
         this.alertManager = new AlertManager(this);
         alertManager.load();
         getServer().getPluginManager().registerEvents(alertManager, this);
-        logSuccess("ALERTS");
+        pluginLogger.success("Alerts", "Alert system loaded");
 
         this.msgManager = new MsgManager();
-        logSuccess("MSG");
+        pluginLogger.success("Msg", "Private messaging loaded");
 
         this.permissionManager = new PermissionManager(this);
         permissionManager.load();
-        logSuccess("PERMISSION");
+        pluginLogger.success("Permission", "Permission manager loaded");
 
         this.grantManager = new GrantManager(this);
         grantManager.load();
@@ -139,17 +141,17 @@ public final class IraqueCore extends JavaPlugin {
 
         this.grantListener = new GrantListener(this);
         getServer().getPluginManager().registerEvents(grantListener, this);
-        logSuccess("GRANT");
+        pluginLogger.success("Grant", "Grant system loaded");
 
         this.chatColorManager = new ChatColorManager(this);
         chatColorManager.load();
-        logSuccess("CHATCOLOR");
+        pluginLogger.success("ChatColor", "Chat color system loaded");
 
         //  Scoreboard 
         this.scoreboardManager = new ScoreboardManager(this);
         scoreboardManager.load();
         scoreboardManager.startTasks();
-        logSuccess("SCOREBOARD");
+        pluginLogger.success("Scoreboard", "Scoreboard system loaded");
 
         //  Events ─
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
@@ -163,10 +165,10 @@ public final class IraqueCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DurabilityListener(this), this);
         getServer().getPluginManager().registerEvents(new TotemListener(this), this);
         getServer().getPluginManager().registerEvents(new MenuListener(), this);
-        logSuccess("EVENTS");
+        pluginLogger.info("Events", "Event listeners registered");
 
         this.statsCommand = new StatsCommand(this);
-        logSuccess("STATS");
+        pluginLogger.success("Stats", "Stats command loaded");
 
         getServer().getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -179,45 +181,47 @@ public final class IraqueCore extends JavaPlugin {
         }, this);
 
         this.leaderboardManager = new LeaderboardManager(this);
-        logSuccess("LEADERBOARD");
+        pluginLogger.success("Leaderboard", "Leaderboard system loaded");
 
         this.motdManager = new MotdManager(this);
         motdManager.load();
-        logSuccess("MOTD");
+        pluginLogger.success("MOTD", "MOTD system loaded");
 
         this.imageMotdManager = new ImageMotdManager(this);
         imageMotdManager.load();
         getServer().getPluginManager().registerEvents(imageMotdManager, this);
-        logSuccess("IMAGE MOTD");
+        pluginLogger.success("ImageMOTD", "Image MOTD loaded");
 
         this.tpaManager = new TPAManager(this);
-        logSuccess("TPA");
+        pluginLogger.success("TPA", "Teleport request system loaded");
 
         this.homeManager = new HomeManager(this);
         homeManager.load();
-        logSuccess("HOME");
+        pluginLogger.success("Home", "Home system loaded");
 
         this.punishmentManager = new PunishmentManager(this);
         punishmentManager.load();
         getServer().getPluginManager().registerEvents(punishmentManager, this);
-        logSuccess("PUNISHMENT");
+        pluginLogger.success("Punishment", "Punishment system loaded");
 
         //  Commands 
         registerCommands();
-        logSuccess("COMMANDS");
+        pluginLogger.success("Commands", "All commands registered");
 
         //  Discord (async — doesn't block startup) ─
         if (configManager.isDiscordEnabled()) {
+            pluginLogger.startFeature("Discord");
             try {
                 this.discordManager = new DiscordManager(this);
                 discordManager.start();
-                logSuccess("DISCORD");
+                pluginLogger.success("Discord", "Discord bot connected");
             } catch (Exception e) {
-                logWarning("DISCORD", e.getMessage());
+                pluginLogger.error("Discord", "Failed to start Discord", e);
             }
         }
 
-        componentLogger.info("IraqueCore v{} enabled!", getPluginMeta().getVersion());
+        pluginLogger.success("Core", "Plugin fully initialized");
+        pluginLogger.printSummary();
     }
 
     @Override
@@ -251,7 +255,7 @@ public final class IraqueCore extends JavaPlugin {
         if (punishmentManager != null) {
             punishmentManager.saveMutes();
         }
-        componentLogger.info("IraqueCore disabled.");
+        pluginLogger.info("IraqueCore", "Plugin disabled.");
         instance = null;
     }
 
@@ -406,7 +410,7 @@ public final class IraqueCore extends JavaPlugin {
                           org.bukkit.command.TabCompleter tabCompleter) {
         var cmd = getCommand(name);
         if (cmd == null) {
-            componentLogger.warn("Command '{}' not found in plugin.yml — skipping.", name);
+            pluginLogger.warn("Command '{}' not found in plugin.yml — skipping.", name);
             return;
         }
         cmd.setExecutor(executor);
@@ -436,27 +440,5 @@ public final class IraqueCore extends JavaPlugin {
     public HomeManager        getHomeManager()           { return homeManager; }
     public PunishmentManager  getPunishmentManager()     { return punishmentManager; }
 
-    /**
-     * Native Paper logger with Adventure Components support.
-     * Use it instead of raw SLF4J for colored console messages.
-     */
-    public ComponentLogger getPluginLogger()          { return componentLogger; }
-
-    //  Console startup logging 
-
-    private void logSuccess(String feature) {
-        Bukkit.getConsoleSender().sendMessage(
-                configManager.deserialize(
-                        "<#383737>[<#b60606>" + feature + "</#b60606><#383737>] <#ff4d07>Successfully initialized!</#ff4d07>"
-                )
-        );
-    }
-
-    private void logWarning(String feature, String message) {
-        Bukkit.getConsoleSender().sendMessage(
-                configManager.deserialize(
-                        "\u26A0\uFE0F <#383737>[<#b60606>" + feature + "</#b60606><#383737>] <#383737>(<#ff4d07>WARNING</#ff4d07><#383737>) <#ffd900>" + message + "</#ffd900>"
-                )
-        );
-    }
+    public PluginLogger getPluginLogger() { return pluginLogger; }
 }

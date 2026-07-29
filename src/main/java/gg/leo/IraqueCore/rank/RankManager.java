@@ -145,12 +145,10 @@ public class RankManager {
         // Apply rank permissions (config + custom)
         getPlayerRank(player.getUniqueId()).ifPresent(rank -> {
             for (String perm : rank.permissions()) {
-                if (perm.equals("*")) continue;
                 attachment.setPermission(perm, true);
             }
             if (permManager != null) {
                 for (String perm : permManager.getRankPermissions(rank.name())) {
-                    if (perm.equals("*")) continue;
                     attachment.setPermission(perm, true);
                 }
             }
@@ -159,7 +157,6 @@ public class RankManager {
         // Apply player-specific permissions from PermissionManager
         if (permManager != null) {
             for (String perm : permManager.getPermissions(player.getUniqueId())) {
-                if (perm.equals("*")) continue;
                 attachment.setPermission(perm, true);
             }
         }
