@@ -30,6 +30,7 @@ public class ArmorStandEditor implements Listener {
         Player player = event.getPlayer();
         if (!player.isSneaking()) return;
         if (!player.hasPermission("iraquecore.armorstand")) return;
+        if (player.getInventory().getItemInMainHand().getType() != org.bukkit.Material.AIR) return;
 
         event.setCancelled(true);
         editing.put(player.getUniqueId(), stand);

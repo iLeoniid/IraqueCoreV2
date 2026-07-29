@@ -480,9 +480,380 @@ tags:
       - '&7O começo de tudo'
 
   # ============================================
-  # CATEGORY: ESPECIAL
+  # CATEGORY: ESPECIAL - Supreme Icons (Oraxen)
   # ============================================
-  # Reserved for staff / events / rarities
-  # Add exclusive tags with permission: 'iraquecore.tag.especial.<name>'
+  # Tags com texturas Oraxen do Supreme Icons
+  # Usam caracteres Unicode mapeados no glyphs.yml
+  # Permissão: iraquecore.tag.especial.<id>
+
+  # ── ICONES COMUNS ──
+  flame:
+    display-name: '&6Flame'
+    tag: "\uA860"
+    permission: 'iraquecore.tag.especial.flame'
+    category: 'especial'
+    material: BLAZE_POWDER
+    lore:
+      - '&7Chama ardente'
+  star:
+    display-name: '&eStar'
+    tag: "\uA867"
+    permission: 'iraquecore.tag.especial.star'
+    category: 'especial'
+    material: NETHER_STAR
+    lore:
+      - '&7Brilho eterno'
+  sword:
+    display-name: '&fSword'
+    tag: "\uA868"
+    permission: 'iraquecore.tag.especial.sword'
+    category: 'especial'
+    material: IRON_SWORD
+    lore:
+      - '&7Força em batalha'
+  shield:
+    display-name: '&8Shield'
+    tag: "\uA872"
+    permission: 'iraquecore.tag.especial.shield'
+    category: 'especial'
+    material: SHIELD
+    lore:
+      - '&7Defesa máxima'
+  gem:
+    display-name: '&aGem'
+    tag: "\uA86F"
+    permission: 'iraquecore.tag.especial.gem'
+    category: 'especial'
+    material: EMERALD
+    lore:
+      - '&7Gema preciosa'
+  coin:
+    display-name: '&6Coin'
+    tag: "\uA86E"
+    permission: 'iraquecore.tag.especial.coin'
+    category: 'especial'
+    material: GOLD_NUGGET
+    lore:
+      - '&7Riqueza infinita'
+  trophy:
+    display-name: '&6Trophy'
+    tag: "\uA86C"
+    permission: 'iraquecore.tag.especial.trophy'
+    category: 'especial'
+    material: GOLD_BLOCK
+    lore:
+      - '&7Campeão nato'
+  wing:
+    display-name: '&fWing'
+    tag: "\uA875"
+    permission: 'iraquecore.tag.especial.wing'
+    category: 'especial'
+    material: FEATHER
+    lore:
+      - '&7Liberdade total'
+  medal:
+    display-name: '&eMedal'
+    tag: "\uA862"
+    permission: 'iraquecore.tag.especial.medal'
+    category: 'especial'
+    material: GOLD_INGOT
+    lore:
+      - '&7Conquista especial'
+  heart:
+    display-name: '&cHeart'
+    tag: "\uA86D"
+    permission: 'iraquecore.tag.especial.heart'
+    category: 'especial'
+    material: REDSTONE
+    lore:
+      - '&7Amor e paixão'
+  thunder:
+    display-name: '&eThunder'
+    tag: "\uA869"
+    permission: 'iraquecore.tag.especial.thunder'
+    category: 'especial'
+    material: GLOWSTONE
+    lore:
+      - '&7Poder elétrico'
+  treasure:
+    display-name: '&6Treasure'
+    tag: "\uA86B"
+    permission: 'iraquecore.tag.especial.treasure'
+    category: 'especial'
+    material: CHEST
+    lore:
+      - '&7Tesouro raro'
+
+  # ── CRISTAIS ──
+  crystal-1:
+    display-name: '&dCrystal #1'
+    tag: "\u0E01"
+    permission: 'iraquecore.tag.especial.crystal-1'
+    category: 'especial'
+    material: AMETHYST_SHARD
+    lore:
+      - '&7Cristal místico'
+  crystal-2:
+    display-name: '&dCrystal #2'
+    tag: "\u0E02"
+    permission: 'iraquecore.tag.especial.crystal-2'
+    category: 'especial'
+    material: AMETHYST_SHARD
+    lore:
+      - '&7Cristal radiante'
+  crystal-3:
+    display-name: '&dCrystal #3'
+    tag: "\u0E03"
+    permission: 'iraquecore.tag.especial.crystal-3'
+    category: 'especial'
+    material: AMETHYST_SHARD
+    lore:
+      - '&7Cristal brilhante'
+  crystal-4:
+    display-name: '&dCrystal #4'
+    tag: "\u0E04"
+    permission: 'iraquecore.tag.especial.crystal-4'
+    category: 'especial'
+    material: AMETHYST_SHARD
+    lore:
+      - '&7Cristal reluzente'
+  crystal-5:
+    display-name: '&dCrystal #5'
+    tag: "\u0E05"
+    permission: 'iraquecore.tag.especial.crystal-5'
+    category: 'especial'
+    material: AMETHYST_SHARD
+    lore:
+      - '&7Cristal supremo'
+
+  # ── RUBIS ──
+  ruby-1:
+    display-name: '&cRuby #1'
+    tag: "\u0E22"
+    permission: 'iraquecore.tag.especial.ruby-1'
+    category: 'especial'
+    material: RED_DYE
+    lore:
+      - '&7Rubi vermelho'
+  ruby-2:
+    display-name: '&cRuby #2'
+    tag: "\u0E23"
+    permission: 'iraquecore.tag.especial.ruby-2'
+    category: 'especial'
+    material: RED_DYE
+    lore:
+      - '&7Rubi flamejante'
+  ruby-3:
+    display-name: '&cRuby #3'
+    tag: "\u0E24"
+    permission: 'iraquecore.tag.especial.ruby-3'
+    category: 'especial'
+    material: RED_DYE
+    lore:
+      - '&7Rubi profundo'
+  ruby-4:
+    display-name: '&cRuby #4'
+    tag: "\u0E25"
+    permission: 'iraquecore.tag.especial.ruby-4'
+    category: 'especial'
+    material: RED_DYE
+    lore:
+      - '&7Rubi real'
+  ruby-5:
+    display-name: '&cRuby #5'
+    tag: "\u0E26"
+    permission: 'iraquecore.tag.especial.ruby-5'
+    category: 'especial'
+    material: RED_DYE
+    lore:
+      - '&7Rubi supremo'
+
+  # ── MÁSCARAS ──
+  mask-1:
+    display-name: '&7Mask #1'
+    tag: "\uA840"
+    permission: 'iraquecore.tag.especial.mask-1'
+    category: 'especial'
+    material: NAME_TAG
+    lore:
+      - '&7Máscara misteriosa'
+  mask-2:
+    display-name: '&7Mask #2'
+    tag: "\uA841"
+    permission: 'iraquecore.tag.especial.mask-2'
+    category: 'especial'
+    material: NAME_TAG
+    lore:
+      - '&7Máscara sombria'
+  mask-3:
+    display-name: '&7Mask #3'
+    tag: "\uA842"
+    permission: 'iraquecore.tag.especial.mask-3'
+    category: 'especial'
+    material: NAME_TAG
+    lore:
+      - '&7Máscara elegante'
+  mask-4:
+    display-name: '&7Mask #4'
+    tag: "\uA843"
+    permission: 'iraquecore.tag.especial.mask-4'
+    category: 'especial'
+    material: NAME_TAG
+    lore:
+      - '&7Máscara icônica'
+
+  # ── CHAPÉUS ──
+  hat-1:
+    display-name: '&eHat #1'
+    tag: "\uA847"
+    permission: 'iraquecore.tag.especial.hat-1'
+    category: 'especial'
+    material: LEATHER_HELMET
+    lore:
+      - '&7Chapéu estiloso'
+  hat-2:
+    display-name: '&eHat #2'
+    tag: "\uA848"
+    permission: 'iraquecore.tag.especial.hat-2'
+    category: 'especial'
+    material: LEATHER_HELMET
+    lore:
+      - '&7Chapéu clássico'
+  hat-3:
+    display-name: '&eHat #3'
+    tag: "\uA849"
+    permission: 'iraquecore.tag.especial.hat-3'
+    category: 'especial'
+    material: LEATHER_HELMET
+    lore:
+      - '&7Chapéu lendário'
+
+  # ── PRESENTES ──
+  gift-1:
+    display-name: '&aGift #1'
+    tag: "\uA84D"
+    permission: 'iraquecore.tag.especial.gift-1'
+    category: 'especial'
+    material: BIRCH_CHEST_BOAT
+    lore:
+      - '&7Presente especial'
+  gift-2:
+    display-name: '&aGift #2'
+    tag: "\uA84E"
+    permission: 'iraquecore.tag.especial.gift-2'
+    category: 'especial'
+    material: BIRCH_CHEST_BOAT
+    lore:
+      - '&7Presente raro'
+  gift-3:
+    display-name: '&aGift #3'
+    tag: "\uA84F"
+    permission: 'iraquecore.tag.especial.gift-3'
+    category: 'especial'
+    material: BIRCH_CHEST_BOAT
+    lore:
+      - '&7Presente supremo'
+
+  # ── BOLHAS ──
+  bubble-1:
+    display-name: '&bBubble #1'
+    tag: "\uA853"
+    permission: 'iraquecore.tag.especial.bubble-1'
+    category: 'especial'
+    material: PRISMARINE_SHARD
+    lore:
+      - '&7Bolha aquática'
+  bubble-2:
+    display-name: '&bBubble #2'
+    tag: "\uA854"
+    permission: 'iraquecore.tag.especial.bubble-2'
+    category: 'especial'
+    material: PRISMARINE_SHARD
+    lore:
+      - '&7Bolha mágica'
+  bubble-3:
+    display-name: '&bBubble #3'
+    tag: "\uA855"
+    permission: 'iraquecore.tag.especial.bubble-3'
+    category: 'especial'
+    material: PRISMARINE_SHARD
+    lore:
+      - '&7Bolha encantada'
+
+  # ── MINECRAFT ICONS ──
+  diamond:
+    display-name: '&bDiamond'
+    tag: "\u0E12"
+    permission: 'iraquecore.tag.especial.diamond'
+    category: 'especial'
+    material: DIAMOND
+    lore:
+      - '&7Diamante puro'
+  emerald:
+    display-name: '&aEmerald'
+    tag: "\u0E13"
+    permission: 'iraquecore.tag.especial.emerald'
+    category: 'especial'
+    material: EMERALD_BLOCK
+    lore:
+      - '&7Esmeralda valiosa'
+  nether-star:
+    display-name: '&fNether Star'
+    tag: "\u0E18"
+    permission: 'iraquecore.tag.especial.nether-star'
+    category: 'especial'
+    material: NETHER_STAR
+    lore:
+      - '&7Estrela do nether'
+  netherite:
+    display-name: '&8Netherite'
+    tag: "\u0E19"
+    permission: 'iraquecore.tag.especial.netherite'
+    category: 'especial'
+    material: NETHERITE_INGOT
+    lore:
+      - '&7Lendário e raro'
+  totem:
+    display-name: '&6Totem'
+    tag: "\u0E1A"
+    permission: 'iraquecore.tag.especial.totem'
+    category: 'especial'
+    material: TOTEM_OF_UNDYING
+    lore:
+      - '&7Imortal'
+
+  # ── EXTRA ──
+  hammer:
+    display-name: '&7Hammer'
+    tag: "\uA861"
+    permission: 'iraquecore.tag.especial.hammer'
+    category: 'especial'
+    material: IRON_PICKAXE
+    lore:
+      - '&7Construtor incansável'
+  cup:
+    display-name: '&6Cup'
+    tag: "\uA870"
+    permission: 'iraquecore.tag.especial.cup'
+    category: 'especial'
+    material: BOWL
+    lore:
+      - '&7Vitória merecida'
+  book:
+    display-name: '&fBook'
+    tag: "\uA85C"
+    permission: 'iraquecore.tag.especial.book'
+    category: 'especial'
+    material: BOOK
+    lore:
+      - '&7Conhecimento é poder'
+  candy:
+    display-name: '&dCandy'
+    tag: "\uA85D"
+    permission: 'iraquecore.tag.especial.candy'
+    category: 'especial'
+    material: SUGAR
+    lore:
+      - '&7Doce e perigoso'
 
 players: {}

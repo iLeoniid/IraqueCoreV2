@@ -399,6 +399,9 @@ public final class IraqueCore extends JavaPlugin {
         var trashCommand = new gg.leo.IraqueCore.commands.TrashCommand(this);
         register("trash", trashCommand, null);
         getServer().getPluginManager().registerEvents(trashCommand, this);
+
+        var removeArmorStandCommand = new gg.leo.IraqueCore.commands.RemoveArmorStandCommand(this);
+        register("removearmorstand", removeArmorStandCommand, null);
     }
 
     /**

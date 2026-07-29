@@ -78,9 +78,13 @@ public class AfkManager implements Listener {
         plugin.getRankManager().updatePlayerRankVisuals(player);
     }
 
-    private void updateActivity(UUID uuid) {
+    private void updateActivity(Player player) {
         if (!enabled) return;
+        UUID uuid = player.getUniqueId();
         lastActivity.put(uuid, System.currentTimeMillis());
+        if (afkPlayers.contains(uuid)) {
+            setAfk(player, false);
+        }
     }
 
     public boolean isAfk(UUID uuid) {
@@ -98,22 +102,22 @@ public class AfkManager implements Listener {
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
             return;
         }
-        updateActivity(event.getPlayer().getUniqueId());
+        updateActivity(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChat(AsyncChatEvent event) {
-        updateActivity(event.getPlayer().getUniqueId());
+        updateActivity(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
-        updateActivity(event.getPlayer().getUniqueId());
+        updateActivity(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        updateActivity(event.getPlayer().getUniqueId());
+        updateActivity(event.getPlayer());
     }
 
     @EventHandler
