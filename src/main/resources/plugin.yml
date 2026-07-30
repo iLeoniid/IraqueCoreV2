@@ -132,6 +132,24 @@ commands:
     description: Remove the armor stand you are looking at
     aliases: [rms, removearmor]
     permission: iraquecore.removearmorstand
+  troll:
+    description: Troll another player with effects
+    aliases: [trollear]
+    permission: troll.use
+  trollf:
+    description: Troll a player from command
+    aliases: [trollcmd]
+    permission: troll.use
+  untroll:
+    description: Remove troll effects from a player
+    aliases: [untroll]
+    permission: troll.undo
+  panicstoptroll:
+    description: Emergency stop all trolls
+    permission: troll.panic
+  control:
+    description: Control another player's movement and chat
+    permission: troll.control
 
 permissions:
   iraquecore.*:
@@ -337,3 +355,161 @@ permissions:
   iraquecore.removearmorstand:
     description: Remove armor stands
     default: op
+
+  troll.use:
+    description: Use the troll command
+    default: op
+  troll.undo:
+    description: Undo troll effects on players
+    default: op
+  troll.effect.fake-disconnect:
+    description: Allow using fake disconnect effect
+    default: op
+  troll.effect.invert-controls:
+    description: Allow using invert controls effect
+    default: op
+  troll.effect.blindness-pulse:
+    description: Allow using blindness pulse effect
+    default: op
+  troll.effect.nausea:
+    description: Allow using nausea effect
+    default: op
+  troll.effect.fake-chat:
+    description: Allow using fake chat effect
+    default: op
+  troll.effect.random-title:
+    description: Allow using random title effect
+    default: op
+  troll.effect.random-tp:
+    description: Allow using random teleport effect
+    default: op
+  troll.effect.slippery-floor:
+    description: Allow using slippery floor effect
+    default: op
+  troll.effect.forced-jump:
+    description: Allow using forced jump effect
+    default: op
+  troll.effect.inverted-gravity:
+    description: Allow using inverted gravity effect
+    default: op
+  troll.effect.freeze:
+    description: Allow using freeze effect
+    default: op
+  troll.effect.shuffle-inv:
+    description: Allow using shuffle inventory effect
+    default: op
+  troll.effect.rename-items:
+    description: Allow using rename items effect
+    default: op
+  troll.effect.fake-inv-full:
+    description: Allow using fake inventory full effect
+    default: op
+  troll.effect.vanishing-item:
+    description: Allow using vanishing item effect
+    default: op
+  troll.effect.random-sounds:
+    description: Allow using random sounds effect
+    default: op
+  troll.effect.fake-self-chat:
+    description: Allow using fake self chat effect
+    default: op
+  troll.effect.fake-mobs:
+    description: Allow using fake mobs effect
+    default: op
+  troll.effect.arrow-rain:
+    description: Allow using arrow rain effect
+    default: op
+  troll.effect.fake-explosion:
+    description: Allow using fake explosion effect
+    default: op
+  troll.effect.random-inv-open:
+    description: Allow using random inventory open effect
+    default: op
+  troll.effect.tab-name:
+    description: Allow using tab name change effect
+    default: op
+  troll.effect.action-bar:
+    description: Allow using action bar effect
+    default: op
+  troll.panic:
+    description: Use panic stop troll
+    default: op
+  troll.control:
+    description: Use control command
+    default: op
+  troll.effect.*:
+    description: All troll effects
+    default: op
+    children:
+      troll.effect.fake-disconnect: true
+      troll.effect.invert-controls: true
+      troll.effect.blindness-pulse: true
+      troll.effect.nausea: true
+      troll.effect.fake-chat: true
+      troll.effect.random-title: true
+      troll.effect.random-tp: true
+      troll.effect.slippery-floor: true
+      troll.effect.forced-jump: true
+      troll.effect.inverted-gravity: true
+      troll.effect.freeze: true
+      troll.effect.shuffle-inv: true
+      troll.effect.rename-items: true
+      troll.effect.fake-inv-full: true
+      troll.effect.vanishing-item: true
+      troll.effect.random-sounds: true
+      troll.effect.fake-self-chat: true
+      troll.effect.fake-mobs: true
+      troll.effect.arrow-rain: true
+      troll.effect.fake-explosion: true
+      troll.effect.random-inv-open: true
+      troll.effect.tab-name: true
+      troll.effect.action-bar: true
+      troll.effect.spin: true
+      troll.effect.fake-op: true
+      troll.effect.fake-unop: true
+      troll.effect.pumpkin: true
+      troll.effect.rickroll: true
+      troll.effect.slenderman: true
+      troll.effect.anvil-drop: true
+      troll.effect.fake-crash: true
+      troll.effect.fake-ban: true
+      troll.effect.fake-reload: true
+      troll.effect.exploding-chicken: true
+      troll.effect.kitty-cannon: true
+      troll.effect.fake-nuke: true
+      troll.effect.nuke: true
+      troll.effect.bed-missing: true
+      troll.effect.nick: true
+      troll.effect.annoy: true
+      troll.effect.burn: true
+      troll.effect.starve: true
+      troll.effect.hide-players: true
+      troll.effect.poop: true
+      troll.effect.potato: true
+      troll.effect.ring-of-fire: true
+      troll.effect.silverfish: true
+      troll.effect.slippery-hands: true
+      troll.effect.cave-sounds: true
+      troll.effect.ghast-sounds: true
+      troll.effect.time-flash: true
+      troll.effect.random-tp-world: true
+      troll.effect.random-particle: true
+      troll.effect.launch: true
+      troll.effect.free-fall: true
+      troll.effect.all-entities-die: true
+      troll.effect.event-freeze: true
+      troll.effect.break: true
+      troll.effect.deafen: true
+      troll.effect.explode-on-chat: true
+      troll.effect.random-chat: true
+      troll.effect.reverse-chat: true
+      troll.effect.bed-explode: true
+      troll.effect.stop-sleep: true
+      troll.effect.tnt-place: true
+      troll.effect.lightning: true
+      troll.effect.force-jump-event: true
+      troll.effect.sneak-destroy: true
+      troll.effect.insta-tool-break: true
+      troll.effect.aquaphobia: true
+      troll.effect.inventory-stop: true
+      troll.effect.entity-multiply: true

@@ -244,6 +244,182 @@ motd-image:
   # Also set the server favicon (64x64) from the same image
   set-favicon: true
 
+#   TROLL PLUGIN
+#   Sistema de trolleo avanzado con /troll <jugador>
+
+troll:
+  enabled: true
+
+  # Blocklist of players that cannot be trolled
+  blocklist:
+    - "Herobrine"
+  # Allow trolling operators
+  allow-troll-op: false
+
+  durations:
+    fake-disconnect: 8
+    invert-controls: 15
+    blindness-pulse: 18
+    nausea: 20
+    fake-chat: 12
+    random-title: 18
+    random-tp: 12
+    slippery-floor: 18
+    forced-jump: 14
+    inverted-gravity: 12
+    freeze: 8
+    shuffle-inv: 18
+    rename-items: 25
+    fake-inv-full: 0
+    vanishing-item: 18
+    random-sounds: 18
+    fake-self-chat: 14
+    fake-mobs: 15
+    arrow-rain: 8
+    fake-explosion: 0
+    random-inv-open: 18
+    tab-name: 25
+    action-bar: 25
+    spin: 10
+    fake-op: 0
+    fake-unop: 0
+    pumpkin: 15
+    rickroll: 8
+    slenderman: 12
+    anvil-drop: 12
+    fake-crash: 0
+    fake-ban: 0
+    fake-reload: 6
+    exploding-chicken: 0
+    kitty-cannon: 12
+    fake-nuke: 4
+    nuke: 0
+    bed-missing: 0
+    nick: 15
+    annoy: 14
+    burn: 10
+    starve: 10
+    hide-players: 15
+    poop: 15
+    potato: 18
+    ring-of-fire: 12
+    silverfish: 12
+    slippery-hands: 14
+    cave-sounds: 12
+    ghast-sounds: 12
+    time-flash: 12
+    random-tp-world: 0
+    random-particle: 14
+    launch: 0
+    free-fall: 0
+    all-entities-die: 0
+    event-freeze: 10
+    break: 12
+    deafen: 10
+    explode-on-chat: 12
+    random-chat: 12
+    reverse-chat: 12
+    bed-explode: 10
+    stop-sleep: 10
+    tnt-place: 10
+    lightning: 12
+    force-jump-event: 10
+    sneak-destroy: 10
+    insta-tool-break: 12
+    aquaphobia: 12
+    inventory-stop: 12
+    entity-multiply: 15
+  cooldowns:
+    fake-disconnect: 30
+    invert-controls: 60
+    blindness-pulse: 45
+    nausea: 30
+    fake-chat: 60
+    random-title: 60
+    random-tp: 120
+    slippery-floor: 60
+    forced-jump: 60
+    inverted-gravity: 60
+    freeze: 120
+    shuffle-inv: 60
+    rename-items: 60
+    fake-inv-full: 10
+    vanishing-item: 60
+    random-sounds: 60
+    fake-self-chat: 60
+    fake-mobs: 90
+    arrow-rain: 60
+    fake-explosion: 30
+    random-inv-open: 60
+    tab-name: 60
+    action-bar: 60
+    spin: 60
+    fake-op: 15
+    fake-unop: 15
+    pumpkin: 45
+    rickroll: 90
+    slenderman: 120
+    anvil-drop: 90
+    fake-crash: 30
+    fake-ban: 30
+    fake-reload: 120
+    exploding-chicken: 60
+    kitty-cannon: 90
+    fake-nuke: 60
+    nuke: 300
+    bed-missing: 15
+    nick: 90
+    annoy: 45
+    burn: 60
+    starve: 60
+    hide-players: 60
+    poop: 60
+    potato: 60
+    ring-of-fire: 90
+    silverfish: 120
+    slippery-hands: 60
+    cave-sounds: 60
+    ghast-sounds: 60
+    time-flash: 60
+    random-tp-world: 60
+    random-particle: 60
+    launch: 30
+    free-fall: 60
+    all-entities-die: 30
+    event-freeze: 60
+    break: 60
+    deafen: 45
+    explode-on-chat: 60
+    random-chat: 60
+    reverse-chat: 60
+    bed-explode: 60
+    stop-sleep: 45
+    tnt-place: 60
+    lightning: 60
+    force-jump-event: 45
+    sneak-destroy: 45
+    insta-tool-break: 60
+    aquaphobia: 60
+    inventory-stop: 60
+    entity-multiply: 90
+
+  # Random chat messages pool
+  troll-config:
+    randomchat:
+      - "i got hacked!"
+      - "what is happening??"
+      - "my screen is glitching"
+      - "help me!"
+      - "admin? anyone?"
+      - "this server is crazy"
+      - "lol who is trolling me"
+      - "i can't stop moving"
+      - "why is there a creeper??"
+      - "STOP IT"
+      - "please make it stop"
+      - "this is actually funny xd"
+      - "i think im going crazy"
+
 #   DATA STORAGE
 
 storage:
