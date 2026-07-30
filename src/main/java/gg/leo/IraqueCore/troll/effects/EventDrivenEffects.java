@@ -90,7 +90,7 @@ public final class EventDrivenEffects {
 
     private static class ExplodeOnChatEffect extends EventToggleEffect {
         ExplodeOnChatEffect() {
-            super("explode-on-chat", "&6Explotar al Chat", Material.TNT,
+            super("explode-on-chat", "&6Explodir ao Chat", Material.TNT,
                     Arrays.asList("&7Explode o jogador quando", "&7escreve no chat.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.explode-on-chat", 12, 60);
         }
@@ -140,7 +140,7 @@ public final class EventDrivenEffects {
 
     private static class TNTPlaceEffect extends EventToggleEffect {
         TNTPlaceEffect() {
-            super("tnt-place", "&cTNT al Colocar", Material.TNT,
+            super("tnt-place", "&cTNT ao Colocar", Material.TNT,
                     Arrays.asList("&7Quando o jogador coloca um", "&7bloco, ele vira TNT.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.tnt-place", 10, 60);
         }
@@ -150,7 +150,7 @@ public final class EventDrivenEffects {
 
     private static class LightningEffect extends EventToggleEffect {
         LightningEffect() {
-            super("lightning", "&eRayo al Moverse", Material.NETHER_STAR,
+            super("lightning", "&eRaio ao se Mover", Material.NETHER_STAR,
                     Arrays.asList("&7Cai um raio quando o", "&7jogador se move.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.lightning", 12, 60);
         }
@@ -170,7 +170,7 @@ public final class EventDrivenEffects {
 
     private static class SneakDestroyEffect extends EventToggleEffect {
         SneakDestroyEffect() {
-            super("sneak-destroy", "&7Destruir al Agacharse", Material.OAK_TRAPDOOR,
+            super("sneak-destroy", "&7Destruir ao Agachar", Material.OAK_TRAPDOOR,
                     Arrays.asList("&7Destroi o bloco abaixo", "&7do jogador ao se agachar.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.sneak-destroy", 10, 45);
         }
@@ -180,7 +180,7 @@ public final class EventDrivenEffects {
 
     private static class InstaToolBreakEffect extends EventToggleEffect {
         InstaToolBreakEffect() {
-            super("insta-tool-break", "&6Herramientas Rotas", Material.STONE_PICKAXE,
+            super("insta-tool-break", "&6Ferramentas Quebradas", Material.STONE_PICKAXE,
                     Arrays.asList("&7As ferramentas do jogador", "&7quebram na hora.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.insta-tool-break", 12, 60);
         }
@@ -190,7 +190,7 @@ public final class EventDrivenEffects {
 
     private static class AquaphobiaEffect extends EventToggleEffect {
         AquaphobiaEffect() {
-            super("aquaphobia", "&9Acuafobia", Material.WATER_BUCKET,
+            super("aquaphobia", "&9Aquafobia", Material.WATER_BUCKET,
                     Arrays.asList("&7Envenena o jogador quando", "&7esta na agua.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.aquaphobia", 12, 60);
         }
@@ -200,7 +200,7 @@ public final class EventDrivenEffects {
 
     private static class InventoryStopEffect extends EventToggleEffect {
         InventoryStopEffect() {
-            super("inventory-stop", "&5Sin Inventarios", Material.CHEST,
+            super("inventory-stop", "&5Sem Inventarios", Material.CHEST,
                     Arrays.asList("&7Impede o jogador de abrir", "&7qualquer inventario.", "", "&e\u25B8 Clique para aplicar"),
                     "event", "troll.effect.inventory-stop", 12, 60);
         }

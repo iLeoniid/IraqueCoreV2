@@ -40,6 +40,8 @@ public class TrollMenu {
                 List.of("&7Efeitos que alteram", "&7o chat do jogador.")));
         CATEGORIES.put("random", new CategoryInfo("&aAleatorio", Material.COMMAND_BLOCK,
                 List.of("&7Efeitos aleatorios", "&7e variados.")));
+        CATEGORIES.put("event", new CategoryInfo("&eEventos", Material.OBSERVER,
+                List.of("&7Efeitos baseados em", "&7eventos do jogador.")));
     }
 
     private final TrollManager manager;
