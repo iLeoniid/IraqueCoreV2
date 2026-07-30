@@ -181,10 +181,7 @@ public final class InventoryEffects {
             String key = target.getUniqueId().toString();
             Map<Integer, ItemStack> restored = hiddenItems.remove(key);
             if (restored != null) {
-                for (Map.Entry<Integer, ItemStack> entry : restored.entrySet()) {
-                    target.getInventory().setItem(entry.getKey(), entry.getValue());
-                }
-                target.updateInventory();
+                restoreItems(target, restored);
             }
         }
 
@@ -200,14 +197,26 @@ public final class InventoryEffects {
             String key = target.getUniqueId().toString();
             Map<Integer, ItemStack> hidden = hiddenItems.get(key);
             if (hidden != null && !hidden.isEmpty()) {
-                for (Map.Entry<Integer, ItemStack> entry : hidden.entrySet()) {
-                    target.getInventory().setItem(entry.getKey(), entry.getValue());
-                }
-                target.updateInventory();
+                restoreItems(target, hidden);
                 hiddenItems.remove(key);
             } else {
                 hideRandomItem(target);
             }
+        }
+
+        private void restoreItems(Player target, Map<Integer, ItemStack> items) {
+            for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
+                int slot = entry.getKey();
+                ItemStack item = entry.getValue();
+                ItemStack current = target.getInventory().getItem(slot);
+                if (current == null || current.getType() == Material.AIR) {
+                    target.getInventory().setItem(slot, item);
+                } else {
+                    target.getInventory().addItem(item).values().forEach(dropped ->
+                            target.getWorld().dropItemNaturally(target.getLocation(), dropped));
+                }
+            }
+            target.updateInventory();
         }
 
         private void hideRandomItem(Player target) {

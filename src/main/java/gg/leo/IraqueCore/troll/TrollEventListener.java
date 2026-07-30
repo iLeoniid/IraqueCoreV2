@@ -189,7 +189,11 @@ public class TrollEventListener implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         if (randomInvPlayers.contains(event.getPlayer().getUniqueId())) {
             Player p = (Player) event.getPlayer();
-            p.closeInventory();
+            org.bukkit.Bukkit.getScheduler().runTask(manager.getPlugin(), () -> {
+                if (p.isOnline() && randomInvPlayers.contains(p.getUniqueId())) {
+                    p.closeInventory();
+                }
+            });
         }
     }
 
