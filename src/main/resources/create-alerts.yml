@@ -4,6 +4,7 @@ alertas:
     description: "&7El servidor se reiniciará en &e10 minutos&7. Guarda tu progreso."
     sound:
       id: "oraxen:alerta_mantenimiento"
+      source: "AMBIENT"
       volume: 1.0
       pitch: 1.0
 
@@ -12,6 +13,7 @@ alertas:
     description: "&7Se está celebrando un evento en el lobby. ¡Únete!"
     sound:
       id: "ENTITY_PLAYER_LEVELUP"
+      source: "PLAYERS"
       volume: 1.0
       pitch: 1.5
 
