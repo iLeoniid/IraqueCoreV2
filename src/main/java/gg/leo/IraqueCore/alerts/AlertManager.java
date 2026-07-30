@@ -59,9 +59,10 @@ public class AlertManager implements Listener {
                     String soundId = soundSection.getString("id", "");
                     float volume = (float) soundSection.getDouble("volume", 1.0);
                     float pitch = (float) soundSection.getDouble("pitch", 1.0);
-                    sound = new Alert.SoundConfig(soundId, volume, pitch, !soundId.isEmpty());
+                    String source = soundSection.getString("source", "PLAYERS");
+                    sound = new Alert.SoundConfig(soundId, volume, pitch, source, !soundId.isEmpty());
                 } else {
-                    sound = new Alert.SoundConfig("", 1.0f, 1.0f, false);
+                    sound = new Alert.SoundConfig("", 1.0f, 1.0f, "PLAYERS", false);
                 }
 
                 Alert alert = new Alert(key, title, description, sound);
@@ -119,7 +120,11 @@ public class AlertManager implements Listener {
         if (sound == null || !sound.enabled() || sound.id().isEmpty()) return;
 
         try {
-            player.playSound(player, sound.id(), SoundCategory.PLAYERS, sound.volume(), sound.pitch());
+            SoundCategory category = SoundCategory.PLAYERS;
+            if (sound.source() != null && !sound.source().isEmpty()) {
+                category = SoundCategory.valueOf(sound.source().toUpperCase());
+            }
+            player.playSound(player, sound.id(), category, sound.volume(), sound.pitch());
         } catch (Exception e) {
             plugin.getPluginLogger().warn("Could not play sound '{}': {}", sound.id(), e.getMessage());
         }
