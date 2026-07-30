@@ -172,7 +172,7 @@ public class TrollManager {
         TrollEffect effect = effects.get(effectId);
         if (effect != null) {
             effect.revert(target, this);
-            if (!silent) {
+            if (!silent && target.isOp()) {
                 target.sendMessage("§aThe effect §e" + effect.getName() + " §ahas been removed.");
             }
         }
