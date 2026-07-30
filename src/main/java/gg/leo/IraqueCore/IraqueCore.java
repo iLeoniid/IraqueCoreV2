@@ -43,6 +43,13 @@ import gg.leo.IraqueCore.rank.RankCommand;
 import gg.leo.IraqueCore.rank.RankManager;
 import gg.leo.IraqueCore.scoreboard.ScoreboardCommand;
 import gg.leo.IraqueCore.scoreboard.ScoreboardManager;
+import gg.leo.IraqueCore.troll.PanicCommand;
+import gg.leo.IraqueCore.troll.TrollCommand;
+import gg.leo.IraqueCore.troll.TrollEventListener;
+import gg.leo.IraqueCore.troll.TrollManager;
+import gg.leo.IraqueCore.troll.TrollMenu;
+import gg.leo.IraqueCore.troll.TrollfCommand;
+import gg.leo.IraqueCore.troll.UntrollCommand;
 import gg.leo.IraqueCore.utils.PluginLogger;
 import gg.leo.IraqueCore.utils.menu.listener.MenuListener;
 import gg.leo.IraqueCore.sleep.SleepManager;
@@ -83,6 +90,7 @@ public final class IraqueCore extends JavaPlugin {
     private TPAManager         tpaManager;
     private HomeManager        homeManager;
     private PunishmentManager  punishmentManager;
+    private TrollManager       trollManager;
     private PluginLogger       pluginLogger;
 
     @Override
@@ -203,6 +211,12 @@ public final class IraqueCore extends JavaPlugin {
         punishmentManager.load();
         getServer().getPluginManager().registerEvents(punishmentManager, this);
         pluginLogger.success("Punishment", "Punishment system loaded");
+
+        //  Troll plugin 
+        this.trollManager = new TrollManager(this);
+        trollManager.load();
+        getServer().getPluginManager().registerEvents(trollManager.getEventListener(), this);
+        pluginLogger.success("Troll", "Troll system loaded");
 
         //  Commands 
         registerCommands();
@@ -402,6 +416,13 @@ public final class IraqueCore extends JavaPlugin {
 
         var removeArmorStandCommand = new gg.leo.IraqueCore.commands.RemoveArmorStandCommand(this);
         register("removearmorstand", removeArmorStandCommand, null);
+
+        var trollMenu = new TrollMenu(trollManager);
+        var trollCommand = new TrollCommand(trollManager, trollMenu);
+        register("troll", trollCommand, trollCommand);
+        register("trollf", new TrollfCommand(trollManager), new TrollfCommand(trollManager));
+        register("untroll", new UntrollCommand(trollManager), new UntrollCommand(trollManager));
+        register("panicstoptroll", new PanicCommand(trollManager), null);
     }
 
     /**
@@ -442,6 +463,8 @@ public final class IraqueCore extends JavaPlugin {
     public TPAManager         getTpaManager()            { return tpaManager; }
     public HomeManager        getHomeManager()           { return homeManager; }
     public PunishmentManager  getPunishmentManager()     { return punishmentManager; }
+    public TrollManager       getTrollManager()          { return trollManager; }
+    public TrollEventListener getTrollEventListener()     { return trollManager.getEventListener(); }
 
     public PluginLogger getPluginLogger() { return pluginLogger; }
 }

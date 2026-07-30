@@ -3,6 +3,7 @@ package gg.leo.IraqueCore.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,11 +84,15 @@ public class PluginLogger {
         String timeStr = time > 0 ? " <dark_gray>(" + time + "ms)</dark_gray>" : "";
         String featureStr = feature != null ? " <gray>[" + feature + "]</gray>" : "";
 
+        String safeDetail = detail != null
+                ? detail.replaceAll("§[0-9a-fklmnor]", "")
+                : "";
+
         String msg = level.emoji + " " +
                 "<gradient:#ff6b35:#ff9a44>" + pluginName + "</gradient>:" +
                 featureStr +
                 " " + level.color + level.name() + "</color>" +
-                " - " + detail + timeStr;
+                " - " + safeDetail + timeStr;
 
         Bukkit.getConsoleSender().sendMessage(MINI.deserialize(msg));
 
