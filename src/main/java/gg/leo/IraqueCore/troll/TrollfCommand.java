@@ -24,32 +24,32 @@ public class TrollfCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String[] args) {
         if (args.length < 2) {
-            sender.sendMessage("§cUsage: /trollf <player> <troll>");
+            sender.sendMessage("§cUso: /trollf <jogador> <troll>");
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            sender.sendMessage("§cPlayer not found.");
+            sender.sendMessage("§cJogador nao encontrado.");
             return true;
         }
 
         String effectId = args[1].toLowerCase();
         TrollEffect effect = manager.getEffect(effectId);
         if (effect == null) {
-            sender.sendMessage("§cTroll effect '" + effectId + "' not found.");
+            sender.sendMessage("§cEfeito de troll '" + effectId + "' nao encontrado.");
             return true;
         }
 
         if (sender instanceof Player player) {
             if (!player.hasPermission("troll.use") && !player.hasPermission(effect.getPermission())) {
-                player.sendMessage("§cYou don't have permission.");
+                player.sendMessage("§cVoce nao tem permissao.");
                 return true;
             }
             manager.applyEffect(target, effectId, player);
         } else {
             manager.applyEffect(target, effectId, null);
-            sender.sendMessage("§aApplied " + effect.getName() + " on " + target.getName());
+            sender.sendMessage("§aAplicado " + effect.getName() + " em " + target.getName());
         }
         return true;
     }

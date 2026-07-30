@@ -28,8 +28,8 @@ public final class MovementEffects {
 
     private static class RandomTeleportEffect extends TrollEffect {
         RandomTeleportEffect() {
-            super("random-tp", "&bTeletransporte Bucle", Material.ENDER_PEARL,
-                    Arrays.asList("&7Teletransporta al jugador a", "&7coordenadas random cercanas.", "", "&e\u25B8 Click para aplicar"),
+            super("random-tp", "&bTeletransporte em Loop", Material.ENDER_PEARL,
+                    Arrays.asList("&7Teletransporta o jogador para", "&7coordenadas aleatorias proximas.", "", "&e\u25B8 Clique para aplicar"),
                     "movement", "troll.effect.random-tp", 12, 120);
         }
 
@@ -66,8 +66,8 @@ public final class MovementEffects {
 
     private static class SlipperyFloorEffect extends TrollEffect {
         SlipperyFloorEffect() {
-            super("slippery-floor", "&fSuelo Resbaladizo", Material.ICE,
-                    Arrays.asList("&7Altera la velocidad del jugador", "&7aleatoriamente cada 3s.", "", "&e\u25B8 Click para aplicar"),
+            super("slippery-floor", "&fChao Escorregadio", Material.ICE,
+                    Arrays.asList("&7Altera a velocidade do jogador", "&7aleatoriamente a cada 3s.", "", "&e\u25B8 Clique para aplicar"),
                     "movement", "troll.effect.slippery-floor", 18, 60);
         }
 
@@ -97,8 +97,8 @@ public final class MovementEffects {
 
     private static class ForcedJumpEffect extends TrollEffect {
         ForcedJumpEffect() {
-            super("forced-jump", "&aSalto Forzado", Material.SLIME_BLOCK,
-                    Arrays.asList("&7Aplica velocity hacia arriba", "&7en intervalos.", "", "&e\u25B8 Click para aplicar"),
+            super("forced-jump", "&aSalto Forcado", Material.SLIME_BLOCK,
+                    Arrays.asList("&7Aplica velocity para cima", "&7em intervalos.", "", "&e\u25B8 Clique para aplicar"),
                     "movement", "troll.effect.forced-jump", 14, 60);
         }
 
@@ -130,8 +130,8 @@ public final class MovementEffects {
 
     private static class InvertedGravityEffect extends TrollEffect {
         InvertedGravityEffect() {
-            super("inverted-gravity", "&dGravedad Invertida", Material.FEATHER,
-                    Arrays.asList("&7Aplica levitacion al jugador", "&7simulando gravedad invertida.", "", "&e\u25B8 Click para aplicar"),
+            super("inverted-gravity", "&dGravidade Invertida", Material.FEATHER,
+                    Arrays.asList("&7Aplica levitacao no jogador", "&7simulando gravidade invertida.", "", "&e\u25B8 Clique para aplicar"),
                     "movement", "troll.effect.inverted-gravity", 12, 60);
         }
 
@@ -148,8 +148,8 @@ public final class MovementEffects {
 
     private static class FreezeEffect extends TrollEffect {
         FreezeEffect() {
-            super("freeze", "&bCongelar Movimiento", Material.BLUE_ICE,
-                    Arrays.asList("&7Congela al jugador en su lugar", "&7(sin moverse, pero puede chatear).", "", "&e\u25B8 Click para aplicar"),
+            super("freeze", "&bCongelar Movimento", Material.BLUE_ICE,
+                    Arrays.asList("&7Congela o jogador no lugar", "&7(sem se mover, mas pode conversar).", "", "&e\u25B8 Clique para aplicar"),
                     "movement", "troll.effect.freeze", 8, 120);
         }
 

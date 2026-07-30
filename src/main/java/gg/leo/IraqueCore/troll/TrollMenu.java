@@ -19,27 +19,27 @@ public class TrollMenu {
 
     static {
         CATEGORIES.put("visual", new CategoryInfo("&bVisuais / Cliente", Material.ENDER_EYE,
-                List.of("&7Efectos visuales y de cliente", "&7que desorientan al jugador.")));
-        CATEGORIES.put("movement", new CategoryInfo("&aMovimiento", Material.FEATHER,
-                List.of("&7Efectos que alteran el", "&7movimiento del jugador.")));
+                List.of("&7Efeitos visuais e de cliente", "&7que desorientam o jogador.")));
+        CATEGORIES.put("movement", new CategoryInfo("&aMovimento", Material.FEATHER,
+                List.of("&7Efeitos que alteram o", "&7movimento do jogador.")));
         CATEGORIES.put("inventory", new CategoryInfo("&6Inventario", Material.CHEST,
-                List.of("&7Efectos que juegan con", "&7el inventario del jugador.")));
-        CATEGORIES.put("soundchat", new CategoryInfo("&dSonido / Chat", Material.JUKEBOX,
-                List.of("&7Efectos de sonido y", "&7mensajes en el chat.")));
+                List.of("&7Efeitos que mexem com", "&7o inventario do jogador.")));
+        CATEGORIES.put("soundchat", new CategoryInfo("&dSom / Chat", Material.JUKEBOX,
+                List.of("&7Efeitos de som e", "&7mensagens no chat.")));
         CATEGORIES.put("combatworld", new CategoryInfo("&cCombate / Mundo", Material.DIAMOND_SWORD,
-                List.of("&7Efectos que afectan el", "&7mundo y combate.")));
-        CATEGORIES.put("interface", new CategoryInfo("&5Interfaz", Material.BOOK,
-                List.of("&7Efectos que alteran la", "&7interfaz de usuario.")));
-        CATEGORIES.put("classic", new CategoryInfo("&4Clasicos", Material.DIAMOND,
-                List.of("&7Efectos clasicos y", "&7divertidos para trollear.")));
-        CATEGORIES.put("explosion", new CategoryInfo("&6Explosion", Material.TNT,
-                List.of("&7Explosiones, pollos y", "&7mas caos explosivo.")));
+                List.of("&7Efeitos que afetam o", "&7mundo e combate.")));
+        CATEGORIES.put("interface", new CategoryInfo("&5Interface", Material.BOOK,
+                List.of("&7Efeitos que alteram a", "&7interface do usuario.")));
+        CATEGORIES.put("classic", new CategoryInfo("&4Classicos", Material.DIAMOND,
+                List.of("&7Efeitos classicos e", "&7divertidos para trolar.")));
+        CATEGORIES.put("explosion", new CategoryInfo("&6Explosao", Material.TNT,
+                List.of("&7Explosoes, galinhas e", "&7mais caos explosivo.")));
         CATEGORIES.put("beds", new CategoryInfo("&cCamas", Material.RED_BED,
-                List.of("&7Trolleos relacionados", "&7con camas y dormir.")));
+                List.of("&7Troleos relacionados", "&7com camas e dormir.")));
         CATEGORIES.put("chat2", new CategoryInfo("&dChat", Material.PAPER,
-                List.of("&7Efectos que alteran", "&7el chat del jugador.")));
-        CATEGORIES.put("random", new CategoryInfo("&aRandom", Material.COMMAND_BLOCK,
-                List.of("&7Efectos aleatorios", "&7y variados.")));
+                List.of("&7Efeitos que alteram", "&7o chat do jogador.")));
+        CATEGORIES.put("random", new CategoryInfo("&aAleatorio", Material.COMMAND_BLOCK,
+                List.of("&7Efeitos aleatorios", "&7e variados.")));
     }
 
     private final TrollManager manager;
@@ -73,9 +73,9 @@ public class TrollMenu {
                         public List<String> getDescription(Player p) {
                             List<String> desc = new ArrayList<>(info.description);
                             desc.add("");
-                            desc.add("&7Efectos: &f" + effectCount);
-                            desc.add("");
-                            desc.add("&e\u25B8 Click para abrir");
+                    desc.add("&7Efeitos: &f" + effectCount);
+                    desc.add("");
+                    desc.add("&e\u25B8 Clique para abrir");
                             return desc;
                         }
                         @Override
@@ -95,9 +95,9 @@ public class TrollMenu {
                     public Material getMaterial(Player p) { return Material.BARRIER; }
                     @Override
                     public List<String> getDescription(Player p) {
-                        return List.of("&7Cierra el menu de trolleo",
+                        return List.of("&7Fecha o menu de trolagem",
                                 "",
-                                "&c\u2716 Click para cerrar");
+                                "&c\u2716 Clique para fechar");
                     }
                     @Override
                     public String getDisplayName(Player p) { return "&cCerrar"; }
@@ -114,7 +114,7 @@ public class TrollMenu {
 
             @Override
             public String getTitle(Player p) {
-                return ChatColor.DARK_RED + "\u00BB " + ChatColor.RED + "Trollear a " + target.getName();
+                return ChatColor.DARK_RED + "\u00BB " + ChatColor.RED + "Trolar " + target.getName();
             }
         }.openMenu();
     }
@@ -124,7 +124,7 @@ public class TrollMenu {
         CategoryInfo info = CATEGORIES.get(category);
 
         if (effects.isEmpty()) {
-            player.sendMessage("§cNo effects found in this category.");
+            player.sendMessage("§cNenhum efeito encontrado nessa categoria.");
             return;
         }
 
@@ -140,10 +140,10 @@ public class TrollMenu {
                     if (manager.isOnCooldown(target.getUniqueId(), effect.getId())) {
                         long cooldown = manager.getCooldownRemaining(target.getUniqueId(), effect.getId());
                         lore.add("");
-                        lore.add("&c\u25CF En cooldown: &e" + cooldown + "s");
+                        lore.add("&c\u25CF Em cooldown: &e" + cooldown + "s");
                     } else if (manager.hasActiveEffect(target, effect.getId())) {
                         lore.add("");
-                        lore.add("&a\u25CF Activo ahora");
+                        lore.add("&a\u25CF Ativo agora");
                     }
 
                     String effectId = effect.getId();
@@ -196,10 +196,10 @@ public class TrollMenu {
                     public Material getMaterial(Player p) { return Material.BARRIER; }
                     @Override
                     public List<String> getDescription(Player p) {
-                        return List.of("&7Volver al menu principal");
+                        return List.of("&7Voltar ao menu principal");
                     }
                     @Override
-                    public String getDisplayName(Player p) { return "&c\u2190 Volver"; }
+                    public String getDisplayName(Player p) { return "&c\u2190 Voltar"; }
                     @Override
                     public int getData(Player p) { return 0; }
                     @Override
@@ -212,7 +212,7 @@ public class TrollMenu {
                     public Material getMaterial(Player p) { return Material.BARRIER; }
                     @Override
                     public List<String> getDescription(Player p) {
-                        return List.of("&7Cierra el menu de trolleo");
+                        return List.of("&7Fecha o menu de trolagem");
                     }
                     @Override
                     public String getDisplayName(Player p) { return "&cCerrar"; }

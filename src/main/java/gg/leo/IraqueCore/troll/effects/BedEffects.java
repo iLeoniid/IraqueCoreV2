@@ -20,13 +20,13 @@ public final class BedEffects {
     private static class BedMissingEffect extends TrollEffect {
         BedMissingEffect() {
             super("bed-missing", "&6Cama Perdida", Material.RED_BED,
-                    Arrays.asList("&7Muestra un mensaje falso de", "&7cama perdida u obstruida.", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Mostra uma mensagem falsa de", "&7cama perdida ou obstruida.", "", "&e\u25B8 Clique para aplicar"),
                     "beds", "troll.effect.bed-missing", 0, 15);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.sendMessage(ChatColor.RED + "You have no home bed or charged respawn anchor, or it was obstructed");
+            target.sendMessage(ChatColor.RED + "Voce nao tem uma cama ou ancora de renascimento, ou ela foi obstruida");
         }
 
         @Override

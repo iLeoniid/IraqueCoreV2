@@ -38,7 +38,7 @@ public final class ClassicEffects {
     private static class SpinEffect extends TrollEffect {
         SpinEffect() {
             super("spin", "&bGiro Infinito", Material.COMPASS,
-                    Arrays.asList("&7Hace girar al jugador", "&7constantemente 90 grados.", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Faz o jogador girar", "&7constantemente 90 graus.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.spin", 10, 60);
         }
 
@@ -71,14 +71,14 @@ public final class ClassicEffects {
 
     private static class FakeOpEffect extends TrollEffect {
         FakeOpEffect() {
-            super("fake-op", "&aFake OP", Material.DIAMOND,
-                    Arrays.asList("&7Muestra un mensaje falso de", "&7que el jugador es now OP.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-op", "&aFalso OP", Material.DIAMOND,
+                    Arrays.asList("&7Mostra uma mensagem falsa de", "&7que o jogador e OP.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.fake-op", 0, 15);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.sendMessage(ChatColor.GRAY + "[Server: Made " + target.getName() + " a server operator]");
+            target.sendMessage(ChatColor.GRAY + "[Server: " + target.getName() + " foi promovido a operador do servidor]");
         }
 
         @Override
@@ -87,14 +87,14 @@ public final class ClassicEffects {
 
     private static class FakeUnOpEffect extends TrollEffect {
         FakeUnOpEffect() {
-            super("fake-unop", "&cFake De-OP", Material.DIAMOND_AXE,
-                    Arrays.asList("&7Muestra un mensaje falso de", "&7remover OP del jugador.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-unop", "&cFalso De-OP", Material.DIAMOND_AXE,
+                    Arrays.asList("&7Mostra uma mensagem falsa de", "&7remocao de OP do jogador.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.fake-unop", 0, 15);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.sendMessage(ChatColor.GRAY + "[Server: Made " + target.getName() + " no longer a server operator]");
+            target.sendMessage(ChatColor.GRAY + "[Server: " + target.getName() + " nao e mais operador do servidor]");
         }
 
         @Override
@@ -103,8 +103,8 @@ public final class ClassicEffects {
 
     private static class PumpkinEffect extends TrollEffect {
         PumpkinEffect() {
-            super("pumpkin", "&6Calabaza Eterna", Material.CARVED_PUMPKIN,
-                    Arrays.asList("&7Pone una calabaza en la cabeza", "&7del jugador constantemente.", "", "&e\u25B8 Click para aplicar"),
+            super("pumpkin", "&6Abobora Eterna", Material.CARVED_PUMPKIN,
+                    Arrays.asList("&7Coloca uma abobora na cabeca", "&7do jogador constantemente.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.pumpkin", 15, 45);
         }
 
@@ -140,7 +140,7 @@ public final class ClassicEffects {
     private static class RickRollEffect extends TrollEffect {
         RickRollEffect() {
             super("rickroll", "&dRick Roll", Material.WRITTEN_BOOK,
-                    Arrays.asList("&7Abre un libro con lyrics", "&7y musica de Rick Astley!", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Abre um livro com letras", "&7e musica do Rick Astley!", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.rickroll", 8, 90);
         }
 
@@ -173,7 +173,7 @@ public final class ClassicEffects {
     private static class SlendermanEffect extends TrollEffect {
         SlendermanEffect() {
             super("slenderman", "&8Slenderman", Material.ENDER_PEARL,
-                    Arrays.asList("&7Invocas un Enderman", "&7aterrador que te persigue.", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Invoca um Enderman", "&7assustador que te persegue.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.slenderman", 12, 120);
         }
 
@@ -198,8 +198,8 @@ public final class ClassicEffects {
 
     private static class AnvilDropEffect extends TrollEffect {
         AnvilDropEffect() {
-            super("anvil-drop", "&7Lluvia de Yunques", Material.ANVIL,
-                    Arrays.asList("&7Hace caer yunques sobre", "&7el jugador repetidamente.", "", "&e\u25B8 Click para aplicar"),
+            super("anvil-drop", "&7Chuva de Bigornas", Material.ANVIL,
+                    Arrays.asList("&7Faz cair bigornas sobre", "&7o jogador repetidamente.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.anvil-drop", 12, 90);
         }
 
@@ -231,8 +231,8 @@ public final class ClassicEffects {
 
     private static class FakeCrashEffect extends TrollEffect {
         FakeCrashEffect() {
-            super("fake-crash", "&4Fake Crash", Material.BARRIER,
-                    Arrays.asList("&7Simula un crash del cliente", "&7con pantalla de desconexion.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-crash", "&4Falso Crash", Material.BARRIER,
+                    Arrays.asList("&7Simula um crash do cliente", "&7com tela de desconexao.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.fake-crash", 0, 30);
         }
 
@@ -247,14 +247,14 @@ public final class ClassicEffects {
 
     private static class FakeBanEffect extends TrollEffect {
         FakeBanEffect() {
-            super("fake-ban", "&4Fake Ban", Material.REDSTONE_BLOCK,
-                    Arrays.asList("&7Simula un baneo con pantalla", "&7de baneo del servidor.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-ban", "&4Falso Ban", Material.REDSTONE_BLOCK,
+                    Arrays.asList("&7Simula um ban com tela", "&7de ban do servidor.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.fake-ban", 0, 30);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.kickPlayer(ChatColor.RED + "You have been banned from this server!");
+            target.kickPlayer(ChatColor.RED + "Voce foi banido deste servidor!");
         }
 
         @Override
@@ -263,18 +263,18 @@ public final class ClassicEffects {
 
     private static class FakeReloadEffect extends TrollEffect {
         FakeReloadEffect() {
-            super("fake-reload", "&eFake Reload", Material.COMMAND_BLOCK,
-                    Arrays.asList("&7Simula un reload del servidor", "&7con mensajes de consola.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-reload", "&eFalso Reload", Material.COMMAND_BLOCK,
+                    Arrays.asList("&7Simula um reload do servidor", "&7com mensagens de console.", "", "&e\u25B8 Clique para aplicar"),
                     "classic", "troll.effect.fake-reload", 6, 120);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.sendMessage(ChatColor.GREEN + "[CONSOLE: Please note that this command is not supported...]");
+            target.sendMessage(ChatColor.GREEN + "[CONSOLE: Observe que este comando nao e suportado...]");
             org.bukkit.Bukkit.getScheduler().runTaskLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                         if (!target.isOnline()) return;
-                        target.sendMessage(ChatColor.YELLOW + "[CONSOLE: Reload complete.]");
+                        target.sendMessage(ChatColor.YELLOW + "[CONSOLE: Recarga concluida.]");
                     }, 100L);
         }
 

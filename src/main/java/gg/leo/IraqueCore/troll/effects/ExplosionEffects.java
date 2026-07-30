@@ -29,8 +29,8 @@ public final class ExplosionEffects {
 
     private static class ExplodingChickenEffect extends TrollEffect {
         ExplodingChickenEffect() {
-            super("exploding-chicken", "&6Pollo Explosivo", Material.COOKED_CHICKEN,
-                    Arrays.asList("&7Invocas un pollo que explota", "&7con fuegos artificiales!", "", "&e\u25B8 Click para aplicar"),
+            super("exploding-chicken", "&6Galinha Explosiva", Material.COOKED_CHICKEN,
+                    Arrays.asList("&7Invoca uma galinha que explode", "&7com fogos de artificio!", "", "&e\u25B8 Clique para aplicar"),
                     "explosion", "troll.effect.exploding-chicken", 0, 60);
         }
 
@@ -59,8 +59,8 @@ public final class ExplosionEffects {
 
     private static class KittyCannonEffect extends TrollEffect {
         KittyCannonEffect() {
-            super("kitty-cannon", "&eCatapulta de Gatitos", Material.OCELOT_SPAWN_EGG,
-                    Arrays.asList("&7Dispara ocelots explosivos", "&7al jugador repetidamente.", "", "&e\u25B8 Click para aplicar"),
+            super("kitty-cannon", "&eCatapulta de Gatinhos", Material.OCELOT_SPAWN_EGG,
+                    Arrays.asList("&7Dispara ocelots explosivos", "&7no jogador repetidamente.", "", "&e\u25B8 Clique para aplicar"),
                     "explosion", "troll.effect.kitty-cannon", 12, 90);
         }
 
@@ -101,8 +101,8 @@ public final class ExplosionEffects {
 
     private static class FakeNukeEffect extends TrollEffect {
         FakeNukeEffect() {
-            super("fake-nuke", "&cFake Nuke", Material.TNT,
-                    Arrays.asList("&7Invocas 16 TNTs falsas", "&7(se auto-remueven).", "", "&e\u25B8 Click para aplicar"),
+            super("fake-nuke", "&cFalsa Nuke", Material.TNT,
+                    Arrays.asList("&7Invoca 16 TNTs falsas", "&7(se auto-removem).", "", "&e\u25B8 Clique para aplicar"),
                     "explosion", "troll.effect.fake-nuke", 4, 60);
         }
 
@@ -129,7 +129,7 @@ public final class ExplosionEffects {
     private static class NukeEffect extends TrollEffect {
         NukeEffect() {
             super("nuke", "&4\u00a1NUKE!", Material.TNT_MINECART,
-                    Arrays.asList("&4\u00a1INVOCAS 320 TNTs!", "&7(Se auto-remueven despues).", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&4\u00a1INVOCA 320 TNTs!", "&7(Se auto-removem depois).", "", "&e\u25B8 Clique para aplicar"),
                     "explosion", "troll.effect.nuke", 0, 300);
         }
 

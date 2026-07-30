@@ -42,8 +42,8 @@ public final class SoundChatEffects {
 
     private static class RandomSoundsEffect extends TrollEffect {
         RandomSoundsEffect() {
-            super("random-sounds", "&6Sonidos Molestos", Material.JUKEBOX,
-                    List.of("&7Reproduce sonidos aleatorios", "&7molestos en intervalos.", "", "&e\u25B8 Click para aplicar"),
+            super("random-sounds", "&6Sons Irritantes", Material.JUKEBOX,
+                    List.of("&7Reproduz sons aleatorios", "&7irritantes em intervalos.", "", "&e\u25B8 Clique para aplicar"),
                     "soundchat", "troll.effect.random-sounds", 18, 60);
         }
 
@@ -76,26 +76,26 @@ public final class SoundChatEffects {
 
     private static class FakeSelfChatEffect extends TrollEffect {
         private static final List<String> FAKE_PLAYER_MESSAGES = List.of(
-                "alguien me trolleo xd",
-                "que hago ahora?",
-                "mi inventario se reordena solo D:",
-                "ayuda! mi pantalla se ve raro",
-                "que esta pasando?",
-                "admin? hay alguien?",
-                "creo que mi pc se esta volviendo loca",
+                "alguem me trollou xd",
+                "o que eu faco agora?",
+                "meu inventario se reorganiza sozinho D:",
+                "ajuda! minha tela esta estranha",
+                "o que esta acontecendo?",
+                "admin? tem alguem ai?",
+                "acho que meu pc esta ficando louco",
                 "wtf",
-                "JAJAJA alguien me esta vacilando",
-                "no puedo dejar de saltar",
-                "por que suena una TNT?",
-                "me quiero ir de este server",
-                "alguien sabe que hace este efecto?",
-                "alv que miedo",
-                "esto es gracioso la verdad"
+                "HAHAHA alguem esta me zuando",
+                "nao consigo parar de pular",
+                "por que esta tocando uma TNT?",
+                "quero sair desse server",
+                "alguem sabe o que esse efeito faz?",
+                "puts que medo",
+                "isso e engraçado pra falar a verdade"
         );
 
         FakeSelfChatEffect() {
-            super("fake-self-chat", "&2Auto-Mensajes", Material.PAPER,
-                    List.of("&7Simula que el jugador envia", "&7mensajes en el chat (solo local).", "", "&e\u25B8 Click para aplicar"),
+            super("fake-self-chat", "&2Auto-Mensagens", Material.PAPER,
+                    List.of("&7Simula que o jogador envia", "&7mensagens no chat (so local).", "", "&e\u25B8 Clique para aplicar"),
                     "soundchat", "troll.effect.fake-self-chat", 14, 60);
         }
 

@@ -16,16 +16,16 @@ public final class InterfaceEffects {
     private static final Random RANDOM = new Random();
 
     private static final List<String> ACTION_BAR_MESSAGES = List.of(
-            "&c\u00a1Has sido hackeado!",
+            "&c\u00a1Voce foi hackeado!",
             "&6\u2728 Server Lag Detectado \u2728",
-            "&4\u00a1ALERTA! Tu conexion es inestable",
-            "&a\u00a1Has ganado 1000$ en el juego!",
-            "&d\u00a1Felicidades! Eres el visitante #" + getRandomNumber(),
-            "&e\u26A1 Tu ping: " + getRandomPing() + "ms",
-            "&c\u00a1Tu cuenta sera eliminada en 10s!",
-            "&5\u00a1Un Admin te esta observando!",
-            "&7\u26A0 No olvides votar por el server \u26A0",
-            "&b\u00a1Has recibido un regalo misterioso!"
+            "&4\u00a1ALERTA! Sua conexao esta instavel",
+            "&a\u00a1Voce ganhou 1000$ no jogo!",
+            "&d\u00a1Parabens! Voce e o visitante #" + getRandomNumber(),
+            "&e\u26A1 Seu ping: " + getRandomPing() + "ms",
+            "&c\u00a1Sua conta sera deletada em 10s!",
+            "&5\u00a1Um Admin esta te observando!",
+            "&7\u26A0 Nao esqueca de votar no server \u26A0",
+            "&b\u00a1Voce recebeu um presente misterioso!"
     );
 
     private InterfaceEffects() {}
@@ -38,8 +38,8 @@ public final class InterfaceEffects {
 
     private static class RandomInventoryOpenEffect extends TrollEffect {
         RandomInventoryOpenEffect() {
-            super("random-inv-open", "&5Inventario Random", Material.BOOK,
-                    List.of("&7Abre y cierra inventarios", "&7simulando lag.", "", "&e\u25B8 Click para aplicar"),
+            super("random-inv-open", "&5Inventario Aleatorio", Material.BOOK,
+                    List.of("&7Abre e fecha inventarios", "&7simulando lag.", "", "&e\u25B8 Clique para aplicar"),
                     "interface", "troll.effect.random-inv-open", 18, 60);
         }
 
@@ -72,7 +72,7 @@ public final class InterfaceEffects {
                     () -> {
                         if (!target.isOnline()) return;
                         target.openInventory(Bukkit.createInventory(null, 9,
-                                ChatColor.DARK_PURPLE + "¿Que esta pasando?"));
+                                ChatColor.DARK_PURPLE + "O que esta acontecendo?"));
                         Bukkit.getScheduler().runTaskLater(
                                 gg.leo.IraqueCore.IraqueCore.getInstance(),
                                 () -> {
@@ -84,8 +84,8 @@ public final class InterfaceEffects {
 
     private static class TabNameChangeEffect extends TrollEffect {
         TabNameChangeEffect() {
-            super("tab-name", "&bNombre en Tab", Material.NAME_TAG,
-                    List.of("&7Cambia temporalmente el nombre", "&7del jugador en el tablist.", "", "&e\u25B8 Click para aplicar"),
+            super("tab-name", "&bNome na Tab", Material.NAME_TAG,
+                    List.of("&7Altera temporariamente o nome", "&7do jogador no tablist.", "", "&e\u25B8 Clique para aplicar"),
                     "interface", "troll.effect.tab-name", 25, 60);
         }
 
@@ -130,8 +130,8 @@ public final class InterfaceEffects {
 
     private static class AnnoyingActionBarEffect extends TrollEffect {
         AnnoyingActionBarEffect() {
-            super("action-bar", "&eAction Bar Molesta", Material.COMPASS,
-                    List.of("&7Muestra mensajes aleatorios", "&7en la action bar en loop.", "", "&e\u25B8 Click para aplicar"),
+            super("action-bar", "&eAction Bar Irritante", Material.COMPASS,
+                    List.of("&7Mostra mensagens aleatorias", "&7na action bar em loop.", "", "&e\u25B8 Clique para aplicar"),
                     "interface", "troll.effect.action-bar", 25, 60);
         }
 

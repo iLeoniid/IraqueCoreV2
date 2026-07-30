@@ -20,9 +20,9 @@ public final class InventoryEffects {
     private static final Random RANDOM = new Random();
 
     private static final List<String> FUNNY_NAMES = List.of(
-        "&aItem Magico", "&eRama Seca", "&4Basura Espacial", "&dPolvo Magico",
-        "&cItem de Admin", "&7Piedra Normal", "&6Item Legendario", "&bAgua Bendita",
-        "&5Item Misterioso", "&2Hoja de Arbol", "&aTrol", "&cNada Importante",
+        "&aItem Magico", "&eGalho Seco", "&4Lixo Espacial", "&dPo Magico",
+        "&cItem de Admin", "&7Pedra Normal", "&6Item Legendario", "&bAgua Benta",
+        "&5Item Misterioso", "&2Folha de Arvore", "&aTrol", "&cNada Importante",
         "&eItem #" + RANDOM.nextInt(9999), "&fItem Generico"
     );
 
@@ -38,7 +38,7 @@ public final class InventoryEffects {
     private static class ShuffleInventoryEffect extends TrollEffect {
         ShuffleInventoryEffect() {
             super("shuffle-inv", "&eReorganizar Inventario", Material.HOPPER,
-                    List.of("&7Reorganiza el inventario", "&7aleatoriamente cada 5s.", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Reorganiza o inventario", "&7aleatoriamente a cada 5s.", "", "&e\u25B8 Clique para aplicar"),
                     "inventory", "troll.effect.shuffle-inv", 18, 60);
         }
 
@@ -94,8 +94,8 @@ public final class InventoryEffects {
         private final Map<String, Map<Integer, String>> originalNames = new HashMap<>();
 
         RenameItemsEffect() {
-            super("rename-items", "&bRenombrar Items", Material.NAME_TAG,
-                    List.of("&7Cambia temporalmente los nombres", "&7de los items a cosas graciosas.", "", "&e\u25B8 Click para aplicar"),
+            super("rename-items", "&bRenomear Items", Material.NAME_TAG,
+                    List.of("&7Altera temporariamente os nomes", "&7dos items para coisas engraçadas.", "", "&e\u25B8 Clique para aplicar"),
                     "inventory", "troll.effect.rename-items", 25, 60);
         }
 
@@ -147,15 +147,15 @@ public final class InventoryEffects {
 
     private static class FakeInventoryFullEffect extends TrollEffect {
         FakeInventoryFullEffect() {
-            super("fake-inv-full", "&6Inventario Lleno Falso", Material.CHEST,
-                    List.of("&7Muestra un mensaje falso", "&7de inventario lleno.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-inv-full", "&6Falso Inventario Cheio", Material.CHEST,
+                    List.of("&7Mostra uma mensagem falsa", "&7de inventario cheio.", "", "&e\u25B8 Clique para aplicar"),
                     "inventory", "troll.effect.fake-inv-full", 0, 10);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.sendMessage(ChatColor.RED + "Your inventory is full!");
-            target.sendMessage(ChatColor.RED + "Tu inventario esta lleno!");
+            target.sendMessage(ChatColor.RED + "Seu inventario esta cheio!");
+            target.sendMessage(ChatColor.RED + "Seu inventario esta cheio!");
         }
 
         @Override
@@ -167,7 +167,7 @@ public final class InventoryEffects {
 
         VanishingItemEffect() {
             super("vanishing-item", "&7Item Desaparece", Material.ITEM_FRAME,
-                    List.of("&7Un item del inventario", "&7desaparece y reaparece.", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Um item do inventario", "&7desaparece e reaparece.", "", "&e\u25B8 Clique para aplicar"),
                     "inventory", "troll.effect.vanishing-item", 18, 60);
         }
 

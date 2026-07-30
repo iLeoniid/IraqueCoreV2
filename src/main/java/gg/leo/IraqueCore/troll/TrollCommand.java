@@ -29,12 +29,12 @@ public class TrollCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
+            sender.sendMessage("§cApenas jogadores podem usar esse comando.");
             return true;
         }
 
         if (!player.hasPermission("troll.use")) {
-            player.sendMessage("§cYou don't have permission to use this command.");
+            player.sendMessage("§cVoce nao tem permissao para usar esse comando.");
             return true;
         }
 
@@ -53,7 +53,7 @@ public class TrollCommand implements TabExecutor {
             default -> {
                 Player target = Bukkit.getPlayer(args[0]);
                 if (target == null) {
-                    player.sendMessage("§cPlayer not found.");
+                    player.sendMessage("§cJogador nao encontrado.");
                     return true;
                 }
                 menu.openMainMenu(player, target);
@@ -64,84 +64,84 @@ public class TrollCommand implements TabExecutor {
 
     private void handleUndo(Player player, String[] args) {
         if (!player.hasPermission("troll.undo")) {
-            player.sendMessage("§cYou don't have permission to undo troll effects.");
+            player.sendMessage("§cVoce nao tem permissao para remover efeitos de troll.");
             return;
         }
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /troll undo <player>");
+            player.sendMessage("§cUso: /troll undo <jogador>");
             return;
         }
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
-            player.sendMessage("§cPlayer not found.");
+            player.sendMessage("§cJogador nao encontrado.");
             return;
         }
         manager.undoAll(target);
-        player.sendMessage("§aAll troll effects removed from §e" + target.getName() + "§a.");
+        player.sendMessage("§aTodos os efeitos de troll removidos de §e" + target.getName() + "§a.");
     }
 
     private void handleReload(Player player) {
         if (!player.hasPermission("troll.reload")) {
-            player.sendMessage("§cYou don't have permission.");
+            player.sendMessage("§cVoce nao tem permissao.");
             return;
         }
         manager.reloadConfig();
-        player.sendMessage("§aTroll config reloaded.");
+        player.sendMessage("§aConfiguracao de troll recarregada.");
     }
 
     private void handleToggleTrollOp(Player player) {
         if (!player.hasPermission("troll.reload")) {
-            player.sendMessage("§cYou don't have permission.");
+            player.sendMessage("§cVoce nao tem permissao.");
             return;
         }
         boolean current = manager.isAllowTrollOp();
         manager.setAllowTrollOp(!current);
-        player.sendMessage("§aTroll-op " + (!current ? "§aenabled" : "§cdisabled") + "§a.");
+        player.sendMessage("§aTroll-op " + (!current ? "§aativo" : "§cdesativado") + "§a.");
     }
 
     private void handleAddBlocked(Player player, String[] args) {
         if (!player.hasPermission("troll.reload")) {
-            player.sendMessage("§cYou don't have permission.");
+            player.sendMessage("§cVoce nao tem permissao.");
             return;
         }
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /troll add-blocked <player>");
+            player.sendMessage("§cUso: /troll add-blocked <jogador>");
             return;
         }
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
-            player.sendMessage("§cPlayer not found.");
+            player.sendMessage("§cJogador nao encontrado.");
             return;
         }
         manager.addBlocked(target);
-        player.sendMessage("§aAdded §e" + target.getName() + " §ato the blocklist.");
+        player.sendMessage("§aAdicionado §e" + target.getName() + " §aa lista de bloqueio.");
     }
 
     private void handleRemoveBlocked(Player player, String[] args) {
         if (!player.hasPermission("troll.reload")) {
-            player.sendMessage("§cYou don't have permission.");
+            player.sendMessage("§cVoce nao tem permissao.");
             return;
         }
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /troll remove-blocked <player>");
+            player.sendMessage("§cUso: /troll remove-blocked <jogador>");
             return;
         }
         manager.removeBlocked(args[1]);
-        player.sendMessage("§aRemoved §e" + args[1] + " §afrom the blocklist.");
+        player.sendMessage("§aRemovido §e" + args[1] + " §ada lista de bloqueio.");
     }
 
     private void handleGiveSkull(Player player, String[] args) {
         if (!player.hasPermission("troll.reload")) {
-            player.sendMessage("§cYou don't have permission.");
+            player.sendMessage("§cVoce nao tem permissao.");
             return;
         }
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /troll giveskull <player>");
+            player.sendMessage("§cUso: /troll giveskull <jogador>");
             return;
         }
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
-            player.sendMessage("§cPlayer not found.");
+            player.sendMessage("§cJogador nao encontrado.");
             return;
         }
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
@@ -149,18 +149,18 @@ public class TrollCommand implements TabExecutor {
         meta.setPlayerProfile(target.getPlayerProfile());
         skull.setItemMeta(meta);
         player.getInventory().addItem(skull);
-        player.sendMessage("§aGiven skull of §e" + target.getName() + "§a.");
+        player.sendMessage("§aVoce recebeu a cabeca de §e" + target.getName() + "§a.");
     }
 
     private void sendHelp(Player player) {
-        player.sendMessage("§6===== Troll Help =====");
-        player.sendMessage("§e/troll <player> §7- Open troll menu");
-        player.sendMessage("§e/troll undo <player> §7- Remove all troll effects");
-        player.sendMessage("§e/troll reload §7- Reload troll config");
-        player.sendMessage("§e/troll toggle-troll-op §7- Toggle op troll bypass");
-        player.sendMessage("§e/troll add-blocked <player> §7- Block a player from being trolled");
-        player.sendMessage("§e/troll remove-blocked <player> §7- Unblock a player");
-        player.sendMessage("§e/troll giveskull <player> §7- Get player skull");
+        player.sendMessage("§6===== Ajuda Troll =====");
+        player.sendMessage("§e/troll <jogador> §7- Abrir menu de troll");
+        player.sendMessage("§e/troll undo <jogador> §7- Remover todos os efeitos");
+        player.sendMessage("§e/troll reload §7- Recarregar configuracao");
+        player.sendMessage("§e/troll toggle-troll-op §7- Ativar/desativar troll-op");
+        player.sendMessage("§e/troll add-blocked <jogador> §7- Bloquear jogador de ser trollado");
+        player.sendMessage("§e/troll remove-blocked <jogador> §7- Desbloquear jogador");
+        player.sendMessage("§e/troll giveskull <jogador> §7- Pegar cabeca do jogador");
     }
 
     @Override

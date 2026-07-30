@@ -30,15 +30,15 @@ public final class VisualEffects {
 
     private static class FakeDisconnectEffect extends TrollEffect {
         FakeDisconnectEffect() {
-            super("fake-disconnect", "&4Falsa Desconexion", Material.REDSTONE_BLOCK,
-                    List.of("&7Simula una perdida de conexion", "&7con titulos dramaticos.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-disconnect", "&4Falsa Desconexao", Material.REDSTONE_BLOCK,
+                    List.of("&7Simula uma perda de conexao", "&7com titulos dramaticos.", "", "&e\u25B8 Clique para aplicar"),
                     "visual", "troll.effect.fake-disconnect", 8, 30);
         }
 
         @Override
         public void apply(Player target, TrollManager manager) {
             target.showTitle(Title.title(
-                    Component.text("\u00A7c\u00A7l\u00A1CONEXION PERDIDA!"),
+                    Component.text("\u00A7c\u00A7l\u00A1CONEXAO PERDIDA!"),
                     Component.text("\u00A77Reconectando..."),
                     Title.Times.times(Duration.ZERO, Duration.ofSeconds(4), Duration.ofSeconds(2))
             ));
@@ -53,7 +53,7 @@ public final class VisualEffects {
     private static class InvertControlsEffect extends TrollEffect {
         InvertControlsEffect() {
             super("invert-controls", "&aControles Invertidos", Material.PACKED_ICE,
-                    List.of("&7Desorienta al jugador aplicando", "&7efectos que invierten su percepcion.", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Desorienta o jogador aplicando", "&7efeitos que invertem sua percepcao.", "", "&e\u25B8 Clique para aplicar"),
                     "visual", "troll.effect.invert-controls", 15, 60);
         }
 
@@ -74,8 +74,8 @@ public final class VisualEffects {
 
     private static class BlindnessPulseEffect extends TrollEffect {
         BlindnessPulseEffect() {
-            super("blindness-pulse", "&8Ceguera Intermitente", Material.INK_SAC,
-                    List.of("&7Aplica ceguera por pulsos", "&7alternando vision cada 3s.", "", "&e\u25B8 Click para aplicar"),
+            super("blindness-pulse", "&8Cegueira Intermitente", Material.INK_SAC,
+                    List.of("&7Aplica cegueira por pulsos", "&7alternando visao a cada 3s.", "", "&e\u25B8 Clique para aplicar"),
                     "visual", "troll.effect.blindness-pulse", 18, 45);
         }
 
@@ -112,8 +112,8 @@ public final class VisualEffects {
 
     private static class NauseaEffect extends TrollEffect {
         NauseaEffect() {
-            super("nausea", "&2Pantalla Borrosa", Material.SLIME_BALL,
-                    List.of("&7Aplica NAUSEA (confusion)", "&7haciendo la pantalla borrosa.", "", "&e\u25B8 Click para aplicar"),
+            super("nausea", "&2Tela Borrada", Material.SLIME_BALL,
+                    List.of("&7Aplica NAUSEA (confusao)", "&7deixando a tela borrada.", "", "&e\u25B8 Clique para aplicar"),
                     "visual", "troll.effect.nausea", 20, 30);
         }
 
@@ -130,21 +130,21 @@ public final class VisualEffects {
 
     private static class FakeChatMessagesEffect extends TrollEffect {
         private static final List<String> FAKE_MESSAGES = List.of(
-                "&8[&4\u00a1ATENCION!&8] &cHas sido baneado permanentemente por: HACKING",
-                "&8[&6Sistema&8] &eTu IP: &f" + getRandomIp() + " &eha sido registrada.",
-                "&8[&4\u00a1SUSPENDIDO!&8] &7Razon: &fUso de clientes no permitidos",
-                "&8[&5Staff&8] &dUn administrador esta revisando tu inventario...",
-                "&c\u00a1Todos tus items seran eliminados en 5 segundos!",
-                "&8[&aServer&8] &7Tu ping es demasiado alto: &c" + getRandomPing() + "ms",
-                "&8[&4ANTICHEAT&8] &7Nivel de sospecha: &c" + getRandomSuspicion() + "%",
-                "&6\u2728 &eFelicidades! Has ganado el sorteo semanal. &6\u2728",
-                "&c\u00a1Tu cuenta ha sido comprometida! Cambia tu contrasena ya.",
-                "&8[&eNotificacion&8] &7Has recibido un reporte de &f" + getRandomPlayer() + " &7por: &cHACKING"
+                "&8[&4\u00a1ATENCAO!&8] &cVoce foi banido permanentemente por: HACKING",
+                "&8[&6Sistema&8] &eSeu IP: &f" + getRandomIp() + " &e foi registrado.",
+                "&8[&4\u00a1SUSPENSO!&8] &7Motivo: &fUso de clientes nao permitidos",
+                "&8[&5Staff&8] &dUm administrador esta revisando seu inventario...",
+                "&c\u00a1Todos os seus items serao deletados em 5 segundos!",
+                "&8[&aServer&8] &7Seu ping esta muito alto: &c" + getRandomPing() + "ms",
+                "&8[&4ANTICHEAT&8] &7Nivel de suspeita: &c" + getRandomSuspicion() + "%",
+                "&6\u2728 &eParabens! Voce ganhou o sorteio semanal. &6\u2728",
+                "&c\u00a1Sua conta foi comprometida! Mude sua senha agora.",
+                "&8[&eNotificacao&8] &7Voce recebeu um report de &f" + getRandomPlayer() + " &7por: &cHACKING"
         );
 
         FakeChatMessagesEffect() {
-            super("fake-chat", "&5Mensajes Falsos", Material.MAP,
-                    List.of("&7Envia mensajes falsos del sistema", "&7simulando baneos, alertas, etc.", "", "&e\u25B8 Click para aplicar"),
+            super("fake-chat", "&5Mensagens Falsas", Material.MAP,
+                    List.of("&7Envia mensagens falsas do sistema", "&7simulando bans, alertas, etc.", "", "&e\u25B8 Clique para aplicar"),
                     "visual", "troll.effect.fake-chat", 12, 60);
         }
 
@@ -152,14 +152,14 @@ public final class VisualEffects {
         public void apply(Player target, TrollManager manager) {
             target.sendMessage(" ");
             target.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&',
-                    "&8[&4\u00a1CONEXION INESTABLE!&8] &7Inyectando mensajes de simulacion..."));
+                    "&8[&4\u00a1CONEXAO INSTAVEL!&8] &7Injetando mensagens de simulacao..."));
             target.sendMessage(" ");
         }
 
         @Override
         public void revert(Player target, TrollManager manager) {
             target.sendMessage(" ");
-            target.sendMessage("&aSimulacion de mensajes desactivada.");
+            target.sendMessage("&aSimulacao de mensagens desativada.");
             target.sendMessage(" ");
         }
 
@@ -197,27 +197,27 @@ public final class VisualEffects {
 
     private static class RandomTitleEffect extends TrollEffect {
         private static final List<String> TITLES = List.of(
-                "&4&l\u00a1HAS SIDO HACKEADO!",
-                "&6&l\u00a1GANASTE UN IPHONE!",
+                "&4&l\u00a1VOCE FOI HACKEADO!",
+                "&6&l\u00a1VOCE GANHOU UM IPHONE!",
                 "&a&l\u00a1HACKER DETECTADO!",
-                "&c&l\u00a1SERVER CRASH INMINENTE!",
-                "&5&l\u00a1ERES EL JUGADOR #" + getRandomNumber() + "!",
-                "&e&l\u00a1ALGUIEN ENTRO A TU CUENTA!",
+                "&c&l\u00a1SERVER CRASH IMINENTE!",
+                "&5&l\u00a1VOCE E O JOGADOR #" + getRandomNumber() + "!",
+                "&e&l\u00a1ALGUEM ENTROU NA SUA CONTA!",
                 "&4&l\u00a1TROLLEADO!",
-                "&d&l\u00a1FELICIDADES, HAS SIDO TROLLEADO!"
+                "&d&l\u00a1PARABENS, VOCE FOI TROLLADO!"
         );
 
         private static final List<String> SUBTITLES = List.of(
-                "&7No te asustes, es solo un trolleo",
-                "&7Tranquilo, todo esta bien",
-                "&7Disfruta el momento",
-                "&7Esto desaparecera pronto",
-                "&7Sigue jugando normalmente"
+                "&7Nao se assuste, e so um troll",
+                "&7Calma, tudo esta bem",
+                "&7Aproveite o momento",
+                "&7Isso vai desaparecer logo",
+                "&7Continue jogando normalmente"
         );
 
         RandomTitleEffect() {
             super("random-title", "&dTitulos Aleatorios", Material.NAME_TAG,
-                    List.of("&7Muestra titulos aleatorios", "&7en la pantalla cada 5s.", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Mostra titulos aleatorios", "&7na tela a cada 5s.", "", "&e\u25B8 Clique para aplicar"),
                     "visual", "troll.effect.random-title", 18, 60);
         }
 

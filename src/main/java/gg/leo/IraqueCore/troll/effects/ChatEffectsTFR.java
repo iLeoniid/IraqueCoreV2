@@ -22,8 +22,8 @@ public final class ChatEffectsTFR {
 
     private static class NickEffect extends TrollEffect {
         NickEffect() {
-            super("nick", "&dNick Cambiante", Material.NAME_TAG,
-                    Arrays.asList("&7Cambia el nickname del jugador", "&7a un nombre aleatorio.", "", "&e\u25B8 Click para aplicar"),
+            super("nick", "&dApelido Alteravel", Material.NAME_TAG,
+                    Arrays.asList("&7Altera o apelido do jogador", "&7para um nome aleatorio.", "", "&e\u25B8 Clique para aplicar"),
                     "chat2", "troll.effect.nick", 15, 90);
         }
 

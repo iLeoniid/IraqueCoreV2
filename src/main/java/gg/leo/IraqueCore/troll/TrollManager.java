@@ -103,13 +103,13 @@ public class TrollManager {
 
         if (isOnCooldown(target.getUniqueId(), effectId)) {
             long remaining = getCooldownRemaining(target.getUniqueId(), effectId);
-            if (source != null) source.sendMessage("§cThis effect is on cooldown for " + target.getName() +
-                    "! Wait " + remaining + "s.");
+            if (source != null) source.sendMessage("§cEsse efeito esta em cooldown para " + target.getName() +
+                    "! Espere " + remaining + "s.");
             return;
         }
 
         if (hasActiveEffect(target, effectId)) {
-            if (source != null) source.sendMessage("§c" + target.getName() + " already has this effect active!");
+            if (source != null) source.sendMessage("§c" + target.getName() + " ja tem esse efeito ativo!");
             return;
         }
 
@@ -141,7 +141,7 @@ public class TrollManager {
         String sourceName = source != null ? source.getName() : "Console";
         plugin.getPluginLogger().info("Troll", sourceName + " applied §c" + effect.getName() +
                 " §fon §e" + target.getName());
-        if (source != null) source.sendMessage("§aYou applied §e" + effect.getName() + " §aon §e" + target.getName() + "§a!");
+        if (source != null) source.sendMessage("§aVoce aplicou §e" + effect.getName() + " §aem §e" + target.getName() + "§a!");
     }
 
     public void removeEffect(Player target, String effectId, boolean silent) {
@@ -173,7 +173,7 @@ public class TrollManager {
         if (effect != null) {
             effect.revert(target, this);
             if (!silent && target.isOp()) {
-                target.sendMessage("§aThe effect §e" + effect.getName() + " §ahas been removed.");
+                target.sendMessage("§aO efeito §e" + effect.getName() + " §afoi removido.");
             }
         }
     }

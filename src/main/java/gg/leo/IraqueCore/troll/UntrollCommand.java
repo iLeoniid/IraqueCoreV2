@@ -23,7 +23,7 @@ public class UntrollCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("§cUsage: /untroll <player> [troll] or /untroll all");
+            sender.sendMessage("§cUso: /untroll <jogador> [troll] ou /untroll all");
             return true;
         }
 
@@ -31,13 +31,13 @@ public class UntrollCommand implements TabExecutor {
             for (Player online : Bukkit.getOnlinePlayers()) {
                 manager.undoAll(online);
             }
-            sender.sendMessage("§aAll troll effects removed from all players.");
+            sender.sendMessage("§aTodos os efeitos de troll removidos de todos os jogadores.");
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            sender.sendMessage("§cPlayer not found.");
+            sender.sendMessage("§cJogador nao encontrado.");
             return true;
         }
 
@@ -45,13 +45,13 @@ public class UntrollCommand implements TabExecutor {
             String effectId = args[1].toLowerCase();
             if (manager.hasActiveEffect(target, effectId)) {
                 manager.removeEffect(target, effectId, false);
-                sender.sendMessage("§aRemoved §e" + effectId + " §afrom §e" + target.getName());
+                sender.sendMessage("§aRemovido §e" + effectId + " §ade §e" + target.getName());
             } else {
-                sender.sendMessage("§c" + target.getName() + " does not have that effect active.");
+                sender.sendMessage("§c" + target.getName() + " nao tem esse efeito ativo.");
             }
         } else {
             manager.undoAll(target);
-            sender.sendMessage("§aAll troll effects removed from §e" + target.getName());
+            sender.sendMessage("§aTodos os efeitos de troll removidos de §e" + target.getName());
         }
         return true;
     }

@@ -31,7 +31,7 @@ public final class CombatWorldEffects {
     private static class FakeMobsEffect extends TrollEffect {
         FakeMobsEffect() {
             super("fake-mobs", "&cMobs Falsos", Material.ZOMBIE_HEAD,
-                    List.of("&7Rodea al jugador de mobs", "&7inofensivos.", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Cerca o jogador de mobs", "&7inofensivos.", "", "&e\u25B8 Clique para aplicar"),
                     "combatworld", "troll.effect.fake-mobs", 15, 90);
         }
 
@@ -71,7 +71,7 @@ public final class CombatWorldEffects {
     private static class ArrowRainEffect extends TrollEffect {
         ArrowRainEffect() {
             super("arrow-rain", "&aLluvia de Flechas", Material.ARROW,
-                    List.of("&7Particulas de flechas + sonido", "&7(Sin daño real, configurable).", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Particulas de flechas + som", "&7(Sem dano real, configuravel).", "", "&e\u25B8 Clique para aplicar"),
                     "combatworld", "troll.effect.arrow-rain", 8, 60);
         }
 
@@ -107,7 +107,7 @@ public final class CombatWorldEffects {
     private static class FakeExplosionEffect extends TrollEffect {
         FakeExplosionEffect() {
             super("fake-explosion", "&6Fake Explosion", Material.TNT,
-                    List.of("&7Particulas de explosion + sonido", "&7(Sin destruir bloques).", "", "&e\u25B8 Click para aplicar"),
+                    List.of("&7Particulas de explosao + som", "&7(Sem destruir blocos).", "", "&e\u25B8 Clique para aplicar"),
                     "combatworld", "troll.effect.fake-explosion", 0, 30);
         }
 

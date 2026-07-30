@@ -42,8 +42,8 @@ public final class RandomEffects {
 
     private static class AnnoyEffect extends TrollEffect {
         AnnoyEffect() {
-            super("annoy", "&eMolestia", Material.VILLAGER_SPAWN_EGG,
-                    Arrays.asList("&7Reproduce sonidos molestos", "&7de aldeano repetidamente.", "", "&e\u25B8 Click para aplicar"),
+            super("annoy", "&eIncomodo", Material.VILLAGER_SPAWN_EGG,
+                    Arrays.asList("&7Reproduz sons irritantes", "&7de aldeao repetidamente.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.annoy", 14, 45);
         }
 
@@ -77,8 +77,8 @@ public final class RandomEffects {
 
     private static class BurnEffect extends TrollEffect {
         BurnEffect() {
-            super("burn", "&4Quemar", Material.FLINT_AND_STEEL,
-                    Arrays.asList("&7Prende fuego al jugador", "&7constantemente.", "", "&e\u25B8 Click para aplicar"),
+            super("burn", "&4Queimar", Material.FLINT_AND_STEEL,
+                    Arrays.asList("&7Poes fogo no jogador", "&7constantemente.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.burn", 10, 60);
         }
 
@@ -109,8 +109,8 @@ public final class RandomEffects {
 
     private static class StarveEffect extends TrollEffect {
         StarveEffect() {
-            super("starve", "&6Hambre Extrema", Material.ROTTEN_FLESH,
-                    Arrays.asList("&7Aplica hambre extrema", "&7al jugador.", "", "&e\u25B8 Click para aplicar"),
+            super("starve", "&6Fome Extrema", Material.ROTTEN_FLESH,
+                    Arrays.asList("&7Aplica fome extrema", "&7ao jogador.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.starve", 10, 60);
         }
 
@@ -129,8 +129,8 @@ public final class RandomEffects {
 
     private static class HideAllPlayersEffect extends TrollEffect {
         HideAllPlayersEffect() {
-            super("hide-players", "&7Ocultar Jugadores", Material.INK_SAC,
-                    Arrays.asList("&7Oculta todos los jugadores", "&7de la vista de la victima.", "", "&e\u25B8 Click para aplicar"),
+            super("hide-players", "&7Ocultar Jogadores", Material.INK_SAC,
+                    Arrays.asList("&7Oculta todos os jogadores", "&7da vista da vitima.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.hide-players", 15, 60);
         }
 
@@ -156,7 +156,7 @@ public final class RandomEffects {
     private static class PoopEffect extends TrollEffect {
         PoopEffect() {
             super("poop", "&6CACA", Material.COCOA_BEANS,
-                    Arrays.asList("&7Caca de cocoa beans al", "&7agacharse.", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Solta cocoa beans ao", "&7se agachar.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.poop", 15, 60);
         }
 
@@ -173,8 +173,8 @@ public final class RandomEffects {
 
     private static class PotatoEffect extends TrollEffect {
         PotatoEffect() {
-            super("potato", "&ePapa Invisible", Material.POTATO,
-                    Arrays.asList("&7Vuelve invisible al jugador", "&7y dropea papas.", "", "&e\u25B8 Click para aplicar"),
+            super("potato", "&eBatata Invisivel", Material.POTATO,
+                    Arrays.asList("&7Torna o jogador invisivel", "&7e solta batatas.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.potato", 18, 60);
         }
 
@@ -209,8 +209,8 @@ public final class RandomEffects {
         private int tick = 0;
 
         RingOfFireEffect() {
-            super("ring-of-fire", "&4Anillo de Fuego", Material.BLAZE_POWDER,
-                    Arrays.asList("&7Rodea al jugador con un", "&7anillo de fuego y particulas.", "", "&e\u25B8 Click para aplicar"),
+            super("ring-of-fire", "&4Anel de Fogo", Material.BLAZE_POWDER,
+                    Arrays.asList("&7Cerca o jogador com um", "&7anel de fogo e particulas.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.ring-of-fire", 12, 90);
         }
 
@@ -251,8 +251,8 @@ public final class RandomEffects {
 
     private static class SilverfishEffect extends TrollEffect {
         SilverfishEffect() {
-            super("silverfish", "&8Plaga de Silverfish", Material.INFESTED_STONE,
-                    Arrays.asList("&7Invocas 50 silverfish", "&7que atacan al jugador.", "", "&e\u25B8 Click para aplicar"),
+            super("silverfish", "&8Praga de Silverfish", Material.INFESTED_STONE,
+                    Arrays.asList("&7Invoca 50 silverfish", "&7que atacam o jogador.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.silverfish", 12, 120);
         }
 
@@ -281,8 +281,8 @@ public final class RandomEffects {
 
     private static class SlipperyHandsEffect extends TrollEffect {
         SlipperyHandsEffect() {
-            super("slippery-hands", "&bManos Resbaladizas", Material.SLIME_BALL,
-                    Arrays.asList("&7Suelta el item en la mano", "&7cada 2 segundos.", "", "&e\u25B8 Click para aplicar"),
+            super("slippery-hands", "&bMaos Escorregadias", Material.SLIME_BALL,
+                    Arrays.asList("&7Solta o item na mao", "&7a cada 2 segundos.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.slippery-hands", 14, 60);
         }
 
@@ -317,8 +317,8 @@ public final class RandomEffects {
 
     private static class CaveSoundsEffect extends TrollEffect {
         CaveSoundsEffect() {
-            super("cave-sounds", "&8Sonidos de Cueva", Material.SCULK_SHRIEKER,
-                    Arrays.asList("&7Reproduce sonidos de cueva", "&7espeluznantes.", "", "&e\u25B8 Click para aplicar"),
+            super("cave-sounds", "&8Sons de Caverna", Material.SCULK_SHRIEKER,
+                    Arrays.asList("&7Reproduz sons de caverna", "&7assustadores.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.cave-sounds", 12, 60);
         }
 
@@ -345,8 +345,8 @@ public final class RandomEffects {
 
     private static class GhastSoundsEffect extends TrollEffect {
         GhastSoundsEffect() {
-            super("ghast-sounds", "&fSonidos de Ghast", Material.GHAST_SPAWN_EGG,
-                    Arrays.asList("&7Reproduce sonidos de ghast", "&7aletratorios.", "", "&e\u25B8 Click para aplicar"),
+            super("ghast-sounds", "&fSons de Ghast", Material.GHAST_SPAWN_EGG,
+                    Arrays.asList("&7Reproduz sons de ghast", "&7aleatorios.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.ghast-sounds", 12, 60);
         }
 
@@ -373,8 +373,8 @@ public final class RandomEffects {
 
     private static class TimeFlashEffect extends TrollEffect {
         TimeFlashEffect() {
-            super("time-flash", "&bDestello Temporal", Material.CLOCK,
-                    Arrays.asList("&7Cambia el tiempo y aplica", "&7ceguera pulsante.", "", "&e\u25B8 Click para aplicar"),
+            super("time-flash", "&bLampejo Temporal", Material.CLOCK,
+                    Arrays.asList("&7Altera o tempo e aplica", "&7cegueira pulsante.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.time-flash", 12, 60);
         }
 
@@ -406,7 +406,7 @@ public final class RandomEffects {
     private static class RandomTPEffect extends TrollEffect {
         RandomTPEffect() {
             super("random-tp-world", "&3TP Aleatorio", Material.ENDER_PEARL,
-                    Arrays.asList("&7Teletransporta al jugador", "&7a una ubicacion aleatoria.", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Teletransporta o jogador", "&7para uma localizacao aleatoria.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.random-tp-world", 0, 60);
         }
 
@@ -433,7 +433,7 @@ public final class RandomEffects {
 
         RandomParticleEffect() {
             super("random-particle", "&dParticulas Aleatorias", Material.FIREWORK_ROCKET,
-                    Arrays.asList("&7Particulas aleatorias alrededor", "&7del jugador.", "", "&e\u25B8 Click para aplicar"),
+                    Arrays.asList("&7Particulas aleatorias ao redor", "&7do jogador.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.random-particle", 14, 60);
         }
 
@@ -460,8 +460,8 @@ public final class RandomEffects {
 
     private static class LaunchEffect extends TrollEffect {
         LaunchEffect() {
-            super("launch", "&aLanzar al Cielo", Material.FIREWORK_ROCKET,
-                    Arrays.asList("&7Lanza al jugador hacia", "&7arriba con gran velocidad.", "", "&e\u25B8 Click para aplicar"),
+            super("launch", "&aLancar ao Ceu", Material.FIREWORK_ROCKET,
+                    Arrays.asList("&7Lanca o jogador para", "&7cima com grande velocidade.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.launch", 0, 30);
         }
 
@@ -478,8 +478,8 @@ public final class RandomEffects {
 
     private static class FreeFallEffect extends TrollEffect {
         FreeFallEffect() {
-            super("free-fall", "&bCaida Libre", Material.FEATHER,
-                    Arrays.asList("&7Teletransporta al jugador", "&7muy alto y cae en caida libre.", "", "&e\u25B8 Click para aplicar"),
+            super("free-fall", "&bQueda Livre", Material.FEATHER,
+                    Arrays.asList("&7Teletransporta o jogador", "&7bem alto e cai em queda livre.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.free-fall", 0, 60);
         }
 
@@ -498,8 +498,8 @@ public final class RandomEffects {
 
     private static class AllEntitiesDieEffect extends TrollEffect {
         AllEntitiesDieEffect() {
-            super("all-entities-die", "&cMuerte de Entidades", Material.BONE,
-                    Arrays.asList("&7Mata todas las entidades", "&7en un radio de 10 bloques.", "", "&e\u25B8 Click para aplicar"),
+            super("all-entities-die", "&cMorte de Entidades", Material.BONE,
+                    Arrays.asList("&7Mata todas as entidades", "&7em um raio de 10 blocos.", "", "&e\u25B8 Clique para aplicar"),
                     "random", "troll.effect.all-entities-die", 0, 30);
         }
 
