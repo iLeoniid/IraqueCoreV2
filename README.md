@@ -92,7 +92,7 @@ Servidores **chill** de **supervivencia semi-vanilla** entre amigos. Con lo just
 
 ## Créditos
 
-Hecho por **Proctocol** — con mucho amor, mates de por medio, y código que funciona (cuando no hay merge conflicts).
+Hecho por **Proctocol** — con mucho amor y código que funciona (cuando no hay merge conflicts).
 
 ---
 
