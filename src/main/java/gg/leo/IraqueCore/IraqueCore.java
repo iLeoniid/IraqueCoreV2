@@ -351,6 +351,7 @@ public final class IraqueCore extends JavaPlugin {
         var reloadCommand    = new ReloadCommand(this);
         var spawnCommand     = new SpawnCommand(this);
         var gamemodeCommand  = new GameModeCommand(this);
+        gamemodeCommand.startTask();
 
         register("rank",       rankCommand,   rankCommand);
         register("tags",       tagCommand,    tagCommand);
