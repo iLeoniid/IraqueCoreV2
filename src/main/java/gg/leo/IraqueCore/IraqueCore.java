@@ -24,6 +24,8 @@ import gg.leo.IraqueCore.grant.RevokeCommand;
 import gg.leo.IraqueCore.home.HomeCommand;
 import gg.leo.IraqueCore.home.HomeManager;
 import gg.leo.IraqueCore.stats.StatsCommand;
+import gg.leo.IraqueCore.teleport.TeleportListener;
+import gg.leo.IraqueCore.teleport.TeleportManager;
 import gg.leo.IraqueCore.tpa.TPACommand;
 import gg.leo.IraqueCore.tpa.TPAManager;
 import gg.leo.IraqueCore.leaderboard.LeaderboardCommand;
@@ -89,6 +91,7 @@ public final class IraqueCore extends JavaPlugin {
     private StatsCommand       statsCommand;
     private TPAManager         tpaManager;
     private HomeManager        homeManager;
+    private TeleportManager    teleportManager;
     private PunishmentManager  punishmentManager;
     private TrollManager       trollManager;
     private PluginLogger       pluginLogger;
@@ -207,6 +210,10 @@ public final class IraqueCore extends JavaPlugin {
         homeManager.load();
         pluginLogger.success("Home", "Home system loaded");
 
+        this.teleportManager = new TeleportManager(this);
+        getServer().getPluginManager().registerEvents(new TeleportListener(teleportManager), this);
+        pluginLogger.success("Teleport", "Teleport warmup loaded");
+
         this.punishmentManager = new PunishmentManager(this);
         punishmentManager.load();
         getServer().getPluginManager().registerEvents(punishmentManager, this);
@@ -221,6 +228,12 @@ public final class IraqueCore extends JavaPlugin {
         //  Commands 
         registerCommands();
         pluginLogger.success("Commands", "All commands registered");
+
+        //  PlaceholderAPI expansion 
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new gg.leo.IraqueCore.papi.IraqueCoreExpansion(this).register();
+            pluginLogger.success("PlaceholderAPI", "Expansion registered");
+        }
 
         //  Discord (async — doesn't block startup) ─
         if (configManager.isDiscordEnabled()) {
@@ -466,6 +479,7 @@ public final class IraqueCore extends JavaPlugin {
     public AlertManager       getAlertManager()          { return alertManager; }
     public TPAManager         getTpaManager()            { return tpaManager; }
     public HomeManager        getHomeManager()           { return homeManager; }
+    public TeleportManager    getTeleportManager()        { return teleportManager; }
     public PunishmentManager  getPunishmentManager()     { return punishmentManager; }
     public TrollManager       getTrollManager()          { return trollManager; }
     public TrollEventListener getTrollEventListener()     { return trollManager.getEventListener(); }

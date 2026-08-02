@@ -4,7 +4,6 @@ import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.menu.StatsMenu;
 import gg.leo.IraqueCore.playtime.PlaytimeManager;
 import gg.leo.IraqueCore.rank.Rank;
-import gg.leo.IraqueCore.utils.ItemBuilder;
 import gg.leo.IraqueCore.utils.menu.Button;
 import gg.leo.IraqueCore.utils.menu.Menu;
 import org.bukkit.Bukkit;
@@ -138,9 +137,9 @@ public class ProfileMenu {
                     public ItemStack getButtonItem(Player p) {
                         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
                         SkullMeta meta = (SkullMeta) head.getItemMeta();
-                        meta.setDisplayName(ItemBuilder.color("&6" + fName));
+                        meta.setDisplayName(cm.toLegacyString("&6" + fName));
                         meta.setOwningPlayer(Bukkit.getOfflinePlayer(targetId));
-                        meta.setLore(getDescription(p).stream().map(ItemBuilder::color).toList());
+                        meta.setLore(getDescription(p).stream().map(cm::toLegacyString).toList());
                         head.setItemMeta(meta);
                         return head;
                     }
@@ -262,9 +261,9 @@ public class ProfileMenu {
             profile.setTextures(textures);
             meta.setOwnerProfile(profile);
         } catch (MalformedURLException ignored) {}
-        meta.setDisplayName(ItemBuilder.color(name));
+        meta.setDisplayName(plugin.getConfigManager().toLegacyString(name));
         if (lore != null) {
-            meta.setLore(lore.stream().map(ItemBuilder::color).toList());
+            meta.setLore(lore.stream().map(plugin.getConfigManager()::toLegacyString).toList());
         }
         head.setItemMeta(meta);
         return head;

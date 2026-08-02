@@ -39,7 +39,7 @@ public class TPAManager {
             target.sendMessage(this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(this.plugin.getConfigManager().getMessage("tpa.sender-left", "&cThat player is no longer online."))));
             return false;
         }
-        sender.teleport(target.getLocation());
+        plugin.getTeleportManager().requestTeleport(sender, target.getLocation());
         sender.sendMessage(this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(this.plugin.getConfigManager().getMessage("tpa.accepted", "&aTeleport request accepted. Teleporting to &e{player}&a."))).replaceText(b -> b.matchLiteral("{player}").replacement(target.getName())));
         target.sendMessage(this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(this.plugin.getConfigManager().getMessage("tpa.target-accepted", "&aYou accepted &e{player}&a's teleport request."))).replaceText(b -> b.matchLiteral("{player}").replacement(sender.getName())));
         return true;

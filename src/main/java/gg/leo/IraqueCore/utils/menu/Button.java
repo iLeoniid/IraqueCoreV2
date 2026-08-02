@@ -78,14 +78,18 @@ public abstract class Button {
 
         ItemMeta meta = item.getItemMeta();
         String display = getDisplayName(player);
-        if (display != null) meta.setDisplayName(org.bukkit.ChatColor.translateAlternateColorCodes('&', display));
+        if (display != null) meta.setDisplayName(toLegacy(display));
         List<String> lore = getDescription(player);
         if (lore != null) {
             meta.setLore(lore.stream()
-                    .map(l -> org.bukkit.ChatColor.translateAlternateColorCodes('&', l))
+                    .map(this::toLegacy)
                     .toList());
         }
         item.setItemMeta(meta);
         return item;
+    }
+
+    private String toLegacy(String text) {
+        return gg.leo.IraqueCore.IraqueCore.getInstance().getConfigManager().toLegacyString(text);
     }
 }

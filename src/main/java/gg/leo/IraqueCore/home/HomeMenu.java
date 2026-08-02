@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.home;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.utils.menu.Button;
+import gg.leo.IraqueCore.utils.menu.ConfirmMenu;
 import gg.leo.IraqueCore.utils.menu.Menu;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,9 +96,14 @@ public class HomeMenu {
                         public int getData(Player p) { return 0; }
                         @Override
                         public void onClick(Player p, int slot, ClickType type) {
-                            homeManager.deleteHome(p);
-                            p.sendMessage(plugin.getConfigManager().getMessageComponent("home.deleted"));
-                            open(p);
+                            ConfirmMenu.open(p,
+                                    plugin.getConfigManager().getMessage("home.confirm-title", "&8\u00BB &cDeletar Home"),
+                                    plugin.getConfigManager().getMessageList("home.confirm-lore"),
+                                    () -> {
+                                        homeManager.deleteHome(p);
+                                        p.sendMessage(plugin.getConfigManager().getMessageComponent("home.deleted"));
+                                        open(p);
+                                    });
                         }
                     });
                 } else {
@@ -156,8 +162,7 @@ public class HomeMenu {
 
     private void teleport(Player p, Location loc) {
         p.closeInventory();
-        p.teleport(loc);
-        p.sendMessage(plugin.getConfigManager().getMessageComponent("home.teleport"));
+        plugin.getTeleportManager().requestTeleport(p, loc);
     }
 
     private void setHome(Player p) {

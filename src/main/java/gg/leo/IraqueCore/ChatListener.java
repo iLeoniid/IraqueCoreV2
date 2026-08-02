@@ -7,6 +7,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,12 +32,14 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncChatEvent event) {
         Player player  = event.getPlayer();
-        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
+        String rawMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
 
-        if (plugin.getGrantListener() != null && plugin.getGrantListener().getGrantMenu().handleChatInput(player, message)) {
+        if (plugin.getGrantListener() != null && plugin.getGrantListener().getGrantMenu().handleChatInput(player, rawMessage)) {
             event.setCancelled(true);
             return;
         }
+
+        String message = applyMentions(player, rawMessage);
 
         String format    = plugin.getConfigManager().getChatFormat();
         String prefix    = "";
@@ -100,8 +103,36 @@ public class ChatListener implements Listener {
 
         DiscordManager discord = plugin.getDiscordManager();
         if (discord != null) {
-            discord.sendMinecraftToDiscord(player, message);
+            discord.sendMinecraftToDiscord(player, rawMessage);
         }
+    }
+
+    private static final Pattern MENTION_PATTERN = Pattern.compile("@(\\w{1,16})");
+
+    private String applyMentions(Player sender, String text) {
+        Matcher matcher = MENTION_PATTERN.matcher(text);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            Player target = findOnlinePlayer(matcher.group(1));
+            if (target == null || target.getUniqueId().equals(sender.getUniqueId())) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group()));
+                continue;
+            }
+            String name = target.getName();
+            target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(
+                    "<click:run_command:'/profile " + name + "'><hover:show_text:'<gray>Perfil de <white>" + name
+                            + "</white></gray>'><color:#FFD700><b>@" + name + "</b></color></hover></click>"));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private Player findOnlinePlayer(String name) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getName().equalsIgnoreCase(name)) return p;
+        }
+        return null;
     }
 
     @EventHandler

@@ -38,6 +38,10 @@ public class ConfigManager {
     private String leaveMessage;
     private String deathMessage;
 
+    private int teleportDelay;
+    private boolean teleportCancelOnMove;
+    private boolean teleportCancelOnDamage;
+
     private String storageType;
     private String mysqlHost;
     private int mysqlPort;
@@ -92,6 +96,7 @@ public class ConfigManager {
         loadDiscordFile();
         loadGeneral();
         loadChat();
+        loadTeleport();
         loadDiscord();
         loadStorage();
     }
@@ -219,6 +224,11 @@ public class ConfigManager {
         return LegacyComponentSerializer.legacySection().serialize(MINI.deserialize(s));
     }
 
+    public String toLegacyString(String s) {
+        if (s == null) return "";
+        return toLegacy(translate(s));
+    }
+
     public String toLegacyMessage(String path) {
         return toLegacy(translate(getMessage(path)));
     }
@@ -273,6 +283,14 @@ public class ConfigManager {
         this.useTags = section.getBoolean("use-tags", true);
     }
 
+    private void loadTeleport() {
+        ConfigurationSection section = config.getConfigurationSection("teleport");
+        if (section == null) return;
+        this.teleportDelay = section.getInt("delay-seconds", 3);
+        this.teleportCancelOnMove = section.getBoolean("cancel-on-move", true);
+        this.teleportCancelOnDamage = section.getBoolean("cancel-on-damage", true);
+    }
+
     private void loadDiscord() {
         if (discordConfig == null) return;
 
@@ -324,6 +342,10 @@ public class ConfigManager {
     public boolean isUseRanks() { return useRanks; }
     public boolean isUseTags() { return useTags; }
     public String getDateFormat() { return config.getString("general.date-format", "dd/MM/yyyy HH:mm"); }
+
+    public int getTeleportDelay() { return teleportDelay; }
+    public boolean isTeleportCancelOnMove() { return teleportCancelOnMove; }
+    public boolean isTeleportCancelOnDamage() { return teleportCancelOnDamage; }
 
     public boolean isDiscordEnabled() { return discordEnabled; }
     public String getDiscordToken() { return discordToken; }

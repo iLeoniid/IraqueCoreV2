@@ -42,7 +42,7 @@ public class SpawnCommand implements TabExecutor {
             return true;
         }
 
-        player.teleport(spawn);
+        plugin.getTeleportManager().requestTeleport(player, spawn);
         player.sendMessage(plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().getPrefixedMessage("spawn.teleport")));
         return true;

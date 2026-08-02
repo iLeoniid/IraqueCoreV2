@@ -420,6 +420,15 @@ troll:
       - "this is actually funny xd"
       - "i think im going crazy"
 
+#   TELEPORT WARMUP
+#   Delay before home / tpa / spawn teleports are executed
+#   The teleport is cancelled if the player moves or takes damage
+
+teleport:
+  delay-seconds: 3
+  cancel-on-move: true
+  cancel-on-damage: true
+
 #   DATA STORAGE
 
 storage:

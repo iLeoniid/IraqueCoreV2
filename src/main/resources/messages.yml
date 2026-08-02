@@ -309,6 +309,18 @@ home:
   menu-delete: "&c\u25B8 Clique para deletar"
   menu-set: "&a\u25B8 Clique para definir sua home aqui"
   menu-close: "&7Clique para fechar"
+  confirm-title: "&8\u00BB &cDeletar Home"
+  confirm-lore:
+    - "&7Tem certeza que deseja deletar sua home?"
+    - "&7Esta ação não pode ser desfeita."
+
+# ─── Teleport Warmup ───
+teleport:
+  start: "&aTeleportando em &e{seconds}s&a... não se mova!"
+  complete: "&aTeleportado!"
+  cancelled: "&cTeleport cancelado!"
+  cancelled-move: "&cVocê se moveu! Teleport cancelado."
+  cancelled-damage: "&cVocê sofreu dano! Teleport cancelado."
 
 # ─── Punishment ───
 punishment:
