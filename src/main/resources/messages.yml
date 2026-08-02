@@ -301,9 +301,14 @@ profile:
 home:
   set: "&aHome definida com sucesso!"
   teleport: "&aTeletransportado para sua home!"
-  not-set: "&cVocê não tem uma home definida. Use &e/sethome &cpara definir uma."
+  not-set: "&cVocê não tem uma home definida. Use &e/sethome &cpara definir."
   invalid: "&cSua home está inválida. Use &e/sethome &cpara definir uma nova."
   deleted: "&cHome deletada."
+  menu-title: "&8\u00BB &6Minhas Homes"
+  menu-teleport: "&a\u25B8 Clique para ir até sua home"
+  menu-delete: "&c\u25B8 Clique para deletar"
+  menu-set: "&a\u25B8 Clique para definir sua home aqui"
+  menu-close: "&7Clique para fechar"
 
 # ─── Punishment ───
 punishment:

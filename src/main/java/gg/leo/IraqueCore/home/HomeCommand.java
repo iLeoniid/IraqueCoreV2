@@ -2,7 +2,6 @@ package gg.leo.IraqueCore.home;
 
 import gg.leo.IraqueCore.IraqueCore;
 import java.util.List;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -53,17 +52,7 @@ implements TabExecutor {
     }
 
     private void handleHome(Player player, String[] args) {
-        if (!this.homeManager.hasHome(player)) {
-            player.sendMessage(this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(this.plugin.getConfigManager().getMessage("home.not-set", "&cYou don't have a home set. Use &e/sethome &cto set one."))));
-            return;
-        }
-        Location home = this.homeManager.getHome(player);
-        if (home == null) {
-            player.sendMessage(this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(this.plugin.getConfigManager().getMessage("home.invalid", "&cYour home location is invalid. Use &e/sethome &cto set a new one."))));
-            return;
-        }
-        player.teleport(home);
-        player.sendMessage(this.plugin.getConfigManager().deserialize(this.plugin.getConfigManager().translate(this.plugin.getConfigManager().getMessage("home.teleport", "&aTeleported to your home!"))));
+        new HomeMenu(this.plugin, this.homeManager).open(player);
     }
 
     private void handleDeleteHome(Player player) {
