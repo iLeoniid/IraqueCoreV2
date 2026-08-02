@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -196,6 +197,30 @@ public class TrollEventListener implements Listener {
                 }
             });
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onQuit(PlayerQuitEvent event) {
+        UUID id = event.getPlayer().getUniqueId();
+        frozenPlayers.remove(id);
+        breakPlayers.remove(id);
+        deafenedPlayers.remove(id);
+        explodeOnChatPlayers.remove(id);
+        randomChatPlayers.remove(id);
+        reverseChatPlayers.remove(id);
+        bedExplodePlayers.remove(id);
+        stopSleepPlayers.remove(id);
+        tntPlacePlayers.remove(id);
+        lightningPlayers.remove(id);
+        forceJumpPlayers.remove(id);
+        sneakDestroyPlayers.remove(id);
+        poopPlayers.remove(id);
+        instaToolBreakPlayers.remove(id);
+        aquaphobiaPlayers.remove(id);
+        inventoryStopPlayers.remove(id);
+        randomInvPlayers.remove(id);
+        entityMultiplyPlayers.remove(id);
+        manager.endSession(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

@@ -31,11 +31,7 @@ public class TrollManager {
     private final IraqueCore plugin;
     private final TrollEventListener eventListener;
     private final Map<String, TrollEffect> effects = new HashMap<>();
-    private final Map<UUID, Set<String>> activeEffects = new HashMap<>();
-    private final Map<UUID, Map<String, BukkitTask>> activeTasks = new HashMap<>();
-    private final Map<UUID, List<Runnable>> revertTasks = new HashMap<>();
-    private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
-    private final Map<UUID, Map<String, BukkitTask>> autoRemoveTasks = new HashMap<>();
+    private final Map<UUID, TrollSession> sessions = new HashMap<>();
 
     public TrollManager(IraqueCore plugin) {
         this.plugin = plugin;
@@ -85,38 +81,45 @@ public class TrollManager {
     }
 
     public boolean hasActiveEffect(Player target, String effectId) {
-        Set<String> active = activeEffects.get(target.getUniqueId());
-        return active != null && active.contains(effectId);
+        TrollSession session = sessions.get(target.getUniqueId());
+        return session != null && session.hasActiveEffect(effectId);
     }
 
     public boolean hasAnyActiveEffect(Player target) {
-        Set<String> active = activeEffects.get(target.getUniqueId());
-        return active != null && !active.isEmpty();
+        TrollSession session = sessions.get(target.getUniqueId());
+        return session != null && session.hasAnyActiveEffect();
     }
 
     public Set<String> getActiveEffects(Player target) {
-        return activeEffects.getOrDefault(target.getUniqueId(), new HashSet<>());
+        TrollSession session = sessions.get(target.getUniqueId());
+        return session != null ? session.getActiveEffects() : new HashSet<>();
+    }
+
+    public TrollSession getSession(Player target) {
+        return sessions.computeIfAbsent(target.getUniqueId(), TrollSession::new);
     }
 
     public void applyEffect(Player target, String effectId, Player source) {
         TrollEffect effect = effects.get(effectId);
         if (effect == null) return;
 
-        if (isOnCooldown(target.getUniqueId(), effectId)) {
-            long remaining = getCooldownRemaining(target.getUniqueId(), effectId);
+        TrollSession session = getSession(target);
+
+        if (session.isOnCooldown(effectId)) {
+            long remaining = session.getCooldownRemaining(effectId);
             if (source != null) source.sendMessage("§cEsse efeito esta em cooldown para " + target.getName() +
                     "! Espere " + remaining + "s.");
             return;
         }
 
-        if (hasActiveEffect(target, effectId)) {
+        if (session.hasActiveEffect(effectId)) {
             if (source != null) source.sendMessage("§c" + target.getName() + " ja tem esse efeito ativo!");
             return;
         }
 
-        activeEffects.computeIfAbsent(target.getUniqueId(), k -> new HashSet<>()).add(effectId);
+        session.addActiveEffect(effectId);
 
-        setCooldown(target.getUniqueId(), effectId,
+        session.setCooldown(effectId,
                 getConfigValue("troll.cooldowns." + effectId, effect.getDefaultCooldown()));
 
         effect.apply(target, this);
@@ -125,7 +128,7 @@ public class TrollManager {
         if (duration > 0) {
             BukkitTask removeTask = SchedulerUtil.runLater(plugin,
                     () -> removeEffect(target, effectId, false), duration * 20L);
-            autoRemoveTasks.computeIfAbsent(target.getUniqueId(), k -> new HashMap<>()).put(effectId, removeTask);
+            session.addAutoRemoveTask(effectId, removeTask);
         }
 
         if (effect.requiresTask()) {
@@ -136,7 +139,7 @@ public class TrollManager {
                 }
                 effect.onTick(target, this);
             }, effect.getInterval(), effect.getInterval());
-            activeTasks.computeIfAbsent(target.getUniqueId(), k -> new HashMap<>()).put(effectId, task);
+            session.addActiveTask(effectId, task);
         }
 
         String sourceName = source != null ? source.getName() : "Console";
@@ -146,29 +149,18 @@ public class TrollManager {
     }
 
     public void removeEffect(Player target, String effectId, boolean silent) {
-        if (!hasActiveEffect(target, effectId)) return;
+        TrollSession session = sessions.get(target.getUniqueId());
+        if (session == null || !session.hasActiveEffect(effectId)) return;
 
-        activeEffects.get(target.getUniqueId()).remove(effectId);
+        session.removeActiveEffect(effectId);
 
-        Map<String, BukkitTask> tasks = activeTasks.get(target.getUniqueId());
-        if (tasks != null) {
-            BukkitTask task = tasks.remove(effectId);
-            if (task != null) task.cancel();
-        }
+        BukkitTask task = session.removeActiveTask(effectId);
+        if (task != null) task.cancel();
 
-        Map<String, BukkitTask> removes = autoRemoveTasks.get(target.getUniqueId());
-        if (removes != null) {
-            BukkitTask task = removes.remove(effectId);
-            if (task != null) task.cancel();
-        }
+        BukkitTask removeTask = session.removeAutoRemoveTask(effectId);
+        if (removeTask != null) removeTask.cancel();
 
-        List<Runnable> reverts = revertTasks.get(target.getUniqueId());
-        if (reverts != null) {
-            reverts.removeIf(r -> {
-                r.run();
-                return true;
-            });
-        }
+        session.runRevertTasks();
 
         TrollEffect effect = effects.get(effectId);
         if (effect != null) {
@@ -180,56 +172,35 @@ public class TrollManager {
     }
 
     public void undoAll(Player target) {
-        Set<String> active = activeEffects.get(target.getUniqueId());
-        if (active == null || active.isEmpty()) return;
+        TrollSession session = sessions.get(target.getUniqueId());
+        if (session == null) return;
 
-        List<String> toRemove = new ArrayList<>(active);
-        for (String effectId : toRemove) {
+        for (String effectId : new ArrayList<>(session.getActiveEffects())) {
             removeEffect(target, effectId, true);
         }
 
-        Map<String, BukkitTask> tasks = activeTasks.remove(target.getUniqueId());
-        if (tasks != null) tasks.values().forEach(BukkitTask::cancel);
+        session.clear();
+        sessions.remove(target.getUniqueId());
+    }
 
-        Map<String, BukkitTask> removes = autoRemoveTasks.remove(target.getUniqueId());
-        if (removes != null) removes.values().forEach(BukkitTask::cancel);
-
-        List<Runnable> reverts = revertTasks.remove(target.getUniqueId());
-        if (reverts != null) reverts.forEach(Runnable::run);
-
-        activeEffects.remove(target.getUniqueId());
-        cooldowns.remove(target.getUniqueId());
+    public void endSession(Player target) {
+        TrollSession session = sessions.remove(target.getUniqueId());
+        if (session == null) return;
+        session.clear();
     }
 
     public void addRevertTask(Player target, Runnable task) {
-        revertTasks.computeIfAbsent(target.getUniqueId(), k -> new ArrayList<>()).add(task);
+        getSession(target).addRevertTask(task);
     }
 
     public boolean isOnCooldown(UUID targetId, String effectId) {
-        Map<String, Long> playerCooldowns = cooldowns.get(targetId);
-        if (playerCooldowns == null) return false;
-        Long expiry = playerCooldowns.get(effectId);
-        if (expiry == null) return false;
-        if (System.currentTimeMillis() >= expiry) {
-            playerCooldowns.remove(effectId);
-            return false;
-        }
-        return true;
+        TrollSession session = sessions.get(targetId);
+        return session != null && session.isOnCooldown(effectId);
     }
 
     public long getCooldownRemaining(UUID targetId, String effectId) {
-        Map<String, Long> playerCooldowns = cooldowns.get(targetId);
-        if (playerCooldowns == null) return 0;
-        Long expiry = playerCooldowns.get(effectId);
-        if (expiry == null) return 0;
-        long remaining = (expiry - System.currentTimeMillis()) / 1000;
-        return Math.max(0, remaining);
-    }
-
-    private void setCooldown(UUID targetId, String effectId, int seconds) {
-        if (seconds <= 0) return;
-        cooldowns.computeIfAbsent(targetId, k -> new HashMap<>())
-                .put(effectId, System.currentTimeMillis() + (seconds * 1000L));
+        TrollSession session = sessions.get(targetId);
+        return session != null ? session.getCooldownRemaining(effectId) : 0;
     }
 
     private int getConfigValue(String path, int defaultValue) {
