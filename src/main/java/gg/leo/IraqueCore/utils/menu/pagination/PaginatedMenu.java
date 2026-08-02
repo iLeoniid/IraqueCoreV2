@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.utils.menu.pagination;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import gg.leo.IraqueCore.utils.menu.Button;
 import gg.leo.IraqueCore.utils.menu.MenuController;
 import org.bukkit.Bukkit;
@@ -161,7 +162,7 @@ public abstract class PaginatedMenu {
         player.closeInventory();
 
         // Esperar 1 tick para que el cliente procese el cierre
-        Bukkit.getScheduler().runTaskLater(IraqueCore.getInstance(), () -> {
+        SchedulerUtil.runLater(IraqueCore.getInstance(), () -> {
             if (!player.isOnline()) return;
 
             Map<Integer, Button> buttons = getButtonsInRange(player);

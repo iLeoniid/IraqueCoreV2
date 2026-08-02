@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.troll.effects;
 
 import gg.leo.IraqueCore.troll.TrollEffect;
 import gg.leo.IraqueCore.troll.TrollManager;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -67,13 +68,13 @@ public final class InterfaceEffects {
 
         private void doOpenRandomInventory(Player target) {
             target.closeInventory();
-            Bukkit.getScheduler().runTaskLater(
+            SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(),
                     () -> {
                         if (!target.isOnline()) return;
                         target.openInventory(Bukkit.createInventory(null, 9,
                                 ChatColor.DARK_PURPLE + "O que esta acontecendo?"));
-                        Bukkit.getScheduler().runTaskLater(
+                        SchedulerUtil.runLater(
                                 gg.leo.IraqueCore.IraqueCore.getInstance(),
                                 () -> {
                                     if (target.isOnline()) target.closeInventory();

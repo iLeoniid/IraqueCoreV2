@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.punishment;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -90,7 +91,7 @@ public class PunishmentManager implements Listener {
     }
 
     private void startMuteCheck() {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+        SchedulerUtil.runTimer(plugin, () -> {
             boolean changed = false;
             Iterator<Map.Entry<UUID, MuteEntry>> it = mutes.entrySet().iterator();
             while (it.hasNext()) {

@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.playtime;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -48,7 +49,7 @@ public class PlaytimeManager implements Listener {
     }
 
     public void startTask() {
-        Bukkit.getScheduler().runTaskTimer(plugin, this::savePlaytime, 6000L, 6000L);
+        SchedulerUtil.runTimer(plugin, this::savePlaytime, 6000L, 6000L);
     }
 
     private void loadPlaytime() {

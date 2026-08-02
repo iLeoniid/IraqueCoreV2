@@ -2,9 +2,9 @@ package gg.leo.IraqueCore.armorstand.menu;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.armorstand.ArmorStandEditor;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import gg.leo.IraqueCore.utils.menu.Button;
 import gg.leo.IraqueCore.utils.menu.Menu;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -142,7 +142,7 @@ public class ArmorStandEquipmentMenu extends Menu {
             @Override
             public void onClick(Player p, int slot, ClickType type) {
                 editor.cleanup(p);
-                Bukkit.getScheduler().runTask(plugin, (Runnable) p::closeInventory);
+                SchedulerUtil.runSync(plugin, (Runnable) p::closeInventory);
             }
         };
     }

@@ -3,6 +3,7 @@ package gg.leo.IraqueCore.scoreboard;
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.animation.TextAnimation;
 import gg.leo.IraqueCore.utils.ItemBuilder;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ implements Listener {
 
     private void queueUpdate(Player player) {
         if (this.dirtyPlayers.add(player.getUniqueId())) {
-            Bukkit.getScheduler().runTask(this.plugin, this::flushDirty);
+            SchedulerUtil.runSync(this.plugin, this::flushDirty);
         }
     }
 
@@ -397,7 +398,7 @@ implements Listener {
         if (this.statsConfig != null) {
             this.statsConfig.set("players." + id + ".name", player.getName());
         }
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        SchedulerUtil.runLater(this.plugin, () -> {
             if (this.isPlayerEnabled(player)) {
                 this.updateScoreboard(player);
             }

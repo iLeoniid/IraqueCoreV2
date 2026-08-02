@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.troll.effects;
 
 import gg.leo.IraqueCore.troll.TrollEffect;
 import gg.leo.IraqueCore.troll.TrollManager;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -271,7 +272,7 @@ public final class ClassicEffects {
         @Override
         public void apply(Player target, TrollManager manager) {
             target.sendMessage(ChatColor.GREEN + "[CONSOLE: Observe que este comando nao e suportado...]");
-            org.bukkit.Bukkit.getScheduler().runTaskLater(
+            SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                         if (!target.isOnline()) return;
                         target.sendMessage(ChatColor.YELLOW + "[CONSOLE: Recarga concluida.]");

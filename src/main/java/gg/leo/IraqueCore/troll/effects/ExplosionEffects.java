@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.troll.effects;
 
 import gg.leo.IraqueCore.troll.TrollEffect;
 import gg.leo.IraqueCore.troll.TrollManager;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -46,7 +47,7 @@ public final class ExplosionEffects {
             loc.getWorld().spawnParticle(Particle.FIREWORK, loc, 50, 1, 1, 1, 0.1);
             loc.getWorld().playSound(loc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 2, 1);
 
-            org.bukkit.Bukkit.getScheduler().runTaskLater(
+            SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                         if (chicken.isValid()) chicken.remove();
                         loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.COOKED_CHICKEN));
@@ -92,7 +93,7 @@ public final class ExplosionEffects {
             loc.getWorld().createExplosion(loc, 0.0f, false, false);
             loc.getWorld().playSound(loc, Sound.ENTITY_CAT_HURT, 2, 1);
 
-            org.bukkit.Bukkit.getScheduler().runTaskLater(
+            SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                         if (ocelot.isValid()) ocelot.remove();
                     }, 60L);
@@ -114,7 +115,7 @@ public final class ExplosionEffects {
                 Location tntLoc = loc.clone().add(Math.cos(angle) * 3, 0, Math.sin(angle) * 3);
                 tntLoc.getWorld().spawn(tntLoc, TNTPrimed.class);
             }
-            org.bukkit.Bukkit.getScheduler().runTaskLater(
+            SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                         target.getWorld().getEntities().forEach(e -> {
                             if (e instanceof TNTPrimed) e.remove();
@@ -137,7 +138,7 @@ public final class ExplosionEffects {
         public void apply(Player target, TrollManager manager) {
             Location loc = target.getLocation().add(0, 5, 0);
             for (int cycle = 0; cycle < 20; cycle++) {
-                org.bukkit.Bukkit.getScheduler().runTaskLater(
+                SchedulerUtil.runLater(
                         gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                             for (int i = 0; i < 16; i++) {
                                 double angle = 2 * Math.PI * i / 16;
@@ -149,7 +150,7 @@ public final class ExplosionEffects {
                             }
                         }, cycle * 3L);
             }
-            org.bukkit.Bukkit.getScheduler().runTaskLater(
+            SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
                         target.getWorld().getEntities().forEach(e -> {
                             if (e instanceof TNTPrimed) e.remove();

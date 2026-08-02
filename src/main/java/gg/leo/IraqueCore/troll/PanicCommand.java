@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.troll;
 
 import net.kyori.adventure.text.Component;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -37,7 +38,7 @@ public class PanicCommand implements CommandExecutor {
 
         if (pendingConfirmation.contains(player.getUniqueId())) {
             pendingConfirmation.remove(player.getUniqueId());
-            Bukkit.getScheduler().cancelTasks(manager.getPlugin());
+            SchedulerUtil.cancelAll(manager.getPlugin());
             for (Player online : Bukkit.getOnlinePlayers()) {
                 manager.undoAll(online);
             }
@@ -47,7 +48,7 @@ public class PanicCommand implements CommandExecutor {
 
         pendingConfirmation.add(player.getUniqueId());
         player.sendMessage("§c\u00a1PANICO! Digite /panicstoptroll novamente para confirmar e PARAR TODOS os trolls!");
-        Bukkit.getScheduler().runTaskLater(manager.getPlugin(), () ->
+        SchedulerUtil.runLater(manager.getPlugin(), () ->
                 pendingConfirmation.remove(player.getUniqueId()), 200L);
         return true;
     }

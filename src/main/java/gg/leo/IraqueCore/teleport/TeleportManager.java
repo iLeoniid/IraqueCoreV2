@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.teleport;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -89,7 +90,7 @@ public class TeleportManager {
 
         void start() {
             sendStart(player, (int) Math.ceil(remainingTicks / 20.0));
-            task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            task = SchedulerUtil.runTimer(plugin, () -> {
                 if (!player.isOnline()) {
                     cancelTeleport(player.getUniqueId(), false);
                     return;

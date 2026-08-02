@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.discord;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -54,7 +55,7 @@ public class DiscordManager extends ListenerAdapter {
 
         cancelled = false;
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerUtil.runAsync(plugin, () -> {
             try {
                 JDA built = JDABuilder.createLight(token, EnumSet.of(
                         GatewayIntent.GUILD_MESSAGES,
@@ -186,7 +187,7 @@ public class DiscordManager extends ListenerAdapter {
     private void handleWhitelist(String content, MessageReceivedEvent event) {
         if (!plugin.getConfigManager().isWhitelistEnabled()) return;
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        SchedulerUtil.runSync(plugin, () -> {
             if (!Bukkit.hasWhitelist()) return;
 
             String name = content.strip();
@@ -224,7 +225,7 @@ public class DiscordManager extends ListenerAdapter {
         Component component = plugin.getConfigManager().deserialize(
                 plugin.getConfigManager().translate(formatted));
 
-        Bukkit.getScheduler().runTask(plugin, () ->
+        SchedulerUtil.runSync(plugin, () ->
                 Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(component))
         );
     }
@@ -232,7 +233,7 @@ public class DiscordManager extends ListenerAdapter {
     //  Whitelist prompt
 
     public void sendWhitelistPrompt() {
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        SchedulerUtil.runSync(plugin, () -> {
             if (!running || channel == null) return;
             if (!Bukkit.hasWhitelist()) return;
             if (!plugin.getConfigManager().isWhitelistEnabled()) return;
@@ -256,7 +257,7 @@ public class DiscordManager extends ListenerAdapter {
     private void sendToChannel(TextChannel target, String message) {
         if (!running || target == null) return;
         String stripped = stripColor(message);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+        SchedulerUtil.runAsync(plugin, () ->
                 target.sendMessage(stripped).queue(
                         null,
                         err -> plugin.getPluginLogger().warn("Failed to send Discord message: " + err.getMessage())
@@ -270,7 +271,7 @@ public class DiscordManager extends ListenerAdapter {
         String webhookUrl = plugin.getConfigManager().getDiscordWebhook(type);
         if (webhookUrl == null || webhookUrl.isBlank() || !webhookUrl.startsWith("http")) return;
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerUtil.runAsync(plugin, () -> {
             try {
                 String payload = String.format(
                         "{\"username\":\"%s\",\"content\":\"%s\",\"avatar_url\":\"https://crafthead.net/avatar/%s\"}",

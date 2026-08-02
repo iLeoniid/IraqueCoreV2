@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.afk;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +41,7 @@ public class AfkManager implements Listener {
     }
 
     public void startTask() {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+        SchedulerUtil.runTimer(plugin, () -> {
             if (!enabled) return;
             long now = System.currentTimeMillis();
             for (Player player : Bukkit.getOnlinePlayers()) {

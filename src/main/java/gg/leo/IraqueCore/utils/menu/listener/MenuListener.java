@@ -1,5 +1,6 @@
 package gg.leo.IraqueCore.utils.menu.listener;
 
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import gg.leo.IraqueCore.utils.menu.Button;
 import gg.leo.IraqueCore.utils.menu.Menu;
 import gg.leo.IraqueCore.utils.menu.MenuController;
@@ -74,13 +75,13 @@ public class MenuListener implements Listener {
 
         if (btn != null) {
             final Button fbtn = btn;
-            org.bukkit.Bukkit.getScheduler().runTask(
+            SchedulerUtil.runSync(
                 gg.leo.IraqueCore.IraqueCore.getInstance(),
                 () -> {
                     fbtn.onClick(player, event.getSlot(), event.getClick());
                     // Después de ejecutar el click, remover el flag de update
                     // (el updateMenu() ya debería haber terminado)
-                    org.bukkit.Bukkit.getScheduler().runTaskLater(
+                    SchedulerUtil.runLater(
                         gg.leo.IraqueCore.IraqueCore.getInstance(),
                         () -> updating.remove(player.getUniqueId()),
                         2L

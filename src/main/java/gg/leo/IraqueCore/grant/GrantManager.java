@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.grant;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.rank.Rank;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -163,7 +164,7 @@ public class GrantManager {
     }
 
     public void startTask() {
-        taskId = Bukkit.getScheduler().runTaskTimer(plugin, this::checkExpirations, 600L, 600L).getTaskId();
+        taskId = SchedulerUtil.runTimer(plugin, this::checkExpirations, 600L, 600L).getTaskId();
     }
 
     private Map<String, Object> serialize(Grant g) {

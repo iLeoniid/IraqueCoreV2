@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.rank;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -107,7 +108,7 @@ public class RankManager {
         if (player != null) {
             removePermissions(player);
             applyPermissions(player);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> updatePlayerRankVisuals(player), 2L);
+            SchedulerUtil.runLater(plugin, () -> updatePlayerRankVisuals(player), 2L);
         }
     }
 

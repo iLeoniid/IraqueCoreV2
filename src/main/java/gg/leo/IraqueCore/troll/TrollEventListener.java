@@ -1,5 +1,6 @@
 package gg.leo.IraqueCore.troll;
 
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -189,7 +190,7 @@ public class TrollEventListener implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         if (randomInvPlayers.contains(event.getPlayer().getUniqueId())) {
             Player p = (Player) event.getPlayer();
-            org.bukkit.Bukkit.getScheduler().runTask(manager.getPlugin(), () -> {
+            SchedulerUtil.runSync(manager.getPlugin(), () -> {
                 if (p.isOnline() && randomInvPlayers.contains(p.getUniqueId())) {
                     p.closeInventory();
                 }

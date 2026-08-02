@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.motd;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.animation.TextAnimation;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -75,7 +76,7 @@ public class MotdManager {
     }
 
     private void startMotdTask(long ticks) {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+        SchedulerUtil.runTimer(plugin, () -> {
             if (animation != null) {
                 setMotd(animation.getText());
             }

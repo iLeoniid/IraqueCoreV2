@@ -1,6 +1,7 @@
 package gg.leo.IraqueCore.utils.menu;
 
 import gg.leo.IraqueCore.IraqueCore;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import gg.leo.IraqueCore.utils.menu.buttons.PlaceholderButton;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -37,7 +38,7 @@ public abstract class Menu {
     }
 
     public void openMenu() {
-        Bukkit.getScheduler().runTask(IraqueCore.getInstance(), () -> {
+        SchedulerUtil.runSync(IraqueCore.getInstance(), () -> {
             if (!player.isOnline()) return;
 
             // Cerrar primero si hay un inventario abierto
@@ -46,7 +47,7 @@ public abstract class Menu {
             }
 
             // Esperar 1 tick para evitar conflictos con el cierre
-            Bukkit.getScheduler().runTaskLater(IraqueCore.getInstance(), () -> {
+            SchedulerUtil.runLater(IraqueCore.getInstance(), () -> {
                 if (!player.isOnline()) return;
 
                 // Limpiar menús previos y registrar este

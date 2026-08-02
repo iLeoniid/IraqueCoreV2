@@ -2,6 +2,7 @@ package gg.leo.IraqueCore;
 
 import gg.leo.IraqueCore.discord.DiscordManager;
 import gg.leo.IraqueCore.rank.Rank;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
@@ -144,7 +145,7 @@ public class ChatListener implements Listener {
 
         plugin.getRankManager().applyPermissions(player);
 
-        org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        SchedulerUtil.runLater(plugin, () -> {
             if (player.isOnline()) {
                 plugin.getRankManager().initVisuals(player);
             }

@@ -2,6 +2,7 @@ package gg.leo.IraqueCore.commands;
 
 import gg.leo.IraqueCore.IraqueCore;
 import gg.leo.IraqueCore.punishment.PunishmentManager;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -36,7 +37,7 @@ public class GameModeCommand implements TabExecutor {
     }
 
     public void startTask() {
-        tempTask = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20L, 20L);
+        tempTask = SchedulerUtil.runTimer(plugin, this::tick, 20L, 20L);
     }
 
     public void shutdown() {

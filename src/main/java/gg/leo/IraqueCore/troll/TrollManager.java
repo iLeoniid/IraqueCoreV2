@@ -13,6 +13,7 @@ import gg.leo.IraqueCore.troll.effects.MovementEffects;
 import gg.leo.IraqueCore.troll.effects.RandomEffects;
 import gg.leo.IraqueCore.troll.effects.SoundChatEffects;
 import gg.leo.IraqueCore.troll.effects.VisualEffects;
+import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -122,13 +123,13 @@ public class TrollManager {
 
         int duration = getConfigValue("troll.durations." + effectId, effect.getDefaultDuration());
         if (duration > 0) {
-            BukkitTask removeTask = Bukkit.getScheduler().runTaskLater(plugin,
+            BukkitTask removeTask = SchedulerUtil.runLater(plugin,
                     () -> removeEffect(target, effectId, false), duration * 20L);
             autoRemoveTasks.computeIfAbsent(target.getUniqueId(), k -> new HashMap<>()).put(effectId, removeTask);
         }
 
         if (effect.requiresTask()) {
-            BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            BukkitTask task = SchedulerUtil.runTimer(plugin, () -> {
                 if (!target.isOnline()) {
                     removeEffect(target, effectId, true);
                     return;
