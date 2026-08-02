@@ -128,12 +128,20 @@ public class TagManager {
     }
 
     public String getPlayerTagDisplay(Player player) {
-        String tagId = playerTags.get(player.getUniqueId());
+        return getPlayerTagDisplay(player.getUniqueId());
+    }
+
+    public String getPlayerTagDisplay(UUID uuid) {
+        String tagId = playerTags.get(uuid);
         if (tagId != null) {
             Tag tag = tags.get(tagId);
             if (tag != null) return tag.getTag();
         }
         return "";
+    }
+
+    public String getPlayerTagId(UUID uuid) {
+        return playerTags.get(uuid);
     }
 
     public boolean hasTagEquipped(Player player, String tagId) {

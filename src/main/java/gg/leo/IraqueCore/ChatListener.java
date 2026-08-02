@@ -79,10 +79,14 @@ public class ChatListener implements Listener {
         } catch (Exception ignored) {
         }
 
+        String playerLink = nameColor + "<click:run_command:'/profile " + player.getName()
+                + "'><hover:show_text:'<gray>Clique para ver o perfil de "
+                + player.getName() + "'><u>" + player.getName() + "</u></hover></click>";
+
         String formatted = format
                 .replace("{prefix}",      prefix)
                 .replace("{suffix}",      suffix)
-                .replace("{player}",      nameColor + player.getName())
+                .replace("{player}",      playerLink)
                 .replace("{displayname}", displayName)
                 .replace("{tag}",         tagStr)
                 .replace("{world}",       player.getWorld().getName())

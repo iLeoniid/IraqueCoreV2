@@ -21,6 +21,7 @@ public class PlaytimeManager implements Listener {
     private final IraqueCore plugin;
     private final Map<UUID, Long> playtime = new HashMap<>();
     private final Map<UUID, Long> sessionStart = new HashMap<>();
+    private final Map<UUID, Long> firstJoin = new HashMap<>();
 
     private File dataFile;
     private YamlConfiguration data;
@@ -57,6 +58,7 @@ public class PlaytimeManager implements Listener {
                 UUID uuid = UUID.fromString(key);
                 long time = data.getLong("players." + key + ".time", 0);
                 playtime.put(uuid, time);
+                firstJoin.put(uuid, data.getLong("players." + key + ".first-join", 0));
             } catch (IllegalArgumentException ignored) {}
         }
     }
@@ -71,6 +73,9 @@ public class PlaytimeManager implements Listener {
         for (Map.Entry<UUID, Long> entry : playtime.entrySet()) {
             String path = "players." + entry.getKey().toString();
             data.set(path + ".time", entry.getValue());
+            if (firstJoin.containsKey(entry.getKey())) {
+                data.set(path + ".first-join", firstJoin.get(entry.getKey()));
+            }
         }
         try {
             data.save(dataFile);
@@ -81,6 +86,10 @@ public class PlaytimeManager implements Listener {
 
     public long getPlaytime(UUID uuid) {
         return playtime.getOrDefault(uuid, 0L);
+    }
+
+    public long getFirstJoin(UUID uuid) {
+        return firstJoin.getOrDefault(uuid, 0L);
     }
 
     public Map<UUID, Long> getPlaytimeMap() {
@@ -114,6 +123,7 @@ public class PlaytimeManager implements Listener {
         if (!enabled) return;
         UUID id = event.getPlayer().getUniqueId();
         playtime.putIfAbsent(id, 0L);
+        firstJoin.putIfAbsent(id, System.currentTimeMillis());
         sessionStart.put(id, System.currentTimeMillis());
     }
 

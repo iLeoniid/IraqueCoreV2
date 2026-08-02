@@ -150,6 +150,10 @@ commands:
   control:
     description: Control another player's movement and chat
     permission: troll.control
+  profile:
+    description: View a player's profile
+    aliases: [perfil, whois, playerinfo]
+    permission: iraquecore.profile
 
 permissions:
   iraquecore.*:
@@ -303,6 +307,9 @@ permissions:
     default: true
   iraquecore.tpa:
     description: Use teleport request commands
+    default: true
+  iraquecore.profile:
+    description: View player profiles
     default: true
 
   alert.use:

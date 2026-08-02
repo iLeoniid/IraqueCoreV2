@@ -424,6 +424,9 @@ public final class IraqueCore extends JavaPlugin {
         register("trollf", new TrollfCommand(trollManager), new TrollfCommand(trollManager));
         register("untroll", new UntrollCommand(trollManager), new UntrollCommand(trollManager));
         register("panicstoptroll", new PanicCommand(trollManager), null);
+
+        var profileCommand = new gg.leo.IraqueCore.profile.ProfileCommand(this);
+        register("profile", profileCommand, profileCommand);
     }
 
     /**

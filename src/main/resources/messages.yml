@@ -255,7 +255,7 @@ totem:
 tpa:
   usage: "&cUso: /tpa <jogador> | accept | deny"
   request-sent: "&aPedido de teleporte enviado para &e{player}&a."
-  request-received: "&e{player} &aquer se teleportar para você. &7Para aceitar use &e/tpa accept &7ou clique em &a&l<click:run_command:/tpa accept>[Aceitar aqui]</click>"
+  request-received: "&e{player} &aquer se teleportar para você. <click:run_command:'/tpa accept'><hover:show_text:'<green>Aceitar teleporte</green>'><green><bold>[Accept]</bold></green></hover></click> <click:run_command:'/tpa deny'><hover:show_text:'<red>Negar teleporte</red>'><red><bold>[Deny]</bold></red></hover></click>"
   accepted: "&aPedido de teleporte aceito. Teleportando para &e{player}&a."
   target-accepted: "&aVocê aceitou o pedido de teleporte de &e{player}&a."
   denied: "&cPedido de teleporte negado."
@@ -265,6 +265,37 @@ tpa:
   expired: "&cSeu pedido de teleporte expirou."
   cannot-self: "&cVocê não pode se teleportar para si mesmo."
   no-outgoing: "&cVocê não tem pedidos de teleporte para cancelar."
+
+# ─── Profile ───
+profile:
+  player-not-found: "&cJogador não encontrado."
+  header: "&8&m&l--------------------------------"
+  footer: "&8&m&l--------------------------------"
+  title: "&6{display} &8- &7Perfil"
+  rank: " &8\u25b8 &7Rango: &f{rank}"
+  tag: " &8\u25b8 &7Tag: {tag}"
+  tag-none: "&7Nenhuma tag equipada"
+  playtime: " &8\u25b8 &7Tempo de jogo: &e{playtime}"
+  first-join: " &8\u25b8 &7Entrou em: &e{date}"
+  date-unknown: "&7N/A"
+  status: " &8\u25b8 &7Status: {status}"
+  status-online: "&aOnline"
+  status-offline: "&cOffline"
+  achievement: " &8\u25b8 &7Logro destacado: &f{achievement}"
+  achievement-fallback: "&7Conseguiu o logro 'Online'"
+  achievements:
+    - "Primeiro a falar 'GG' no final"
+    - "Especialista em construir buracos"
+    - "Mestre do parkour de escadas"
+    - "Gourmet de pão podre"
+    - "Campeão do ping alto"
+    - "Colecionador de madeira"
+    - "Explorador de montanhas"
+    - "Sobreviveu a primeira noite"
+    - "Especialista em morrer de queda"
+    - "Fazendeiro profissional"
+    - "Nadador de lava profissional"
+    - "Mestre das escadas infinitas"
 
 # ─── Home ───
 home:

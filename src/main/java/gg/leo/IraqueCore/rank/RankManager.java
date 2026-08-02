@@ -188,13 +188,15 @@ public class RankManager {
             }
 
             String nameColor = rank.color();
-            String playerColored = nameColor + player.getName();
+            String playerLink = nameColor + "<click:run_command:'/profile " + player.getName()
+                    + "'><hover:show_text:'<gray>Clique para ver o perfil de "
+                    + player.getName() + "'><u>" + player.getName() + "</u></hover></click>";
 
             String resolved = format
                     .replace("{prefix}", displayPrefix)
                     .replace("{suffix}", rank.suffix())
-                    .replace("{player}", playerColored)
-                    .replace("{displayname}", playerColored)
+                    .replace("{player}", playerLink)
+                    .replace("{displayname}", playerLink)
                     .replace("{tag}", tagStr)
                     .replace("{world}", player.getWorld().getName())
                     .replace("{message}", "");

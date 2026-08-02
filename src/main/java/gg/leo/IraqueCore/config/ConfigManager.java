@@ -167,6 +167,11 @@ public class ConfigManager {
         return messagesConfig.getString(path, fallback);
     }
 
+    public List<String> getMessageList(String path) {
+        if (messagesConfig == null) return List.of();
+        return messagesConfig.getStringList(path);
+    }
+
     public String getPrefixedMessage(String path) {
         String prefix = getMessage("prefix", "&8[&6IraqueCore&8] &7");
         return translate(prefix + getMessage(path, "&cMessage not found: " + path));
@@ -318,6 +323,7 @@ public class ConfigManager {
     public String getChatFormat() { return chatFormat; }
     public boolean isUseRanks() { return useRanks; }
     public boolean isUseTags() { return useTags; }
+    public String getDateFormat() { return config.getString("general.date-format", "dd/MM/yyyy HH:mm"); }
 
     public boolean isDiscordEnabled() { return discordEnabled; }
     public String getDiscordToken() { return discordToken; }
