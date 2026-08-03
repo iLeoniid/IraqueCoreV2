@@ -31,7 +31,7 @@ public class AdvancementListener implements Listener {
 
         String msg = plugin.getConfigManager().getMessage("discord.advancement",
                 "\uD83C\uDFC6 **{player}** has made the advancement **{title}**\n*{description}*");
-        msg = msg.replace("{player}", event.getPlayer().getName())
+        msg = msg.replace("{player}", playerName)
                 .replace("{title}", title)
                 .replace("{description}", description);
 
