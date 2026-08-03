@@ -15,6 +15,7 @@ import gg.leo.IraqueCore.troll.effects.SoundChatEffects;
 import gg.leo.IraqueCore.troll.effects.VisualEffects;
 import gg.leo.IraqueCore.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -145,7 +146,8 @@ public class TrollManager {
         String sourceName = source != null ? source.getName() : "Console";
         plugin.getPluginLogger().info("Troll", sourceName + " applied §c" + effect.getName() +
                 " §fon §e" + target.getName());
-        if (source != null) source.sendMessage("§aVoce aplicou §e" + effect.getName() + " §aem §e" + target.getName() + "§a!");
+        if (source != null) source.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                "§aVoce aplicou §e" + effect.getName() + " §aem §e" + target.getName() + "§a!"));
     }
 
     public void removeEffect(Player target, String effectId, boolean silent) {
@@ -166,7 +168,8 @@ public class TrollManager {
         if (effect != null) {
             effect.revert(target, this);
             if (!silent && target.isOp()) {
-                target.sendMessage("§aO efeito §e" + effect.getName() + " §afoi removido.");
+                target.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                        "§aO efeito §e" + effect.getName() + " §afoi removido."));
             }
         }
     }

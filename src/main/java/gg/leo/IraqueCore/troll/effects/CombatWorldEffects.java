@@ -48,8 +48,15 @@ public final class CombatWorldEffects {
                 double z = loc.getZ() + Math.sin(angle) * (2 + RANDOM.nextDouble());
                 Location spawnLoc = new Location(loc.getWorld(), x, loc.getY(), z, 0, 0);
 
-                spawnLoc.getWorld().spawnEntity(spawnLoc, types[RANDOM.nextInt(types.length)]).setMetadata(
-                        "troll_mob", new FixedMetadataValue(IraqueCore.getInstance(), target.getUniqueId().toString()));
+                LivingEntity mob = (LivingEntity) spawnLoc.getWorld().spawnEntity(spawnLoc,
+                        types[RANDOM.nextInt(types.length)]);
+                mob.setAI(false);
+                mob.setSilent(true);
+                mob.setInvulnerable(true);
+                mob.setMetadata("troll_mob",
+                        new FixedMetadataValue(IraqueCore.getInstance(), target.getUniqueId().toString()));
+                mob.setMetadata("troll_fake",
+                        new FixedMetadataValue(IraqueCore.getInstance(), true));
             }
 
             manager.addRevertTask(target, () -> {

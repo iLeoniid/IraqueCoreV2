@@ -6,14 +6,22 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -21,6 +29,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -69,7 +78,7 @@ public class TrollEventListener implements Listener {
 
         if (lightningPlayers.contains(id)) {
             if (event.getFrom().distanceSquared(event.getTo()) > 0.01) {
-                p.getWorld().strikeLightning(p.getLocation());
+                p.getWorld().strikeLightningEffect(p.getLocation());
             }
             return;
         }
@@ -115,7 +124,10 @@ public class TrollEventListener implements Listener {
         if (tntPlacePlayers.contains(id)) {
             event.setCancelled(true);
             Location loc = event.getBlock().getLocation();
-            loc.getWorld().spawn(loc, org.bukkit.entity.TNTPrimed.class);
+            TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
+            tnt.setYield(0f);
+            tnt.setIsIncendiary(false);
+            tnt.setMetadata("troll_tnt", new FixedMetadataValue(manager.getPlugin(), true));
             loc.getBlock().setType(Material.AIR);
         }
     }
@@ -132,7 +144,9 @@ public class TrollEventListener implements Listener {
 
         if (explodeOnChatPlayers.contains(id)) {
             event.setCancelled(true);
-            p.getWorld().createExplosion(p.getLocation(), 3.0f, false, false);
+            p.getWorld().createExplosion(p.getLocation(), 0f, false, false);
+            p.getWorld().spawnParticle(Particle.EXPLOSION, p.getLocation(), 3, 0.5, 0.5, 0.5, 0);
+            p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
             return;
         }
 
@@ -157,7 +171,9 @@ public class TrollEventListener implements Listener {
         UUID id = p.getUniqueId();
         if (bedExplodePlayers.contains(id)) {
             Location loc = event.getBed().getLocation();
-            p.getWorld().createExplosion(loc, 3.0f, true, true);
+            p.getWorld().createExplosion(loc, 0f, false, false);
+            p.getWorld().spawnParticle(Particle.EXPLOSION, loc, 3, 0.5, 0.5, 0.5, 0);
+            p.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
             return;
         }
         if (stopSleepPlayers.contains(id)) {
@@ -172,7 +188,9 @@ public class TrollEventListener implements Listener {
         UUID id = p.getUniqueId();
         if (sneakDestroyPlayers.contains(id)) {
             Block below = p.getLocation().subtract(0, 1, 0).getBlock();
-            below.setType(Material.AIR);
+            p.spawnParticle(Particle.BLOCK, below.getLocation().add(0.5, 0.5, 0.5), 12,
+                    0.3, 0.3, 0.3, 0.1, below.getBlockData());
+            p.getWorld().playSound(below.getLocation(), below.getBlockData().getSoundGroup().getBreakSound(), 1, 1);
         }
         if (poopPlayers.contains(id)) {
             p.getWorld().dropItemNaturally(p.getEyeLocation(), new org.bukkit.inventory.ItemStack(Material.COCOA_BEANS));
@@ -224,7 +242,50 @@ public class TrollEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager().hasMetadata("troll_fake")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALLING_BLOCK) {
+            Location loc = event.getEntity().getLocation();
+            for (Entity e : loc.getWorld().getNearbyEntities(loc, 1.5, 1.5, 1.5)) {
+                if (e instanceof org.bukkit.entity.FallingBlock && e.hasMetadata("troll_fake")) {
+                    event.setCancelled(true);
+                    e.remove();
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        if (event.getEntity().hasMetadata("troll_fake")) {
+            event.setCancelled(true);
+            event.getEntity().remove();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        Entity entity = event.getEntity();
+        if (entity != null && entity.hasMetadata("troll_tnt")) {
+            event.blockList().clear();
+            event.setYield(0f);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDeath(EntityDeathEvent event) {
+        if (event.getEntity().hasMetadata("troll_fake")) {
+            event.getDrops().clear();
+            event.setDroppedExp(0);
+            return;
+        }
         if (event.getEntity().getKiller() != null) {
             UUID id = event.getEntity().getKiller().getUniqueId();
             if (entityMultiplyPlayers.contains(id)) {

@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -187,6 +188,9 @@ public final class ClassicEffects {
             enderman.setInvulnerable(true);
             enderman.setCustomName("Slenderman");
             enderman.setCustomNameVisible(true);
+            enderman.setMetadata("troll_fake",
+                    new org.bukkit.metadata.FixedMetadataValue(
+                            gg.leo.IraqueCore.IraqueCore.getInstance(), true));
 
             manager.addRevertTask(target, () -> {
                 if (enderman.isValid()) enderman.remove();
@@ -226,7 +230,12 @@ public final class ClassicEffects {
 
         private void dropAnvil(Player target) {
             Location loc = target.getLocation().add(0, 20, 0);
-            loc.getBlock().setType(Material.DAMAGED_ANVIL, false);
+            FallingBlock anvil = loc.getWorld().spawnFallingBlock(loc,
+                    Material.DAMAGED_ANVIL.createBlockData());
+            anvil.setDropItem(false);
+            anvil.setMetadata("troll_fake",
+                    new org.bukkit.metadata.FixedMetadataValue(
+                            gg.leo.IraqueCore.IraqueCore.getInstance(), true));
         }
     }
 

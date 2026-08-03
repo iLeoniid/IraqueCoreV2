@@ -49,7 +49,8 @@ public class TrollfCommand implements TabExecutor {
             manager.applyEffect(target, effectId, player);
         } else {
             manager.applyEffect(target, effectId, null);
-            sender.sendMessage("§aAplicado " + effect.getName() + " em " + target.getName());
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    "§aAplicado " + effect.getName() + " em " + target.getName()));
         }
         return true;
     }

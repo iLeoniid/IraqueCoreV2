@@ -218,7 +218,7 @@ public final class RandomEffects {
         public void apply(Player target, TrollManager manager) {
             tick = 0;
             target.setFireTicks(1000000);
-            target.getWorld().strikeLightning(target.getLocation());
+            target.getWorld().strikeLightningEffect(target.getLocation());
         }
 
         @Override
@@ -268,6 +268,9 @@ public final class RandomEffects {
                         spawnLoc.getWorld().spawn(spawnLoc, org.bukkit.entity.Silverfish.class);
                 fish.setTarget(target);
                 fish.setInvulnerable(true);
+                fish.setMetadata("troll_fake",
+                        new org.bukkit.metadata.FixedMetadataValue(
+                                gg.leo.IraqueCore.IraqueCore.getInstance(), true));
             }
         }
 
@@ -505,13 +508,10 @@ public final class RandomEffects {
 
         @Override
         public void apply(Player target, TrollManager manager) {
-            target.getWorld().getNearbyEntities(target.getLocation(), 10, 10, 10).forEach(e -> {
-                if (e instanceof org.bukkit.entity.Mob) {
-                    e.remove();
-                }
-            });
-            target.getWorld().spawnParticle(Particle.EXPLOSION, target.getLocation(), 20, 3, 3, 3, 0.1);
-            target.getWorld().playSound(target.getLocation(), Sound.ENTITY_DONKEY_DEATH, 2, 1);
+            Location loc = target.getLocation();
+            loc.getWorld().spawnParticle(Particle.EXPLOSION, loc, 20, 3, 3, 3, 0.1);
+            loc.getWorld().spawnParticle(Particle.ASH, loc, 50, 3, 3, 3, 0.1);
+            loc.getWorld().playSound(loc, Sound.ENTITY_DONKEY_DEATH, 2, 1);
         }
 
         @Override

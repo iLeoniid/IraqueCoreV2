@@ -21,6 +21,16 @@ public final class ExplosionEffects {
 
     private ExplosionEffects() {}
 
+    private static TNTPrimed spawnFakeTNT(Location loc) {
+        TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
+        tnt.setYield(0f);
+        tnt.setIsIncendiary(false);
+        tnt.setMetadata("troll_tnt",
+                new org.bukkit.metadata.FixedMetadataValue(
+                        gg.leo.IraqueCore.IraqueCore.getInstance(), true));
+        return tnt;
+    }
+
     public static void register(TrollManager manager) {
         manager.registerEffect(new ExplodingChickenEffect());
         manager.registerEffect(new KittyCannonEffect());
@@ -43,7 +53,7 @@ public final class ExplosionEffects {
             chicken.setInvulnerable(true);
             chicken.setAI(false);
 
-            loc.getWorld().createExplosion(loc, 2.0f, false, false);
+            loc.getWorld().createExplosion(loc, 0f, false, false);
             loc.getWorld().spawnParticle(Particle.FIREWORK, loc, 50, 1, 1, 1, 0.1);
             loc.getWorld().playSound(loc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 2, 1);
 
@@ -113,7 +123,7 @@ public final class ExplosionEffects {
             for (int i = 0; i < 16; i++) {
                 double angle = 2 * Math.PI * i / 16;
                 Location tntLoc = loc.clone().add(Math.cos(angle) * 3, 0, Math.sin(angle) * 3);
-                tntLoc.getWorld().spawn(tntLoc, TNTPrimed.class);
+                spawnFakeTNT(tntLoc);
             }
             SchedulerUtil.runLater(
                     gg.leo.IraqueCore.IraqueCore.getInstance(), () -> {
@@ -146,7 +156,7 @@ public final class ExplosionEffects {
                                         Math.cos(angle) * (4 + RANDOM.nextDouble() * 3),
                                         RANDOM.nextDouble() * 3,
                                         Math.sin(angle) * (4 + RANDOM.nextDouble() * 3));
-                                tntLoc.getWorld().spawn(tntLoc, TNTPrimed.class);
+                                spawnFakeTNT(tntLoc);
                             }
                         }, cycle * 3L);
             }
