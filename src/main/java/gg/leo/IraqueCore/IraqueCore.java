@@ -1,7 +1,6 @@
 package gg.leo.IraqueCore;
 
 import gg.leo.IraqueCore.afk.AfkManager;
-import gg.leo.IraqueCore.alerts.AlertCommand;
 import gg.leo.IraqueCore.alerts.AlertManager;
 import gg.leo.IraqueCore.anvil.AnvilColorListener;
 import gg.leo.IraqueCore.armorstand.ArmorStandEditor;
@@ -95,6 +94,7 @@ public final class IraqueCore extends JavaPlugin {
     private PunishmentManager  punishmentManager;
     private TrollManager       trollManager;
     private PluginLogger       pluginLogger;
+    private gg.leo.IraqueCore.commands.CloudCommandManager cloudCommandManager;
 
     @Override
     public void onEnable() {
@@ -414,9 +414,6 @@ public final class IraqueCore extends JavaPlugin {
         var chatColorCommand = new ChatColorCommand(chatColorManager);
         register("chatcolor", chatColorCommand, null);
 
-        var alertCommand = new AlertCommand(this, alertManager);
-        register("alert", alertCommand, alertCommand);
-
         var infoCommand = new IraqueCoreCommand(this);
         register("iraquecore", infoCommand, null);
 
@@ -435,14 +432,6 @@ public final class IraqueCore extends JavaPlugin {
         register("unmute", punishmentCommand, punishmentCommand);
         register("kick", punishmentCommand, punishmentCommand);
 
-        var healCommand = new gg.leo.IraqueCore.commands.HealCommand(this);
-        register("heal", healCommand, healCommand);
-        var feedCommand = new gg.leo.IraqueCore.commands.FeedCommand(this);
-        register("feed", feedCommand, feedCommand);
-        var trashCommand = new gg.leo.IraqueCore.commands.TrashCommand(this);
-        register("trash", trashCommand, null);
-        getServer().getPluginManager().registerEvents(trashCommand, this);
-
         var removeArmorStandCommand = new gg.leo.IraqueCore.commands.RemoveArmorStandCommand(this);
         register("removearmorstand", removeArmorStandCommand, null);
 
@@ -455,6 +444,11 @@ public final class IraqueCore extends JavaPlugin {
 
         var profileCommand = new gg.leo.IraqueCore.profile.ProfileCommand(this);
         register("profile", profileCommand, profileCommand);
+
+        var trashCommand = new gg.leo.IraqueCore.commands.TrashCommand(this);
+        getServer().getPluginManager().registerEvents(trashCommand, this);
+        this.cloudCommandManager = new gg.leo.IraqueCore.commands.CloudCommandManager(this, trashCommand);
+        cloudCommandManager.registerCommands();
     }
 
     /**

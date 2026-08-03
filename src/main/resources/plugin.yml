@@ -78,10 +78,6 @@ commands:
     description: Open the chat color selector GUI
     aliases: [chatcolors, cc, colors]
     permission: iraquecore.chatcolor
-  alert:
-    description: Send alerts to players
-    aliases: [alerta]
-    permission: alert.use
   iraquecore:
     description: Plugin info
     aliases: [ic, core]
@@ -116,18 +112,6 @@ commands:
   kick:
     description: Kick a player
     permission: iraquecore.kick
-  heal:
-    description: Heal yourself or another player
-    aliases: [curar]
-    permission: iraquecore.heal
-  feed:
-    description: Feed yourself or another player
-    aliases: [alimentar]
-    permission: iraquecore.feed
-  trash:
-    description: Open a trash inventory
-    aliases: [lixeira, dispose]
-    permission: iraquecore.trash
   removearmorstand:
     description: Remove the armor stand you are looking at
     aliases: [rms, removearmor]
