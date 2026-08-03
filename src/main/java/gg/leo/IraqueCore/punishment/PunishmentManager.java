@@ -62,6 +62,12 @@ public class PunishmentManager implements Listener {
         }
     }
 
+    public void reload() {
+        muteFile = new File(plugin.getDataFolder(), "punishments.yml");
+        muteConfig = YamlConfiguration.loadConfiguration(muteFile);
+        loadMutes();
+    }
+
     public void saveMutes() {
         if (muteConfig == null) return;
         muteConfig.set("mutes", null);

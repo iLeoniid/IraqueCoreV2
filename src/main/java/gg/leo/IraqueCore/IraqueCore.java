@@ -299,6 +299,8 @@ public final class IraqueCore extends JavaPlugin {
         configManager.reloadMessages();
         ArrayList<String> files = new ArrayList<>();
         files.add("config.yml");
+        files.add("messages.yml");
+        files.add("discord.yml");
         if (tagManager != null) {
             tagManager.reload();
             files.add("tags.yml");
@@ -313,17 +315,21 @@ public final class IraqueCore extends JavaPlugin {
         }
         if (chatColorManager != null) {
             chatColorManager.load();
+            files.add("chatcolors.yml");
         }
         if (permissionManager != null) {
             permissionManager.load();
+            files.add("player-permissions.yml");
         }
         if (grantManager != null) {
             grantManager.load();
+            files.add("grants.yml");
         }
         rankManager.loadRanks();
         rankManager.updateAllVisuals();
         if (scoreboardManager != null) {
             scoreboardManager.reload();
+            files.add("stats.yml");
         }
         if (afkManager != null) {
             afkManager.load();
@@ -333,12 +339,21 @@ public final class IraqueCore extends JavaPlugin {
         }
         if (playtimeManager != null) {
             playtimeManager.load();
+            files.add("playtime.yml");
         }
         if (imageMotdManager != null) {
             imageMotdManager.reload();
         }
         if (alertManager != null) {
             alertManager.reload();
+            files.add("create-alerts.yml");
+        }
+        if (punishmentManager != null) {
+            punishmentManager.reload();
+            files.add("punishments.yml");
+        }
+        if (trollManager != null) {
+            trollManager.reloadConfig();
         }
         if (discordManager != null) {
             discordManager.shutdown();
