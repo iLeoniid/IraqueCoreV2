@@ -64,7 +64,7 @@ public class MotdManager {
 
     private String getCurrentText() {
         if (animated && animation != null) {
-            return animation.getText();
+            return animation.getCurrentText();
         }
         return staticText;
     }
@@ -78,7 +78,7 @@ public class MotdManager {
     private void startMotdTask(long ticks) {
         SchedulerUtil.runTimer(plugin, () -> {
             if (animation != null) {
-                setMotd(animation.getText());
+                setMotd(animation.getCurrentText());
             }
         }, ticks, ticks);
     }

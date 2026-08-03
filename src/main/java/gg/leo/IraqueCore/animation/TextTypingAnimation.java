@@ -1,33 +1,37 @@
 package gg.leo.IraqueCore.animation;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextTypingAnimation {
-    
-    private final String text;
+public class TextTypingAnimation extends AbstractTextAnimation {
+
+    private static final int CURSOR_BLINKS = 4;
+
     private final ChatColor textColor;
     private final ChatColor cursorColor;
-    private final List<String> frames;
-    private int index;
     private final String cursor;
+    private final boolean erase;
 
     public TextTypingAnimation(String text, ChatColor textColor, ChatColor cursorColor) {
-        this(text, textColor, cursorColor, "▌");
+        this(text, textColor, cursorColor, "▌", false);
     }
 
     public TextTypingAnimation(String text, ChatColor textColor, ChatColor cursorColor, String cursor) {
-        this.text = text;
+        this(text, textColor, cursorColor, cursor, false);
+    }
+
+    public TextTypingAnimation(String text, ChatColor textColor, ChatColor cursorColor, String cursor, boolean erase) {
+        super(text);
         this.textColor = textColor;
         this.cursorColor = cursorColor;
         this.cursor = cursor;
-        this.frames = generateFrames();
-        this.index = 0;
+        this.erase = erase;
     }
 
-    private List<String> generateFrames() {
+    @Override
+    protected List<String> generateFrames() {
         List<String> result = new ArrayList<>();
         int len = text.length();
 
@@ -41,7 +45,7 @@ public class TextTypingAnimation {
         }
 
         // Cursor parpadeando al final
-        for (int blink = 0; blink < 4; blink++) {
+        for (int blink = 0; blink < CURSOR_BLINKS; blink++) {
             if (blink % 2 == 0) {
                 result.add(textColor + text + cursorColor + cursor);
             } else {
@@ -49,32 +53,17 @@ public class TextTypingAnimation {
             }
         }
 
-        // Borrar (opcional - descomenta si quieres que se borre)
-        /*
-        for (int i = len; i >= 0; i--) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(textColor);
-            sb.append(text, 0, i);
-            sb.append(cursorColor).append(cursor);
-            result.add(sb.toString());
+        // Borrar el texto letra por letra (opcional)
+        if (erase) {
+            for (int i = len; i >= 0; i--) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(textColor);
+                sb.append(text, 0, i);
+                sb.append(cursorColor).append(cursor);
+                result.add(sb.toString());
+            }
         }
-        */
 
         return result;
-    }
-
-    public String getCurrentText() {
-        return frames.isEmpty() ? text : frames.get(index);
-    }
-
-    public String nextFrame() {
-        if (frames.isEmpty()) return text;
-        String frame = frames.get(index);
-        index = (index + 1) % frames.size();
-        return frame;
-    }
-
-    public List<String> getFrames() {
-        return List.copyOf(frames);
     }
 }

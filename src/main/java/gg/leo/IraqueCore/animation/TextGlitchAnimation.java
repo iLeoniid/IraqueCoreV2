@@ -1,32 +1,28 @@
 package gg.leo.IraqueCore.animation;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TextGlitchAnimation {
-    
-    private final String text;
+public class TextGlitchAnimation extends AbstractTextAnimation {
+
     private final ChatColor glitchColor;
     private final ChatColor normalColor;
-    private final List<String> frames;
-    private int index;
     private final Random random = new Random();
 
     // Caracteres de glitch
     private static final String GLITCH_CHARS = "▓▒░█▄▀■□▪▫▬►◄▲▼◊○●◐◑☺☻♥♦♣♠•◘○";
 
     public TextGlitchAnimation(String text, ChatColor normalColor, ChatColor glitchColor) {
-        this.text = text;
+        super(text);
         this.normalColor = normalColor;
         this.glitchColor = glitchColor;
-        this.frames = generateFrames();
-        this.index = 0;
     }
 
-    private List<String> generateFrames() {
+    @Override
+    protected List<String> generateFrames() {
         List<String> result = new ArrayList<>();
         int len = text.length();
 
@@ -37,7 +33,7 @@ public class TextGlitchAnimation {
         for (int glitchCount = 1; glitchCount <= len; glitchCount++) {
             StringBuilder sb = new StringBuilder();
             boolean[] glitched = new boolean[len];
-            
+
             // Elegir posiciones aleatorias para glitch
             for (int g = 0; g < glitchCount && g < len; g++) {
                 int pos;
@@ -71,20 +67,5 @@ public class TextGlitchAnimation {
         }
 
         return result;
-    }
-
-    public String getCurrentText() {
-        return frames.isEmpty() ? text : frames.get(index);
-    }
-
-    public String nextFrame() {
-        if (frames.isEmpty()) return text;
-        String frame = frames.get(index);
-        index = (index + 1) % frames.size();
-        return frame;
-    }
-
-    public List<String> getFrames() {
-        return List.copyOf(frames);
     }
 }

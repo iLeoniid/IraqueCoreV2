@@ -1,25 +1,21 @@
 package gg.leo.IraqueCore.animation;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextWaveAnimation {
-    
-    private final String text;
+public class TextWaveAnimation extends AbstractTextAnimation {
+
     private final ChatColor[] colors;
-    private final List<String> frames;
-    private int index;
 
     public TextWaveAnimation(String text, ChatColor... colors) {
-        this.text = text;
+        super(text);
         this.colors = colors;
-        this.frames = generateFrames();
-        this.index = 0;
     }
 
-    private List<String> generateFrames() {
+    @Override
+    protected List<String> generateFrames() {
         List<String> result = new ArrayList<>();
         int colorCount = colors.length;
         if (colorCount == 0) {
@@ -49,20 +45,5 @@ public class TextWaveAnimation {
             result.add(sb.toString());
         }
         return result;
-    }
-
-    public String getCurrentText() {
-        return frames.isEmpty() ? text : frames.get(index);
-    }
-
-    public String nextFrame() {
-        if (frames.isEmpty()) return text;
-        String frame = frames.get(index);
-        index = (index + 1) % frames.size();
-        return frame;
-    }
-
-    public List<String> getFrames() {
-        return List.copyOf(frames);
     }
 }

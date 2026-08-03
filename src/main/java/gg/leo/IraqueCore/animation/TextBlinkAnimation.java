@@ -1,27 +1,23 @@
 package gg.leo.IraqueCore.animation;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextBlinkAnimation {
-    
-    private final String text;
+public class TextBlinkAnimation extends AbstractTextAnimation {
+
     private final ChatColor[] colors;
-    private final List<String> frames;
-    private int index;
     private final boolean bold;
 
     public TextBlinkAnimation(String text, boolean bold, ChatColor... colors) {
-        this.text = text;
-        this.colors = colors;
+        super(text);
         this.bold = bold;
-        this.frames = generateFrames();
-        this.index = 0;
+        this.colors = colors;
     }
 
-    private List<String> generateFrames() {
+    @Override
+    protected List<String> generateFrames() {
         List<String> result = new ArrayList<>();
         int colorCount = colors.length;
         if (colorCount == 0) {
@@ -42,20 +38,5 @@ public class TextBlinkAnimation {
         result.add(ChatColor.RESET + ChatColor.BLACK.toString() + text);
 
         return result;
-    }
-
-    public String getCurrentText() {
-        return frames.isEmpty() ? text : frames.get(index);
-    }
-
-    public String nextFrame() {
-        if (frames.isEmpty()) return text;
-        String frame = frames.get(index);
-        index = (index + 1) % frames.size();
-        return frame;
-    }
-
-    public List<String> getFrames() {
-        return List.copyOf(frames);
     }
 }
